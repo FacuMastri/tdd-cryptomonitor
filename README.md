@@ -1,6 +1,10 @@
-# grupo02
+# Rostov's Crypto Monitor
 
+Plataforma para monitorear los valores de criptomonedas, definir reglas de compra y venta que apliquen según las condiciones o variaciones del mercado
 
+Ver [docs](/docs/)
+
+<!--
 
 ## Getting started
 
