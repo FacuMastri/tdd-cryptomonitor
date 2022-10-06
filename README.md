@@ -4,6 +4,8 @@ Plataforma para monitorear los valores de criptomonedas, definir reglas de compr
 
 Ver [docs](/docs/)
 
+Ver [enunciado](https://docs.google.com/document/d/1YWHSMlHjrVZ6HAVEERuD4IdhdI54ica8IvILpKLGT24/edit)
+
 <!--
 
 ## Getting started
