@@ -1,0 +1,15 @@
+image: node:18.2.0
+
+stages:
+  - lint
+  - test
+
+linter-job:
+  stage: lint
+  script:
+    - npm run lint
+
+unit-test-job:
+  stage: test
+  script:
+    - npm t
