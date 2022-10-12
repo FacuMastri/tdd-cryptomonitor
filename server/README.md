@@ -6,6 +6,20 @@
 
 - [Node.js](https://nodejs.org/en/)
 
+### Run with Docker
+
+First time:
+
+```bash
+docker-compose up --build
+```
+
+Subsequent times:
+
+```bash
+docker-compose up
+```
+
 ### Commands
 
 - `npm install` or `npm i` to install dependencies

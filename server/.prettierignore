@@ -1,0 +1,12 @@
+# folders
+build/
+lib/
+node_modules/
+docs/
+.gitlab/
+.vscode/
+.idea/
+
+# files
+tsconfig.json
+README.md

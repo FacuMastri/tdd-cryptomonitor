@@ -1,0 +1,12 @@
+version: "3.7" # For more information about the version, see https://docs.docker.com/compose/compose-file/compose-versioning/
+services:
+  crypto-monitor-server:
+    build:
+      context: .
+    ports:
+        - "8080:8080"
+    volumes:
+      - .:/app
+    stdin_open: true
+    tty: true
+    command: npm start
