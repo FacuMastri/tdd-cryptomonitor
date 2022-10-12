@@ -25,7 +25,7 @@ test-job:
     when: always
     reports:
       junit:
-        - junit.xml
+        - server/junit.xml
       coverage_report:
         coverage_format: cobertura
-        path: coverage/cobertura-coverage.xml
+        path: server/coverage/cobertura-coverage.xml
