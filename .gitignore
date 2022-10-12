@@ -5,6 +5,10 @@
 # Package lock outside the 'server' folder
 package-lock.json
 
+# Junit test reports
+junit.xml
+
 # Node
 node_modules
 build
+coverage
