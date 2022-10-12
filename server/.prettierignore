@@ -6,7 +6,11 @@ docs/
 .gitlab/
 .vscode/
 .idea/
+coverage/
 
 # files
 tsconfig.json
 README.md
+junit.xml
+Dockerfile
+docker-compose.yml
