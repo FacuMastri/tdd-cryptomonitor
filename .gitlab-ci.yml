@@ -1,5 +1,12 @@
 image: node:18.2.0
 
+before_script:
+  - cd server/
+  - npm install
+cache:
+  paths:
+  - node_modules
+
 stages:
   - lint
   - test
@@ -7,11 +14,9 @@ stages:
 linter-job:
   stage: lint
   script:
-    - cd server/
     - npm run lint
 
 unit-test-job:
   stage: test
   script:
-    - cd server/
     - npm t
