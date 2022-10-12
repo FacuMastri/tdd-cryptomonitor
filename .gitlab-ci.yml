@@ -7,9 +7,11 @@ stages:
 linter-job:
   stage: lint
   script:
+    - cd server/
     - npm run lint
 
 unit-test-job:
   stage: test
   script:
+    - cd server/
     - npm t
