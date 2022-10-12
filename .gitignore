@@ -1,2 +1,10 @@
+# IDEs
+.vscode
+.idea
+
+# Package lock outside the 'server' folder
+package-lock.json
+
+# Node
 node_modules
 build
