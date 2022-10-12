@@ -16,7 +16,16 @@ linter-job:
   script:
     - npm run lint
 
-unit-test-job:
+test-job:
   stage: test
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
   script:
-    - npm t
+    - npm run test:ci
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
