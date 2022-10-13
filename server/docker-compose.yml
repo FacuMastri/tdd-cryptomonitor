@@ -3,10 +3,11 @@ services:
   crypto-monitor-server:
     build:
       context: .
+      dockerfile: Dockerfile
     ports:
       - '8080:8080'
     volumes:
       - .:/app
     stdin_open: true
     tty: true
-    command: npm start
+    container_name: server
