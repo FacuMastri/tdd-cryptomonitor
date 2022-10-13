@@ -3,11 +3,15 @@ services:
   crypto-monitor-server:
     build:
       context: .
-      dockerfile: Dockerfile
     ports:
       - '8080:8080'
     volumes:
-      - .:/app
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./nodemon.json:/app/nodemon.json
+      - ./jest.config.js:/app/jest.config.js
+      - ./tsconfig.json:/app/tsconfig.json
     stdin_open: true
     tty: true
     container_name: server
+    command: npm start
