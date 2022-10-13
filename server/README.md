@@ -25,15 +25,7 @@ docker-compose up
 Once the container is up and running, run the following commands:
 
 ```bash
-$ docker ps
-CONTAINER ID   IMAGE                          COMMAND                  CREATED         STATUS              PORTS                                       NAMES
-f55080179d84   server_crypto-monitor-server   "docker-entrypoint.s…"   6 minutes ago   Up About a minute   0.0.0.0:8080->8080/tcp, :::8080->8080/tcp   server_crypto-monitor-server_1
-```
-
-Copy the container ID and then:
-
-```bash
-docker exec -it [container-id] bash
+docker exec -it server bash
 ```
 
 Once inside the container, run:
