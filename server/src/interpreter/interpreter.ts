@@ -12,6 +12,8 @@ import {
     evalSubtract
 } from "./number";
 
+export let STORAGE: Dict<any> = { a: 123 };
+
 export function evalBoolean(boolean: Dict<any>): boolean {
     switch (boolean.type) {
         case 'CONSTANT':
@@ -92,7 +94,17 @@ export function evalValue(value: any): any {
     switch (value.type) {
         case 'CONSTANT':
             return evalBoolean(value);
+        case 'VARIABLE':
+            return evalVariable(value);
         default:
             throw new Error('Unknown value type: ' + value.type);
+    }
+}
+
+function evalVariable(variable: Dict<any>): any {
+    if (variable.name in STORAGE) {
+        return STORAGE[variable.name];
+    } else {
+        throw new Error('Undefined variable: ' + variable.name);
     }
 }

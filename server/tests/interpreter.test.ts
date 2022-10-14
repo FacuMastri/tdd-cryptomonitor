@@ -1,4 +1,4 @@
-import {evalBoolean, evalNumber} from "../src/interpreter/interpreter";
+import {evalBoolean, evalNumber, evalValue} from "../src/interpreter/interpreter";
 
 test('evalBoolean returns true for constant true', () => {
     let boolean = { type: 'CONSTANT', value: true };
@@ -1148,4 +1148,31 @@ test('evalNumber throws error for LAST call with no arguments', () => {
     };
 
     expect(() => evalNumber(call)).toThrow();
+});
+
+test('evalValue return variable value for VARIABLE value', () => {
+    let variable = {
+        type: 'VARIABLE',
+        name: 'a'
+    };
+
+    expect(evalValue(variable)).toBe(123);
+});
+
+test('evalValue throws error for VARIABLE value with undefined variable', () => {
+    let variable = {
+        type: 'VARIABLE',
+        name: 'b'
+    };
+
+    expect(() => evalValue(variable)).toThrow();
+});
+
+test('evalValue return constant value for CONSTANT value', () => {
+    let constant = {
+        type: 'CONSTANT',
+        value: 123
+    };
+
+    expect(evalValue(constant)).toBe(123);
 });
