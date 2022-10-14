@@ -1,4 +1,5 @@
 import {evalAction, evalBoolean, evalNumber, evalRule, evalValue} from "../src/interpreter/interpreter";
+import exp = require("constants");
 
 test('evalBoolean returns true for constant true', () => {
     let boolean = { type: 'CONSTANT', value: true };
@@ -1343,4 +1344,27 @@ test('evalRule executes all rules', () => {
 
     expect(context.a).toBe(888);
     expect(context.b).toBe(555);
+});
+
+test('evalNumber with CALL of N arguments works with default DATA', () => {
+   let call = {
+         type: 'CALL',
+            name: '+',
+            argument: {
+                "type": "DATA",
+                "symbol": "BTC/USDT",
+                "since": 3600,
+                "until": 0,
+                "default": [{
+                    "type": "CONSTANT",
+                    "value": 1500
+                },
+                {
+                    "type": "CONSTANT",
+                    "value": 3000
+                }]
+            }
+   };
+
+   expect(evalNumber(call)).toBe(4500);
 });

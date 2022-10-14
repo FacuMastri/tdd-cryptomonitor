@@ -13,6 +13,9 @@ import {
 } from "./number";
 
 export let STORAGE: Dict<any> = { a: 123 };
+function mockGetData(symbol: string, since: number, until: number): number[] {
+    return [];
+}
 
 export function evalBoolean(boolean: Dict<any>): boolean {
     switch (boolean.type) {
@@ -61,32 +64,72 @@ export function evalNumber(number: Dict<any>): number {
     }
 }
 
-function evalNumberCall(call: Dict<any>): number {
+function getData(dataInfo: Dict<any>): Dict<any>[] {
+    const data = mockGetData(dataInfo.symbol, dataInfo.since, dataInfo.until);
+    if (data.length == 0) {
+        if ('default' in dataInfo) {
+            return dataInfo.default;
+        } else {
+            throw new Error('No data and no default value');
+        }
+    } else {
+        return data.map((value) => ({ type: 'CONSTANT', value }));
+    }
+}
+
+function getArguments(call: Dict<any>): Dict<any>[] {
+    try {
+        call.arguments.length;
+    } catch (e) {
+        return getData(call.argument);
+    }
+    return call.arguments;
+}
+
+function evalNumberCallWithNArgs(call: Dict<any>): number {
+    const callArgs = getArguments(call);
     switch (call.name) {
-        case 'NEGATE':
-            return evalNegate(call.arguments);
         case '+':
-            return evalAdd(call.arguments);
+            return evalAdd(callArgs);
+        case '*':
+            return evalMultiply(callArgs);
+        case 'MIN':
+            return evalMin(callArgs);
+        case 'MAX':
+            return evalMax(callArgs);
+        case 'AVERAGE':
+            return evalAverage(callArgs);
+        case 'STDDEV':
+            return evalStddev(callArgs);
+        case 'FIRST':
+            return evalFirst(callArgs);
+        case 'LAST':
+            return evalFirst(callArgs.reverse());
+        default:
+            throw new Error('Unknown number call for N arguments: ' + call.name);
+    }
+}
+
+function evalNumberCallWith2Args(call: Dict<any>): number {
+    switch (call.name) {
         case '-':
             return evalSubtract(call.arguments);
-        case '*':
-            return evalMultiply(call.arguments);
         case '/':
             return evalDivide(call.arguments);
-        case 'MIN':
-            return evalMin(call.arguments);
-        case 'MAX':
-            return evalMax(call.arguments);
-        case 'AVERAGE':
-            return evalAverage(call.arguments);
-        case 'STDDEV':
-            return evalStddev(call.arguments);
-        case 'FIRST':
-            return evalFirst(call.arguments);
-        case 'LAST':
-            return evalFirst(call.arguments.reverse());
         default:
-            throw new Error('Unknown number call: ' + call.name);
+            throw new Error('Unknown number call for 2 arguments: ' + call.name);
+    }
+}
+
+function evalNumberCall(call: Dict<any>): number {
+    if (['+', '*', 'MIN', 'MAX', 'AVERAGE', 'STDDEV', 'FIRST', 'LAST'].includes(call.name)) {
+        return evalNumberCallWithNArgs(call);
+    } else if (['-', '/'].includes(call.name)) {
+        return evalNumberCallWith2Args(call);
+    } else if (call.name == 'NEGATE') {
+        return evalNegate(call.arguments);
+    } else {
+        throw new Error('Unknown number call: ' + call.name);
     }
 }
 
