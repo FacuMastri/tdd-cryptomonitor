@@ -22,6 +22,8 @@ function evalBooleanCall(call: Dict<any>) {
             return evalLessThan(call.arguments);
         case '<=':
             return evalLessThanEqual(call.arguments);
+        case '>':
+            return evalLessThan(call.arguments.reverse());
         default:
             throw new Error('Unknown boolean call: ' + call.name);
     }
