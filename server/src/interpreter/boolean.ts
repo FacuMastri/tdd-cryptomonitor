@@ -18,3 +18,13 @@ export function evalLessThan(args: any[]): boolean {
         }
     });
 }
+
+export function evalLessThanEqual(args: any[]): boolean {
+    return args.every((arg, index) => {
+        if (index == 0) {
+            return true;
+        } else {
+            return evalValue(args[index - 1]) <= evalValue(arg);
+        }
+    });
+}
