@@ -401,3 +401,70 @@ test('evalBoolean returns false for >= call with three constants', () => {
 
     expect(evalBoolean(call)).toBe(false);
 });
+
+test('evalBoolean returns true for AND call with two true constants', () => {
+    let call = {
+        type: 'CALL',
+        name: 'AND',
+        arguments: [
+            { type: 'CONSTANT', value: true },
+            { type: 'CONSTANT', value: true }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(true);
+});
+
+test('evalBoolean returns false for AND call with two false constants', () => {
+    let call = {
+        type: 'CALL',
+        name: 'AND',
+        arguments: [
+            { type: 'CONSTANT', value: false },
+            { type: 'CONSTANT', value: false }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(false);
+});
+
+test('evalBoolean returns false for AND call with one true and one false constant', () => {
+    let call = {
+        type: 'CALL',
+        name: 'AND',
+        arguments: [
+            { type: 'CONSTANT', value: true },
+            { type: 'CONSTANT', value: false }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(false);
+});
+
+test('evalBoolean returns true for AND call with three true constants', () => {
+    let call = {
+        type: 'CALL',
+        name: 'AND',
+        arguments: [
+            { type: 'CONSTANT', value: true },
+            { type: 'CONSTANT', value: true },
+            { type: 'CONSTANT', value: true }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(true);
+});
+
+test('evalBoolean returns false for AND call with two true and one false constants', () => {
+    let call = {
+        type: 'CALL',
+        name: 'AND',
+        arguments: [
+            { type: 'CONSTANT', value: true },
+            { type: 'CONSTANT', value: true },
+            { type: 'CONSTANT', value: false }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(false);
+});
