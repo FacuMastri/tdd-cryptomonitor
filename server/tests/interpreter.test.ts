@@ -580,3 +580,51 @@ test('evalNumber return 2 for constant 2', () => {
 
     expect(evalNumber(number)).toBe(2);
 });
+
+test('evalNumber return -1 for NEGATE call with constant 1', () => {
+    let call = {
+        type: 'CALL',
+        name: 'NEGATE',
+        arguments: [{ type: 'CONSTANT', value: 1 }]
+    };
+
+    expect(evalNumber(call)).toBe(-1);
+});
+
+test('evalNumber return -2 for NEGATE call with constant 2', () => {
+    let call = {
+        type: 'CALL',
+        name: 'NEGATE',
+        arguments: [{ type: 'CONSTANT', value: 2 }]
+    };
+
+    expect(evalNumber(call)).toBe(-2);
+});
+
+test('evalNumber return 1 for NEGATE call with constant -1', () => {
+    let call = {
+        type: 'CALL',
+        name: 'NEGATE',
+        arguments: [
+            {
+                type: 'CONSTANT',
+                value: -1
+            }
+        ]
+    };
+
+    expect(evalNumber(call)).toBe(1);
+});
+
+test('evalNumber throws error for NEGATE call with two or more constants', () => {
+    let call = {
+        type: 'CALL',
+        name: 'NEGATE',
+        arguments: [
+            { type: 'CONSTANT', value: 1 },
+            { type: 'CONSTANT', value: 1 }
+        ]
+    };
+
+    expect(() => evalNumber(call)).toThrow();
+});
