@@ -1,5 +1,5 @@
 import Dict = NodeJS.Dict;
-import {evalDistinct, evalEqual} from "./boolean";
+import {evalDistinct, evalEqual, evalLessThan} from "./boolean";
 
 export function evalBoolean(boolean: Dict<any>): boolean {
     switch (boolean.type) {
@@ -18,6 +18,8 @@ function evalBooleanCall(call: Dict<any>) {
             return evalEqual(call.arguments);
         case "DISTINCT":
             return evalDistinct(call.arguments);
+        case '<':
+            return evalLessThan(call.arguments);
         default:
             throw new Error('Unknown boolean call: ' + call.name);
     }

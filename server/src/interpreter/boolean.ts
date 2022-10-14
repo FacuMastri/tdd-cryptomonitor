@@ -8,3 +8,13 @@ export function evalDistinct(args: any[]): boolean {
     let set = new Set(args.map((arg) => evalValue(arg)));
     return set.size == args.length;
 }
+
+export function evalLessThan(args: any[]): boolean {
+    return args.every((arg, index) => {
+        if (index == 0) {
+            return true;
+        } else {
+            return evalValue(args[index - 1]) < evalValue(arg);
+        }
+    });
+}
