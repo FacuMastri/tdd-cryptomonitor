@@ -37,6 +37,15 @@ function evalBooleanCall(call: Dict<any>) {
     }
 }
 
+export function evalNumber(number: Dict<any>): number {
+    switch (number.type) {
+        case 'CONSTANT':
+            return number.value;
+        default:
+            throw new Error('Unknown number type: ' + number.type);
+    }
+}
+
 export function evalValue(value: any): any {
     switch (value.type) {
         case 'CONSTANT':

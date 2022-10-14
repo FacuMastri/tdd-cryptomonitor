@@ -1,4 +1,4 @@
-import {evalBoolean} from "../src/interpreter/interpreter";
+import {evalBoolean, evalNumber} from "../src/interpreter/interpreter";
 
 test('evalBoolean returns true for constant true', () => {
     let boolean = { type: 'CONSTANT', value: true };
@@ -567,4 +567,16 @@ test('evalBoolean throws error for NOT call with two or more constants', () => {
     };
 
     expect(() => evalBoolean(call)).toThrow();
+});
+
+test('evalNumber return 1 for constant 1', () => {
+    let number = { type: 'CONSTANT', value: 1 };
+
+    expect(evalNumber(number)).toBe(1);
+});
+
+test('evalNumber return 2 for constant 2', () => {
+    let number = { type: 'CONSTANT', value: 2 };
+
+    expect(evalNumber(number)).toBe(2);
 });
