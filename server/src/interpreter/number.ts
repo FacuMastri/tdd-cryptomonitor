@@ -22,3 +22,10 @@ export function evalSubtract(args: any[]): number {
         return evalNumber(args[0]) - evalNumber(args[1]);
     }
 }
+
+export function evalMultiply(args: any[]): number {
+    if (args.length == 0) {
+        throw new Error('MULTIPLY takes at least one argument');
+    }
+    return args.reduce((product, arg) => product * evalNumber(arg), 1);
+}
