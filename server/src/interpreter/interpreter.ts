@@ -144,7 +144,22 @@ export function evalAction(action: Dict<any>, context: Dict<any>): Dict<any> {
         case 'SET_VARIABLE':
             context[action.name] = evalValue(action.value);
             return context;
+        case 'BUY_MARKET':
+            return evalBuyMarket(action, context);
         default:
             throw new Error('Unknown action type: ' + action.type);
     }
 }
+
+function evalBuyMarket(action: Dict<any>, context: Dict<any>): Dict<any> {
+    const amount = evalValue(action.amount);
+    if (amount < 0) {
+        throw new Error('Cannot buy negative amount');
+    }
+    if (!(action.symbol in context.wallets)) {
+        context.wallets[action.symbol] = 0;
+    }
+    context.wallets[action.symbol] += amount;
+    return context;
+}
+

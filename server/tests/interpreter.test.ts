@@ -1213,3 +1213,25 @@ test('evalAction sets variable value even if variable is not defined', () => {
 
     expect(context.b).toBe(1000);
 });
+
+test('evalAction buys stock for BUY_MARKET action', () => {
+    let action = {
+        type: 'BUY_MARKET',
+        symbol: 'BTC',
+        amount: { type: 'CONSTANT', value: 10 }
+    };
+
+    let context = evalAction(action, { wallets: {} });
+
+    expect(context.wallets['BTC']).toBe(10);
+});
+
+test('evalAction throws error for BUY_MARKET action with negative amount', () => {
+    let action = {
+        type: 'BUY_MARKET',
+        symbol: 'BTC',
+        amount: { type: 'CONSTANT', value: -10 }
+    };
+
+    expect(() => evalAction(action, {})).toThrow();
+});
