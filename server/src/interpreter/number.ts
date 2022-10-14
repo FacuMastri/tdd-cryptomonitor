@@ -48,3 +48,10 @@ export function evalMin(args: any[]): number {
     }
     return Math.min(...args.map((arg) => evalNumber(arg)));
 }
+
+export function evalMax(args: any[]): number {
+    if (args.length == 0) {
+        throw new Error('MAX takes at least one argument');
+    }
+    return Math.max(...args.map((arg) => evalNumber(arg)));
+}

@@ -901,3 +901,63 @@ test('evalNumber throws error for MIN call with no arguments', () => {
 
     expect(() => evalNumber(call)).toThrow();
 });
+
+test('evalNumber return 2 for MAX call with constant 1 and constant 2', () => {
+    let call = {
+        type: 'CALL',
+        name: 'MAX',
+        arguments: [
+            { type: 'CONSTANT', value: 1 },
+            { type: 'CONSTANT', value: 2 }
+        ]
+    };
+
+    expect(evalNumber(call)).toBe(2);
+});
+
+test('evalNumber return 2 for MAX call with constant 2 and constant 1', () => {
+    let call = {
+        type: 'CALL',
+        name: 'MAX',
+        arguments: [
+            { type: 'CONSTANT', value: 2 },
+            { type: 'CONSTANT', value: 1 }
+        ]
+    };
+
+    expect(evalNumber(call)).toBe(2);
+});
+
+test('evalNumber return 5 for MAX call with constant 5', () => {
+    let call = {
+        type: 'CALL',
+        name: 'MAX',
+        arguments: [{ type: 'CONSTANT', value: 5 }]
+    };
+
+    expect(evalNumber(call)).toBe(5);
+});
+
+test('evalNumber return max value for MAX call with more than two arguments', () => {
+    let call = {
+        type: 'CALL',
+        name: 'MAX',
+        arguments: [
+            { type: 'CONSTANT', value: 5 },
+            { type: 'CONSTANT', value: 2 },
+            { type: 'CONSTANT', value: 3 }
+        ]
+    };
+
+    expect(evalNumber(call)).toBe(5);
+});
+
+test('evalNumber throws error for MAX call with no arguments', () => {
+    let call = {
+        type: 'CALL',
+        name: 'MAX',
+        arguments: []
+    };
+
+    expect(() => evalNumber(call)).toThrow();
+});
