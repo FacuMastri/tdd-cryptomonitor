@@ -14,3 +14,11 @@ export function evalAdd(args: any[]): number {
     }
     return args.reduce((sum, arg) => sum + evalNumber(arg), 0);
 }
+
+export function evalSubtract(args: any[]): number {
+    if (args.length != 2) {
+        throw new Error('SUBTRACT takes exactly two arguments');
+    } else {
+        return evalNumber(args[0]) - evalNumber(args[1]);
+    }
+}
