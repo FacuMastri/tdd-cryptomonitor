@@ -28,6 +28,8 @@ function evalBooleanCall(call: Dict<any>) {
             return evalLessThanEqual(call.arguments.reverse());
         case 'AND':
             return call.arguments.every((arg: Dict<any>) => evalBoolean(arg));
+        case 'OR':
+            return call.arguments.some((arg: Dict<any>) => evalBoolean(arg));
         default:
             throw new Error('Unknown boolean call: ' + call.name);
     }
