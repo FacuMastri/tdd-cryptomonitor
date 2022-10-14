@@ -81,6 +81,8 @@ function evalNumberCall(call: Dict<any>): number {
             return evalStddev(call.arguments);
         case 'FIRST':
             return evalFirst(call.arguments);
+        case 'LAST':
+            return evalFirst(call.arguments.reverse());
         default:
             throw new Error('Unknown number call: ' + call.name);
     }

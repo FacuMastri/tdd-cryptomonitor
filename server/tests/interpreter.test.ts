@@ -1102,3 +1102,50 @@ test('evalNumber throws error for FIRST call with no arguments', () => {
 
     expect(() => evalNumber(call)).toThrow();
 });
+
+test('evalNumber return 2 for LAST call with constant 1 and constant 2', () => {
+    let call = {
+        type: 'CALL',
+        name: 'LAST',
+        arguments: [
+            { type: 'CONSTANT', value: 1 },
+            { type: 'CONSTANT', value: 2 }
+        ]
+    };
+
+    expect(evalNumber(call)).toBe(2);
+});
+
+test('evalNumber return 5 for LAST call with constant 5', () => {
+    let call = {
+        type: 'CALL',
+        name: 'LAST',
+        arguments: [{ type: 'CONSTANT', value: 5 }]
+    };
+
+    expect(evalNumber(call)).toBe(5);
+});
+
+test('evalNumber return last value for LAST call with more than two arguments', () => {
+    let call = {
+        type: 'CALL',
+        name: 'LAST',
+        arguments: [
+            { type: 'CONSTANT', value: 5 },
+            { type: 'CONSTANT', value: 2 },
+            { type: 'CONSTANT', value: 3 }
+        ]
+    };
+
+    expect(evalNumber(call)).toBe(3);
+});
+
+test('evalNumber throws error for LAST call with no arguments', () => {
+    let call = {
+        type: 'CALL',
+        name: 'LAST',
+        arguments: []
+    };
+
+    expect(() => evalNumber(call)).toThrow();
+});
