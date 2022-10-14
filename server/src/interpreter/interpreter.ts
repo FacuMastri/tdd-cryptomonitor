@@ -138,3 +138,13 @@ function evalCall(call: Dict<any>): any {
         throw new Error('Unknown call name: ' + call.name);
     }
 }
+
+export function evalAction(action: Dict<any>, context: Dict<any>): Dict<any> {
+    switch (action.type) {
+        case 'SET_VARIABLE':
+            context[action.name] = evalValue(action.value);
+            return context;
+        default:
+            throw new Error('Unknown action type: ' + action.type);
+    }
+}

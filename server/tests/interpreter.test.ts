@@ -1,4 +1,4 @@
-import {evalBoolean, evalNumber, evalValue} from "../src/interpreter/interpreter";
+import {evalAction, evalBoolean, evalNumber, evalValue} from "../src/interpreter/interpreter";
 
 test('evalBoolean returns true for constant true', () => {
     let boolean = { type: 'CONSTANT', value: true };
@@ -1188,4 +1188,28 @@ test('evalValue return value for CALL value', () => {
     };
 
     expect(evalValue(call)).toBe(3);
+});
+
+test('evalAction sets variable value for SET_VARIABLE action', () => {
+    let action = {
+        type: 'SET_VARIABLE',
+        name: 'a',
+        value: { type: 'CONSTANT', value: 456 }
+    };
+
+    let context = evalAction(action, { a: 123 });
+
+    expect(context.a).toBe(456);
+});
+
+test('evalAction sets variable value even if variable is not defined', () => {
+    let action = {
+        type: 'SET_VARIABLE',
+        name: 'b',
+        value: { type: 'CONSTANT', value: 1000 }
+    };
+
+    let context = evalAction(action, { a: 123 });
+
+    expect(context.b).toBe(1000);
 });
