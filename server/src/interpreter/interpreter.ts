@@ -96,6 +96,8 @@ export function evalValue(value: any): any {
             return evalBoolean(value);
         case 'VARIABLE':
             return evalVariable(value);
+        case 'CALL':
+            return evalCall(value);
         default:
             throw new Error('Unknown value type: ' + value.type);
     }
@@ -106,5 +108,33 @@ function evalVariable(variable: Dict<any>): any {
         return STORAGE[variable.name];
     } else {
         throw new Error('Undefined variable: ' + variable.name);
+    }
+}
+
+function evalCall(call: Dict<any>): any {
+    if (
+        ['==', 'DISTINCT', '<', '<=', '>', '>=', 'AND', 'OR', 'NOT'].includes(
+            call.name
+        )
+    ) {
+        return evalBooleanCall(call);
+    } else if (
+        [
+            'NEGATE',
+            '+',
+            '-',
+            '*',
+            '/',
+            'MIN',
+            'MAX',
+            'AVERAGE',
+            'STDDEV',
+            'FIRST',
+            'LAST'
+        ].includes(call.name)
+    ) {
+        return evalNumberCall(call);
+    } else {
+        throw new Error('Unknown call name: ' + call.name);
     }
 }

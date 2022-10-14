@@ -1176,3 +1176,16 @@ test('evalValue return constant value for CONSTANT value', () => {
 
     expect(evalValue(constant)).toBe(123);
 });
+
+test('evalValue return value for CALL value', () => {
+    let call = {
+        type: 'CALL',
+        name: '+',
+        arguments: [
+            { type: 'CONSTANT', value: 1 },
+            { type: 'CONSTANT', value: 2 }
+        ]
+    };
+
+    expect(evalValue(call)).toBe(3);
+});
