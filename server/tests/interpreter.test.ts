@@ -768,3 +768,76 @@ test('evalNumber throws error for * call with no arguments', () => {
 
     expect(() => evalNumber(call)).toThrow();
 });
+
+test('evalNumber return 2 for / call with constant 4 and constant 2', () => {
+    let call = {
+        type: 'CALL',
+        name: '/',
+        arguments: [
+            { type: 'CONSTANT', value: 4 },
+            { type: 'CONSTANT', value: 2 }
+        ]
+    };
+
+    expect(evalNumber(call)).toBe(2);
+});
+
+test('evalNumber return 2 for / call with constant 6 and constant 3', () => {
+    let call = {
+        type: 'CALL',
+        name: '/',
+        arguments: [
+            { type: 'CONSTANT', value: 6 },
+            { type: 'CONSTANT', value: 3 }
+        ]
+    };
+
+    expect(evalNumber(call)).toBe(2);
+});
+
+test('evalNumber throws error for / call with zero arguments', () => {
+    let call = {
+        type: 'CALL',
+        name: '/',
+        arguments: []
+    };
+
+    expect(() => evalNumber(call)).toThrow();
+});
+
+test('evalNumber throws error for / call with one argument', () => {
+    let call = {
+        type: 'CALL',
+        name: '/',
+        arguments: [{ type: 'CONSTANT', value: 1 }]
+    };
+
+    expect(() => evalNumber(call)).toThrow();
+});
+
+test('evalNumber throws error for / call with more than two arguments', () => {
+    let call = {
+        type: 'CALL',
+        name: '/',
+        arguments: [
+            { type: 'CONSTANT', value: 1 },
+            { type: 'CONSTANT', value: 1 },
+            { type: 'CONSTANT', value: 1 }
+        ]
+    };
+
+    expect(() => evalNumber(call)).toThrow();
+});
+
+test('evalNumber throws error for / call that divides by zero', () => {
+    let call = {
+        type: 'CALL',
+        name: '/',
+        arguments: [
+            { type: 'CONSTANT', value: 1 },
+            { type: 'CONSTANT', value: 0 }
+        ]
+    };
+
+    expect(() => evalNumber(call)).toThrow();
+});

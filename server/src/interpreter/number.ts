@@ -29,3 +29,15 @@ export function evalMultiply(args: any[]): number {
     }
     return args.reduce((product, arg) => product * evalNumber(arg), 1);
 }
+
+export function evalDivide(args: any[]): number {
+    if (args.length != 2) {
+        throw new Error('DIVIDE takes exactly two arguments');
+    } else {
+        let divisor = evalNumber(args[1]);
+        if (divisor == 0) {
+            throw new Error('Division by zero');
+        }
+        return evalNumber(args[0]) / divisor;
+    }
+}
