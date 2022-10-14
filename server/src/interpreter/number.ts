@@ -73,3 +73,10 @@ export function evalStddev(args: any[]): number {
         args.length
     );
 }
+
+export function evalFirst(args: any[]): any {
+    if (args.length == 0) {
+        throw new Error('FIRST takes at least one argument');
+    }
+    return evalNumber(args[0]);
+}

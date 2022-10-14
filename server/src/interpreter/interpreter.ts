@@ -3,7 +3,7 @@ import {evalDistinct, evalEqual, evalLessThan, evalLessThanEqual, evalNot} from 
 import {
     evalAdd,
     evalAverage,
-    evalDivide,
+    evalDivide, evalFirst,
     evalMax,
     evalMin,
     evalMultiply,
@@ -79,6 +79,8 @@ function evalNumberCall(call: Dict<any>): number {
             return evalAverage(call.arguments);
         case 'STDDEV':
             return evalStddev(call.arguments);
+        case 'FIRST':
+            return evalFirst(call.arguments);
         default:
             throw new Error('Unknown number call: ' + call.name);
     }
