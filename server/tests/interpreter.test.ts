@@ -535,3 +535,36 @@ test('evalBoolean returns true for OR call with two true and one false constants
 
     expect(evalBoolean(call)).toBe(true);
 });
+
+test('evalBoolean returns true for NOT call with false constant', () => {
+    let call = {
+        type: 'CALL',
+        name: 'NOT',
+        arguments: [{ type: 'CONSTANT', value: false }]
+    };
+
+    expect(evalBoolean(call)).toBe(true);
+});
+
+test('evalBoolean returns false for NOT call with true constant', () => {
+    let call = {
+        type: 'CALL',
+        name: 'NOT',
+        arguments: [{ type: 'CONSTANT', value: true }]
+    };
+
+    expect(evalBoolean(call)).toBe(false);
+});
+
+test('evalBoolean throws error for NOT call with two or more constants', () => {
+    let call = {
+        type: 'CALL',
+        name: 'NOT',
+        arguments: [
+            { type: 'CONSTANT', value: true },
+            { type: 'CONSTANT', value: true }
+        ]
+    };
+
+    expect(() => evalBoolean(call)).toThrow();
+});
