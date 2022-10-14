@@ -133,3 +133,43 @@ test('evalBoolean throws an error for unknown boolean type', () => {
     let boolean = { type: 'UNKNOWN' };
     expect(() => evalBoolean(boolean)).toThrow();
 });
+
+test('evalBoolean returns true for DISTINCT call with two different constants', () => {
+    let call = {
+        type: 'CALL',
+        name: 'DISTINCT',
+        arguments: [
+            { type: 'CONSTANT', value: true },
+            { type: 'CONSTANT', value: false }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(true);
+});
+
+test('evalBoolean returns false for DISTINCT call with two same constants', () => {
+    let call = {
+        type: 'CALL',
+        name: 'DISTINCT',
+        arguments: [
+            { type: 'CONSTANT', value: true },
+            { type: 'CONSTANT', value: true }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(false);
+});
+
+test('evalBoolean returns false for DISTINCT call with two same constants and one different', () => {
+    let call = {
+        type: 'CALL',
+        name: 'DISTINCT',
+        arguments: [
+            { type: 'CONSTANT', value: true },
+            { type: 'CONSTANT', value: false },
+            { type: 'CONSTANT', value: true }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(false);
+});
