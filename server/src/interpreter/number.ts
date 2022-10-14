@@ -41,3 +41,10 @@ export function evalDivide(args: any[]): number {
         return evalNumber(args[0]) / divisor;
     }
 }
+
+export function evalMin(args: any[]): number {
+    if (args.length == 0) {
+        throw new Error('MIN takes at least one argument');
+    }
+    return Math.min(...args.map((arg) => evalNumber(arg)));
+}
