@@ -334,3 +334,70 @@ test('evalBoolean returns false for > call with three constants', () => {
 
     expect(evalBoolean(call)).toBe(false);
 });
+
+test('evalBoolean returns true for >= call with two constants', () => {
+    let call = {
+        type: 'CALL',
+        name: '>=',
+        arguments: [
+            { type: 'CONSTANT', value: 2 },
+            { type: 'CONSTANT', value: 1 }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(true);
+});
+
+test('evalBoolean returns false for >= call with two constants', () => {
+    let call = {
+        type: 'CALL',
+        name: '>=',
+        arguments: [
+            { type: 'CONSTANT', value: 1 },
+            { type: 'CONSTANT', value: 2 }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(false);
+});
+
+test('evalBoolean returns true for >= call with two equal constants', () => {
+    let call = {
+        type: 'CALL',
+        name: '>=',
+        arguments: [
+            { type: 'CONSTANT', value: 2 },
+            { type: 'CONSTANT', value: 2 }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(true);
+});
+
+test('evalBoolean returns true for >= call with three constants', () => {
+    let call = {
+        type: 'CALL',
+        name: '>=',
+        arguments: [
+            { type: 'CONSTANT', value: 3 },
+            { type: 'CONSTANT', value: 2 },
+            { type: 'CONSTANT', value: 1 }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(true);
+});
+
+test('evalBoolean returns false for >= call with three constants', () => {
+    let call = {
+        type: 'CALL',
+        name: '>=',
+        arguments: [
+            { type: 'CONSTANT', value: 1 },
+            { type: 'CONSTANT', value: 2 },
+            { type: 'CONSTANT', value: 1 }
+        ]
+    };
+
+    expect(evalBoolean(call)).toBe(false);
+});
