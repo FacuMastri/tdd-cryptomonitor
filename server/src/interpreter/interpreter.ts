@@ -181,3 +181,14 @@ function evalSellMarket(action: Dict<any>, context: Dict<any>): Dict<any> {
     return context;
 }
 
+export function evalRule(rule: Dict<any>, context: Dict<any>): Dict<any> {
+    if (evalBoolean(rule.condition)) {
+        return rule.action.reduce(
+            (context: Dict<any>, action: Dict<any>) => evalAction(action, context),
+            context
+        );
+    } else {
+        return context;
+    }
+}
+

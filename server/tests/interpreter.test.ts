@@ -1,4 +1,4 @@
-import {evalAction, evalBoolean, evalNumber, evalValue} from "../src/interpreter/interpreter";
+import {evalAction, evalBoolean, evalNumber, evalRule, evalValue} from "../src/interpreter/interpreter";
 
 test('evalBoolean returns true for constant true', () => {
     let boolean = { type: 'CONSTANT', value: true };
@@ -1286,4 +1286,61 @@ test('evalAction throws error for SELL_MARKET action with unknown coin', () => {
     };
 
     expect(() => evalAction(action, { wallets: {} })).toThrow();
+});
+
+test('evalRule executes action if condition is true', () => {
+    let rule = {
+        condition: { type: 'CONSTANT', value: true },
+        action: [{
+            type: 'SET_VARIABLE',
+            name: 'a',
+            value: { type: 'CONSTANT', value: 456 }
+        }]
+    };
+
+    let context = evalRule(rule, { a: 123 });
+
+    expect(context.a).toBe(456);
+});
+
+test('evalRule does not execute action if condition is false', () => {
+    let rule = {
+        condition: { type: 'CONSTANT', value: false },
+        action: [{
+            type: 'SET_VARIABLE',
+            name: 'a',
+            value: { type: 'CONSTANT', value: 456 }
+        }]
+    };
+
+    let context = evalRule(rule, { a: 123 });
+
+    expect(context.a).toBe(123);
+});
+
+test('evalRule executes all rules', () => {
+    let rule = {
+        name: 'test_rule',
+        condition: {
+            type: 'CONSTANT',
+            value: true
+        },
+        action: [
+            {
+                type: 'SET_VARIABLE',
+                name: 'a',
+                value: { type: 'CONSTANT', value: 888 }
+            },
+            {
+                type: 'SET_VARIABLE',
+                name: 'b',
+                value: { type: 'CONSTANT', value: 555 }
+            }
+        ]
+    };
+
+    let context = evalRule(rule, { a: 123, b: 0 });
+
+    expect(context.a).toBe(888);
+    expect(context.b).toBe(555);
 });
