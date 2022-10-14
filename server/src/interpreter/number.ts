@@ -55,3 +55,10 @@ export function evalMax(args: any[]): number {
     }
     return Math.max(...args.map((arg) => evalNumber(arg)));
 }
+
+export function evalAverage(args: any[]): number {
+    if (args.length == 0) {
+        throw new Error('AVERAGE takes at least one argument');
+    }
+    return args.reduce((sum, arg) => sum + evalNumber(arg), 0) / args.length;
+}

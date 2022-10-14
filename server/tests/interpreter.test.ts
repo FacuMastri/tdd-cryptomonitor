@@ -961,3 +961,50 @@ test('evalNumber throws error for MAX call with no arguments', () => {
 
     expect(() => evalNumber(call)).toThrow();
 });
+
+test('evalNumber return 1.5 for AVERAGE call with constant 1 and constant 2', () => {
+    let call = {
+        type: 'CALL',
+        name: 'AVERAGE',
+        arguments: [
+            { type: 'CONSTANT', value: 1 },
+            { type: 'CONSTANT', value: 2 }
+        ]
+    };
+
+    expect(evalNumber(call)).toBeCloseTo(1.5);
+});
+
+test('evalNumber return 5 for AVERAGE call with constant 5', () => {
+    let call = {
+        type: 'CALL',
+        name: 'AVERAGE',
+        arguments: [{ type: 'CONSTANT', value: 5 }]
+    };
+
+    expect(evalNumber(call)).toBe(5);
+});
+
+test('evalNumber throws error for AVERAGE call with no arguments', () => {
+    let call = {
+        type: 'CALL',
+        name: 'AVERAGE',
+        arguments: []
+    };
+
+    expect(() => evalNumber(call)).toThrow();
+});
+
+test('evalNumber return average value for AVERAGE call with more than two arguments', () => {
+    let call = {
+        type: 'CALL',
+        name: 'AVERAGE',
+        arguments: [
+            { type: 'CONSTANT', value: 5 },
+            { type: 'CONSTANT', value: 2 },
+            { type: 'CONSTANT', value: 3 }
+        ]
+    };
+
+    expect(evalNumber(call)).toBeCloseTo(3.3333333333333335);
+});
