@@ -1235,3 +1235,55 @@ test('evalAction throws error for BUY_MARKET action with negative amount', () =>
 
     expect(() => evalAction(action, {})).toThrow();
 });
+
+test('evalAction sells stock for SELL_MARKET action', () => {
+    let action = {
+        type: 'SELL_MARKET',
+        symbol: 'BTC',
+        amount: { type: 'CONSTANT', value: 5 }
+    };
+
+    let context = evalAction(action, { wallets: { BTC: 10 } });
+
+    expect(context.wallets['BTC']).toBe(5);
+});
+
+test('evalAction throws error for SELL_MARKET action with negative amount', () => {
+    let action = {
+        type: 'SELL_MARKET',
+        symbol: 'BTC',
+        amount: { type: 'CONSTANT', value: -5 }
+    };
+
+    expect(() => evalAction(action, { wallets: { BTC: 10 } })).toThrow();
+});
+
+test('evalAction throws error for SELL_MARKET action with amount greater than owned', () => {
+    let action = {
+        type: 'SELL_MARKET',
+        symbol: 'BTC',
+        amount: { type: 'CONSTANT', value: 15 }
+    };
+
+    expect(() => evalAction(action, { wallets: { BTC: 10 } })).toThrow();
+});
+
+test('evalAction throws error for SELL_MARKET action with no stock owned', () => {
+    let action = {
+        type: 'SELL_MARKET',
+        symbol: 'BTC',
+        amount: { type: 'CONSTANT', value: 5 }
+    };
+
+    expect(() => evalAction(action, { wallets: { BTC: 0 } })).toThrow();
+});
+
+test('evalAction throws error for SELL_MARKET action with unknown coin', () => {
+    let action = {
+        type: 'SELL_MARKET',
+        symbol: 'BTC',
+        amount: { type: 'CONSTANT', value: 5 }
+    };
+
+    expect(() => evalAction(action, { wallets: {} })).toThrow();
+});

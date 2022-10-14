@@ -146,6 +146,8 @@ export function evalAction(action: Dict<any>, context: Dict<any>): Dict<any> {
             return context;
         case 'BUY_MARKET':
             return evalBuyMarket(action, context);
+        case 'SELL_MARKET':
+            return evalSellMarket(action, context);
         default:
             throw new Error('Unknown action type: ' + action.type);
     }
@@ -160,6 +162,22 @@ function evalBuyMarket(action: Dict<any>, context: Dict<any>): Dict<any> {
         context.wallets[action.symbol] = 0;
     }
     context.wallets[action.symbol] += amount;
+    return context;
+}
+
+function evalSellMarket(action: Dict<any>, context: Dict<any>): Dict<any> {
+    const amount = evalValue(action.amount);
+    if (amount < 0) {
+        throw new Error('Cannot sell negative amount');
+    }
+    if (!(action.symbol in context.wallets)) {
+        throw new Error('Cannot sell symbol that is not in wallet');
+    }
+    const total_owned = context.wallets[action.symbol];
+    if (total_owned < amount) {
+        throw new Error('Insufficient funds');
+    }
+    context.wallets[action.symbol] -= amount;
     return context;
 }
 
