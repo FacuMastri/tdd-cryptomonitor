@@ -62,3 +62,14 @@ export function evalAverage(args: any[]): number {
     }
     return args.reduce((sum, arg) => sum + evalNumber(arg), 0) / args.length;
 }
+
+export function evalStddev(args: any[]): number {
+    if (args.length == 0) {
+        throw new Error('STDDEV takes at least one argument');
+    }
+    let mean = evalAverage(args);
+    return Math.sqrt(
+        args.reduce((sum, arg) => sum + Math.pow(evalNumber(arg) - mean, 2), 0) /
+        args.length
+    );
+}

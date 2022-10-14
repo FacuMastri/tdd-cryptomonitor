@@ -1008,3 +1008,50 @@ test('evalNumber return average value for AVERAGE call with more than two argume
 
     expect(evalNumber(call)).toBeCloseTo(3.3333333333333335);
 });
+
+test('evalNumber return 0.5 for STDDEV call with constant 1 and constant 2', () => {
+    let call = {
+        type: 'CALL',
+        name: 'STDDEV',
+        arguments: [
+            { type: 'CONSTANT', value: 1 },
+            { type: 'CONSTANT', value: 2 }
+        ]
+    };
+
+    expect(evalNumber(call)).toBeCloseTo(0.5);
+});
+
+test('evalNumber return 0 for STDDEV call with constant 5', () => {
+    let call = {
+        type: 'CALL',
+        name: 'STDDEV',
+        arguments: [{ type: 'CONSTANT', value: 5 }]
+    };
+
+    expect(evalNumber(call)).toBe(0);
+});
+
+test('evalNumber throws error for STDDEV call with no arguments', () => {
+    let call = {
+        type: 'CALL',
+        name: 'STDDEV',
+        arguments: []
+    };
+
+    expect(() => evalNumber(call)).toThrow();
+});
+
+test('evalNumber return standard deviation value for STDDEV call with more than two arguments', () => {
+    let call = {
+        type: 'CALL',
+        name: 'STDDEV',
+        arguments: [
+            { type: 'CONSTANT', value: 5 },
+            { type: 'CONSTANT', value: 2 },
+            { type: 'CONSTANT', value: 3 }
+        ]
+    };
+
+    expect(evalNumber(call)).toBeCloseTo(1.247219128924647);
+});

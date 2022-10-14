@@ -1,6 +1,16 @@
 import Dict = NodeJS.Dict;
 import {evalDistinct, evalEqual, evalLessThan, evalLessThanEqual, evalNot} from "./boolean";
-import {evalAdd, evalAverage, evalDivide, evalMax, evalMin, evalMultiply, evalNegate, evalSubtract} from "./number";
+import {
+    evalAdd,
+    evalAverage,
+    evalDivide,
+    evalMax,
+    evalMin,
+    evalMultiply,
+    evalNegate,
+    evalStddev,
+    evalSubtract
+} from "./number";
 
 export function evalBoolean(boolean: Dict<any>): boolean {
     switch (boolean.type) {
@@ -67,6 +77,8 @@ function evalNumberCall(call: Dict<any>): number {
             return evalMax(call.arguments);
         case 'AVERAGE':
             return evalAverage(call.arguments);
+        case 'STDDEV':
+            return evalStddev(call.arguments);
         default:
             throw new Error('Unknown number call: ' + call.name);
     }
