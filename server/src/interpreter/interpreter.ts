@@ -19,145 +19,146 @@ import {
   evalSubtract
 } from './number';
 
-export let STORAGE: Dict<any> = { a: 123 };
+type Context = Dict<ValueOutput>
+
+export let STORAGE: Context = { a: 123 };
 function mockGetData(symbol: string, since: number, until: number): number[] {
   return [];
 }
 
-export function evalBoolean(boolean: Dict<any>): boolean {
+export function evalBoolean(boolean: Value): boolean {
   switch (boolean.type) {
-    case 'CONSTANT':
-      return boolean.value;
-    case 'CALL':
+    case VALUE_CONST:
+      if (typeof boolean.value === 'boolean') return boolean.value;
+      break;
+    case VALUE_CALL:
       return evalBooleanCall(boolean);
-    default:
-      throw new Error('Unknown boolean type: ' + boolean.type);
   }
+  throw new Error('Unknown boolean type: ' + boolean.type);
 }
 
-function evalBooleanCall(call: Dict<any>) {
+function evalBooleanCall(call: ValueCall) {
+  const callArgs = getArguments(call);
   switch (call.name) {
-    case '==':
-      return evalEqual(call.arguments);
-    case 'DISTINCT':
-      return evalDistinct(call.arguments);
-    case '<':
-      return evalLessThan(call.arguments);
-    case '<=':
-      return evalLessThanEqual(call.arguments);
-    case '>':
-      return evalLessThan(call.arguments.reverse());
-    case '>=':
-      return evalLessThanEqual(call.arguments.reverse());
-    case 'AND':
-      return call.arguments.every((arg: Dict<any>) => evalBoolean(arg));
-    case 'OR':
-      return call.arguments.some((arg: Dict<any>) => evalBoolean(arg));
-    case 'NOT':
-      return evalNot(call.arguments);
+    case EQUAL:
+      return evalEqual(callArgs);
+    case DISTINCT:
+      return evalDistinct(callArgs);
+    case LESS:
+      return evalLessThan(callArgs);
+    case LESS_EQUAL:
+      return evalLessThanEqual(callArgs);
+    case GREATER:
+      return evalLessThan(callArgs.reverse());
+    case GREATER_EQUAL:
+      return evalLessThanEqual(callArgs.reverse());
+    case AND:
+      return callArgs.every(arg => evalBoolean(arg));
+    case OR:
+      return callArgs.some(arg => evalBoolean(arg));
+    case NOT:
+      return evalNot(callArgs);
     default:
       throw new Error('Unknown boolean call: ' + call.name);
   }
 }
 
-export function evalNumber(number: Dict<any>): number {
+export function evalNumber(number: Value): number {
   switch (number.type) {
-    case 'CONSTANT':
-      return number.value;
-    case 'CALL':
+    case VALUE_CONST:
+      if (typeof number.value == 'number') return number.value;
+      break;
+    case VALUE_CALL:
       return evalNumberCall(number);
-    default:
-      throw new Error('Unknown number type: ' + number.type);
   }
+  throw new Error('Unknown number type: ' + number.type);
 }
 
-function getData(dataInfo: Dict<any>): Dict<any>[] {
+function getData(dataInfo: ValueData): Value[] {
   const data = mockGetData(dataInfo.symbol, dataInfo.since, dataInfo.until);
   if (data.length == 0) {
-    if ('default' in dataInfo) {
+    if (dataInfo.default) {
       return dataInfo.default;
     } else {
       throw new Error('No data and no default value');
     }
   } else {
-    return data.map((value) => ({ type: 'CONSTANT', value }));
+    return data.map((value) => ({ type: VALUE_CONST, value }));
   }
 }
 
-function getArguments(call: Dict<any>): Dict<any>[] {
-  try {
-    call.arguments.length;
-  } catch (e) {
-    return getData(call.argument);
+function getArguments(call: ValueCall): Value[] {
+  if (Array.isArray(call.arguments)) {
+    return call.arguments;
   }
-  return call.arguments;
+  return getData(call.arguments);
 }
 
-function evalNumberCallWithNArgs(call: Dict<any>): number {
+function evalNumberCallWithNArgs(call: ValueCallMany): number {
   const callArgs = getArguments(call);
   switch (call.name) {
-    case '+':
+    case PLUS:
       return evalAdd(callArgs);
-    case '*':
+    case MULTIPLY:
       return evalMultiply(callArgs);
-    case 'MIN':
+    case MIN:
       return evalMin(callArgs);
-    case 'MAX':
+    case MAX:
       return evalMax(callArgs);
-    case 'AVERAGE':
+    case AVERAGE:
       return evalAverage(callArgs);
-    case 'STDDEV':
+    case STDDEV:
       return evalStddev(callArgs);
-    case 'FIRST':
+    case FIRST:
       return evalFirst(callArgs);
-    case 'LAST':
+    case LAST:
       return evalFirst(callArgs.reverse());
     default:
       throw new Error('Unknown number call for N arguments: ' + call.name);
   }
 }
 
-function evalNumberCallWith2Args(call: Dict<any>): number {
+function evalNumberCallWith2Args(call: ValueCallBinary): number {
+  const callArgs = getArguments(call);
   switch (call.name) {
-    case '-':
-      return evalSubtract(call.arguments);
-    case '/':
-      return evalDivide(call.arguments);
+    case MINUS:
+      return evalSubtract(callArgs);
+    case DIVIDE:
+      return evalDivide(callArgs);
     default:
       throw new Error('Unknown number call for 2 arguments: ' + call.name);
   }
 }
 
-function evalNumberCall(call: Dict<any>): number {
-  if (
-    ['+', '*', 'MIN', 'MAX', 'AVERAGE', 'STDDEV', 'FIRST', 'LAST'].includes(
-      call.name
-    )
-  ) {
+function evalNumberCall(call: ValueCall): number {
+  if (isCallMany(call)) {
     return evalNumberCallWithNArgs(call);
-  } else if (['-', '/'].includes(call.name)) {
+  } else if (isCallBinary(call)) {
     return evalNumberCallWith2Args(call);
   } else if (call.name == 'NEGATE') {
-    return evalNegate(call.arguments);
+    const callArgs = getArguments(call);
+    return evalNegate(callArgs);
   } else {
     throw new Error('Unknown number call: ' + call.name);
   }
 }
 
-export function evalValue(value: any): any {
+export function evalValue(value: Value): ValueOutput {
   switch (value.type) {
-    case 'CONSTANT':
+    case VALUE_CONST:
       return evalBoolean(value);
-    case 'VARIABLE':
+    case VALUE_VAR:
       return evalVariable(value);
-    case 'CALL':
+    case VALUE_CALL:
       return evalCall(value);
+    case VALUE_WALLET:
+      throw new Error("TODO");
     default:
-      throw new Error('Unknown value type: ' + value.type);
-  }
+      throw new Error('Unknown value type: ' + value);
+    } 
 }
 
-function evalVariable(variable: Dict<any>): any {
+function evalVariable(variable: ValueVariable): ValueOutput {
   if (variable.name in STORAGE) {
     return STORAGE[variable.name];
   } else {
@@ -165,53 +166,34 @@ function evalVariable(variable: Dict<any>): any {
   }
 }
 
-function evalCall(call: Dict<any>): any {
-  if (
-    ['==', 'DISTINCT', '<', '<=', '>', '>=', 'AND', 'OR', 'NOT'].includes(
-      call.name
-    )
-  ) {
+function evalCall(call: ValueCall): ValueOutput {
+  if (isBooleanCall(call)) {
     return evalBooleanCall(call);
-  } else if (
-    [
-      'NEGATE',
-      '+',
-      '-',
-      '*',
-      '/',
-      'MIN',
-      'MAX',
-      'AVERAGE',
-      'STDDEV',
-      'FIRST',
-      'LAST'
-    ].includes(call.name)
-  ) {
+  } else if (isNumberCall(call)) {
     return evalNumberCall(call);
-  } else {
-    throw new Error('Unknown call name: ' + call.name);
   }
+  throw new Error('Unknown call name: ' + call);
 }
 
-export function evalAction(action: Dict<any>, context: Dict<any>): Dict<any> {
+export function evalAction(action: Action, context: Context): ValueOutput {
   switch (action.type) {
-    case 'SET_VARIABLE':
+    case ACTION_SET:
       context[action.name] = evalValue(action.value);
       return context;
-    case 'BUY_MARKET':
+    case ACTION_BUY:
       return evalBuyMarket(action, context);
-    case 'SELL_MARKET':
+    case ACTION_SELL:
       return evalSellMarket(action, context);
     default:
-      throw new Error('Unknown action type: ' + action.type);
+      throw new Error('Unknown action type: ' + action);
   }
 }
 
-function evalBuyMarket(action: Dict<any>, context: Dict<any>): Dict<any> {
+function evalBuyMarket(action: ActionBuyMarket, context: Context): ValueOutput {
   const amount = evalValue(action.amount);
-  if (amount < 0) {
-    throw new Error('Cannot buy negative amount');
-  }
+  if (typeof amount !== 'number') throw new Error('Amount must be a number');
+  if (amount < 0) throw new Error('Cannot buy negative amount');
+
   if (!(action.symbol in context.wallets)) {
     context.wallets[action.symbol] = 0;
   }
@@ -219,14 +201,11 @@ function evalBuyMarket(action: Dict<any>, context: Dict<any>): Dict<any> {
   return context;
 }
 
-function evalSellMarket(action: Dict<any>, context: Dict<any>): Dict<any> {
+function evalSellMarket(action: ActionSellMarket, context: Context): ValueOutput {
   const amount = evalValue(action.amount);
-  if (amount < 0) {
-    throw new Error('Cannot sell negative amount');
-  }
-  if (!(action.symbol in context.wallets)) {
-    throw new Error('Cannot sell symbol that is not in wallet');
-  }
+  if (typeof amount !== 'number') throw new Error('Amount must be a number');
+  if (!(action.symbol in context.wallets)) throw new Error('Cannot sell symbol that is not in wallet');
+
   const total_owned = context.wallets[action.symbol];
   if (total_owned < amount) {
     throw new Error('Insufficient funds');
@@ -235,10 +214,10 @@ function evalSellMarket(action: Dict<any>, context: Dict<any>): Dict<any> {
   return context;
 }
 
-export function evalRule(rule: Dict<any>, context: Dict<any>): Dict<any> {
+export function evalRule(rule: Rule, context: Context): Context {
   if (evalBoolean(rule.condition)) {
     return rule.action.reduce(
-      (context: Dict<any>, action: Dict<any>) => evalAction(action, context),
+      (context: Context, action: Action) => evalAction(action, context),
       context
     );
   } else {
