@@ -1,52 +1,76 @@
-const EQUAL = "=="
-const DISTINCT = "DISTINCT"
-const LESS = "<"
-const LESS_EQUAL = "<="
-const GREATER = ">"
-const GREATER_EQUAL = ">="
-const AND = "AND"
-const OR = "OR"
-const NOT = "NOT"
-const NEGATE = "NEGATE"
-const PLUS = "+"
-const MINUS = "-"
-const MULTIPLY = "*"
-const DIVIDE = "/"
-const MIN = "MIN"
-const MAX = "MAX"
-const AVERAGE = "AVERAGE"
-const STDDEV = "STDDEV"
-const FIRST = "FIRST"
-const LAST = "LAST"
+import { ValueCall } from './value';
+import { NumberCall } from './number';
+import { BooleanCall } from './boolean';
 
-const MANY_OPS_ARR = [EQUAL, DISTINCT, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL, PLUS, MULTIPLY, MIN, MAX, AVERAGE, STDDEV, FIRST, LAST, AND, OR] as const
-type ManyOps = typeof MANY_OPS_ARR[number]
+export const EQUAL = '==';
+export const DISTINCT = 'DISTINCT';
+export const LESS = '<';
+export const LESS_EQUAL = '<=';
+export const GREATER = '>';
+export const GREATER_EQUAL = '>=';
+export const AND = 'AND';
+export const OR = 'OR';
+export const NOT = 'NOT';
+export const NEGATE = 'NEGATE';
+export const PLUS = '+';
+export const MINUS = '-';
+export const MULTIPLY = '*';
+export const DIVIDE = '/';
+export const MIN = 'MIN';
+export const MAX = 'MAX';
+export const AVERAGE = 'AVERAGE';
+export const STDDEV = 'STDDEV';
+export const FIRST = 'FIRST';
+export const LAST = 'LAST';
 
-const BINARY_OPS_ARR = [MINUS, DIVIDE] as const
-type BinaryOps = typeof BINARY_OPS_ARR[number] 
+export const OPS_N_NUMBERS = [
+  PLUS,
+  MULTIPLY,
+  MIN,
+  MAX,
+  AVERAGE,
+  STDDEV,
+  FIRST,
+  LAST
+] as const;
+export const OPS_2_NUMBERS = [MINUS, DIVIDE] as const;
+export const OPS_1_NUMBER = [NEGATE] as const;
 
-const UNARY_OPS_ARR = [NOT, NEGATE] as const
-type UnaryOps = typeof UNARY_OPS_ARR[number]
+export type OpManyNumbers = typeof OPS_N_NUMBERS[number];
+export type OpBinaryNumber = typeof OPS_2_NUMBERS[number];
+export type OpUnaryNumber = typeof OPS_1_NUMBER[number];
 
-const BOOLEAN_OPS_ARR = [EQUAL, DISTINCT, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL, AND, OR, NOT] as const
-const NUMBER_OPS_ARR = [PLUS, MINUS, MULTIPLY, DIVIDE, MIN, MAX, AVERAGE, STDDEV, FIRST, LAST, NEGATE] as const
+export type OpNumber = OpManyNumbers | OpBinaryNumber | OpUnaryNumber;
 
-function isCallMany(call: ValueCall): call is ValueCallMany {
-  return MANY_OPS_ARR.some(s => s == call.name)
+export const OPS_COMP_N_NUMBERS = [
+  LESS,
+  LESS_EQUAL,
+  GREATER,
+  GREATER_EQUAL
+] as const;
+export const OPS_COMP_N_VALUES = [EQUAL, DISTINCT] as const;
+export const OPS_1_BOOLEAN = [NOT] as const;
+
+export const OPS_COMP_N_BOOLEANS = [AND, OR] as const;
+
+export type OpCompManyBooleans = typeof OPS_COMP_N_BOOLEANS[number];
+export type OpCompManyNumbers = typeof OPS_COMP_N_NUMBERS[number];
+export type OpUnaryBoolean = typeof OPS_1_BOOLEAN[number];
+
+export type OpCompManyValues = typeof OPS_COMP_N_VALUES[number];
+
+export function isBooleanCall(call: ValueCall): call is BooleanCall {
+  return (
+    OPS_COMP_N_BOOLEANS.includes(call.name as any) ||
+    OPS_COMP_N_NUMBERS.includes(call.name as any) ||
+    OPS_COMP_N_VALUES.includes(call.name as any)
+  );
 }
 
-function isCallBinary(call: ValueCall): call is ValueCallBinary {
-  return BINARY_OPS_ARR.some(s => s == call.name)
-}
-
-function isCallUnary(call: ValueCall): call is ValueCallUnary {
-  return UNARY_OPS_ARR.some(s => s == call.name)
-}
-
-function isBooleanCall(call: ValueCall): call is ValueCall {
-  return BOOLEAN_OPS_ARR.some(s => s == call.name)
-}
-
-function isNumberCall(call: ValueCall): call is ValueCall {
-  return NUMBER_OPS_ARR.some(s => s == call.name)
+export function isNumberCall(call: ValueCall): call is NumberCall {
+  return (
+    OPS_N_NUMBERS.includes(call.name as any) ||
+    OPS_2_NUMBERS.includes(call.name as any) ||
+    OPS_1_NUMBER.includes(call.name as any)
+  );
 }

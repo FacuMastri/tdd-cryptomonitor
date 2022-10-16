@@ -18,63 +18,100 @@ import {
   evalStddev,
   evalSubtract
 } from './number';
+import {
+  Value,
+  VALUE_CALL,
+  VALUE_CONST,
+  VALUE_VAR,
+  VALUE_WALLET,
+  ValueCall,
+  ValueOutput,
+  ValueVariable
+} from './types/value';
+import {
+  AND,
+  AVERAGE,
+  DISTINCT,
+  DIVIDE,
+  EQUAL,
+  FIRST,
+  GREATER,
+  GREATER_EQUAL,
+  isBooleanCall,
+  isNumberCall,
+  LAST,
+  LESS,
+  LESS_EQUAL,
+  MAX,
+  MIN,
+  MINUS,
+  MULTIPLY,
+  NOT,
+  OR,
+  PLUS,
+  STDDEV
+} from './types/calls';
+import {
+  isNumberCallBinary,
+  isNumberCallMany,
+  NumberCall,
+  NumberCallBinary,
+  NumberCallMany,
+  NumberData,
+  NumberType
+} from './types/number';
+import { BooleanCall, BooleanType } from './types/boolean';
 
-type Context = Dict<ValueOutput>
+type Context = Dict<ValueOutput>;
 
 export let STORAGE: Context = { a: 123 };
+
 function mockGetData(symbol: string, since: number, until: number): number[] {
   return [];
 }
 
-export function evalBoolean(boolean: Value): boolean {
+export function evalBoolean(boolean: BooleanType): boolean {
   switch (boolean.type) {
     case VALUE_CONST:
-      if (typeof boolean.value === 'boolean') return boolean.value;
-      break;
+      return boolean.value;
     case VALUE_CALL:
       return evalBooleanCall(boolean);
   }
-  throw new Error('Unknown boolean type: ' + boolean.type);
 }
 
-function evalBooleanCall(call: ValueCall) {
-  const callArgs = getArguments(call);
+function evalBooleanCall(call: BooleanCall): boolean {
   switch (call.name) {
     case EQUAL:
-      return evalEqual(callArgs);
+      return evalEqual(call.arguments);
     case DISTINCT:
-      return evalDistinct(callArgs);
+      return evalDistinct(call.arguments);
     case LESS:
-      return evalLessThan(callArgs);
+      return evalLessThan(call.arguments);
     case LESS_EQUAL:
-      return evalLessThanEqual(callArgs);
+      return evalLessThanEqual(call.arguments);
     case GREATER:
-      return evalLessThan(callArgs.reverse());
+      return evalLessThan(call.arguments.reverse());
     case GREATER_EQUAL:
-      return evalLessThanEqual(callArgs.reverse());
+      return evalLessThanEqual(call.arguments.reverse());
     case AND:
-      return callArgs.every(arg => evalBoolean(arg));
+      return call.arguments.every((arg) => evalBoolean(arg));
     case OR:
-      return callArgs.some(arg => evalBoolean(arg));
+      return call.arguments.some((arg) => evalBoolean(arg));
     case NOT:
-      return evalNot(callArgs);
-    default:
-      throw new Error('Unknown boolean call: ' + call.name);
+      return evalNot(call.arguments);
   }
 }
 
-export function evalNumber(number: Value): number {
+export function evalNumber(number: NumberType): number {
   switch (number.type) {
     case VALUE_CONST:
-      if (typeof number.value == 'number') return number.value;
-      break;
+      return number.value;
     case VALUE_CALL:
       return evalNumberCall(number);
   }
-  throw new Error('Unknown number type: ' + number.type);
 }
 
-function getData(dataInfo: ValueData): Value[] {
+function getData(dataInfo: NumberData): NumberType[] {
   const data = mockGetData(dataInfo.symbol, dataInfo.since, dataInfo.until);
   if (data.length == 0) {
     if (dataInfo.default) {
@@ -87,14 +124,14 @@ function getData(dataInfo: ValueData): Value[] {
   }
 }
 
-function getArguments(call: ValueCall): Value[] {
+function getArguments(call: NumberCallMany): NumberType[] {
   if (Array.isArray(call.arguments)) {
     return call.arguments;
   }
   return getData(call.arguments);
 }
 
-function evalNumberCallWithNArgs(call: ValueCallMany): number {
+function evalNumberCallWithNArgs(call: NumberCallMany): number {
   const callArgs = getArguments(call);
   switch (call.name) {
     case PLUS:
@@ -118,26 +155,24 @@ function evalNumberCallWithNArgs(call: ValueCallMany): number {
   }
 }
 
-function evalNumberCallWith2Args(call: ValueCallBinary): number {
-  const callArgs = getArguments(call);
+function evalNumberCallWith2Args(call: NumberCallBinary): number {
   switch (call.name) {
     case MINUS:
-      return evalSubtract(callArgs);
+      return evalSubtract(call.arguments);
     case DIVIDE:
-      return evalDivide(callArgs);
+      return evalDivide(call.arguments);
     default:
       throw new Error('Unknown number call for 2 arguments: ' + call.name);
   }
 }
 
-function evalNumberCall(call: ValueCall): number {
-  if (isCallMany(call)) {
-    return evalNumberCallWithNArgs(call);
-  } else if (isCallBinary(call)) {
+function evalNumberCall(call: NumberCall): number {
+  if (isNumberCallBinary(call)) {
     return evalNumberCallWith2Args(call);
+  } else if (isNumberCallMany(call)) {
+    return evalNumberCallWithNArgs(call);
   } else if (call.name == 'NEGATE') {
-    const callArgs = getArguments(call);
-    return evalNegate(callArgs);
+    return evalNegate(call.arguments);
   } else {
     throw new Error('Unknown number call: ' + call.name);
   }
@@ -146,21 +181,21 @@ function evalNumberCall(call: ValueCall): number {
 export function evalValue(value: Value): ValueOutput {
   switch (value.type) {
     case VALUE_CONST:
-      return evalBoolean(value);
+      return value.value;
     case VALUE_VAR:
       return evalVariable(value);
     case VALUE_CALL:
       return evalCall(value);
     case VALUE_WALLET:
-      throw new Error("TODO");
+      throw new Error('TODO');
     default:
       throw new Error('Unknown value type: ' + value);
-    } 
+  }
 }
 
 function evalVariable(variable: ValueVariable): ValueOutput {
   if (variable.name in STORAGE) {
-    return STORAGE[variable.name];
+    return STORAGE[variable.name] as ValueOutput;
   } else {
     throw new Error('Undefined variable: ' + variable.name);
   }
@@ -175,6 +210,7 @@ function evalCall(call: ValueCall): ValueOutput {
   throw new Error('Unknown call name: ' + call);
 }
 
+/*
 export function evalAction(action: Action, context: Context): ValueOutput {
   switch (action.type) {
     case ACTION_SET:
@@ -224,3 +260,4 @@ export function evalRule(rule: Rule, context: Context): Context {
     return context;
   }
 }
+*/

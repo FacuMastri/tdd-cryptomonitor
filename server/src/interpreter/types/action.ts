@@ -1,22 +1,24 @@
-const ACTION_BUY = 'BUY_MARKET'
-interface ActionBuyMarket {
-    type: typeof ACTION_BUY;
-    symbol: string;
-    amount: Value;
+import { Value } from './value';
+
+export const ACTION_BUY = 'BUY_MARKET';
+export interface ActionBuyMarket {
+  type: typeof ACTION_BUY;
+  symbol: string;
+  amount: Value;
 }
 
-const ACTION_SELL = 'SELL_MARKET'
-interface ActionSellMarket {
-    type: typeof ACTION_SELL;
-    symbol: string;
-    amount: Value;
+export const ACTION_SELL = 'SELL_MARKET';
+export interface ActionSellMarket {
+  type: typeof ACTION_SELL;
+  symbol: string;
+  amount: Value;
 }
 
-const ACTION_SET = 'SET_VARIABLE'
-interface ActionSetVariable {
-    type: typeof ACTION_SET;
-    name: string;
-    value: Value;
+export const ACTION_SET = 'SET_VARIABLE';
+export interface ActionSetVariable {
+  type: typeof ACTION_SET;
+  name: string;
+  value: Value;
 }
 
-type Action = ActionBuyMarket | ActionSellMarket | ActionSetVariable;
+export type Action = ActionBuyMarket | ActionSellMarket | ActionSetVariable;

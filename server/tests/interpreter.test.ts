@@ -1,193 +1,220 @@
 import {
-  evalAction,
   evalBoolean,
   evalNumber,
-  evalRule,
   evalValue
 } from '../src/interpreter/interpreter';
-import exp = require('constants');
+import {
+  VALUE_CALL,
+  VALUE_CONST,
+  VALUE_VAR
+} from '../src/interpreter/types/value';
+import { NumberType } from '../src/interpreter/types/number';
+import {
+  AND,
+  AVERAGE,
+  DISTINCT,
+  DIVIDE,
+  EQUAL,
+  FIRST,
+  GREATER,
+  GREATER_EQUAL,
+  LAST,
+  LESS,
+  LESS_EQUAL,
+  MAX,
+  MIN,
+  MINUS,
+  MULTIPLY,
+  NEGATE,
+  NOT,
+  OR,
+  PLUS,
+  STDDEV
+} from '../src/interpreter/types/calls';
+import { BooleanType } from '../src/interpreter/types/boolean';
 
 test('evalBoolean returns true for constant true', () => {
-  let boolean = { type: 'CONSTANT', value: true };
+  const boolean = { type: VALUE_CONST as typeof VALUE_CONST, value: true };
   expect(evalBoolean(boolean)).toBe(true);
 });
 
 test('evalBoolean returns false for constant false', () => {
-  let boolean = { type: 'CONSTANT', value: false };
+  const boolean = { type: VALUE_CONST as typeof VALUE_CONST, value: false };
   expect(evalBoolean(boolean)).toBe(false);
 });
 
-test('evalBoolean returns true for == call with two true constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '==',
+test('evalValue returns true for == call with two true constants', () => {
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: EQUAL as typeof EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true }
     ]
   };
-  expect(evalBoolean(call)).toBe(true);
+  expect(evalValue(call)).toBe(true);
 });
 
-test('evalBoolean returns false for == call with two false constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '==',
+test('evalValue returns false for == call with two false constants', () => {
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: EQUAL as typeof EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: false },
-      { type: 'CONSTANT', value: false }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false }
     ]
   };
-  expect(evalBoolean(call)).toBe(true);
+  expect(evalValue(call)).toBe(true);
 });
 
-test('evalBoolean returns false for == call with one true and one false constant', () => {
-  let call = {
-    type: 'CALL',
-    name: '==',
+test('evalValue returns false for == call with one true and one false constant', () => {
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: EQUAL as typeof EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: false }
-    ]
-  };
-
-  expect(evalBoolean(call)).toBe(false);
-});
-
-test('evalBoolean returns true for == call with three true constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '==',
-    arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false }
     ]
   };
 
-  expect(evalBoolean(call)).toBe(true);
+  expect(evalValue(call)).toBe(false);
 });
 
-test('evalBoolean returns false for == call with one true and two false constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '==',
+test('evalValue returns true for == call with three true constants', () => {
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: EQUAL as typeof EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: false }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true }
     ]
   };
 
-  expect(evalBoolean(call)).toBe(false);
+  expect(evalValue(call)).toBe(true);
 });
 
-test('evalBoolean returns true for == call with two equal constant numbers', () => {
-  let call = {
-    type: 'CALL',
-    name: '==',
+test('evalValue returns false for == call with one true and two false constants', () => {
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: EQUAL as typeof EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false }
     ]
   };
 
-  expect(evalBoolean(call)).toBe(true);
+  expect(evalValue(call)).toBe(false);
 });
 
-test('evalBoolean returns false for == call with two unequal constant numbers', () => {
-  let call = {
-    type: 'CALL',
-    name: '==',
+test('evalValue returns true for == call with two equal constant numbers', () => {
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: EQUAL as typeof EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
-  expect(evalBoolean(call)).toBe(false);
+  expect(evalValue(call)).toBe(true);
 });
 
-test('evalBoolean returns true for == call with three equal constant numbers', () => {
-  let call = {
-    type: 'CALL',
-    name: '==',
+test('evalValue returns false for == call with two unequal constant numbers', () => {
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: EQUAL as typeof EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
-  expect(evalBoolean(call)).toBe(true);
+  expect(evalValue(call)).toBe(false);
 });
 
-test('evalBoolean returns false for == call with one equal and two unequal constant numbers', () => {
-  let call = {
-    type: 'CALL',
-    name: '==',
+test('evalValue returns true for == call with three equal constant numbers', () => {
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: EQUAL as typeof EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
-  expect(evalBoolean(call)).toBe(false);
+  expect(evalValue(call)).toBe(true);
 });
 
-test('evalBoolean throws an error for unknown boolean type', () => {
-  let boolean = { type: 'UNKNOWN' };
-  expect(() => evalBoolean(boolean)).toThrow();
-});
-
-test('evalBoolean returns true for DISTINCT call with two different constants', () => {
-  let call = {
-    type: 'CALL',
-    name: 'DISTINCT',
+test('evalValue returns false for == call with one equal and two unequal constant numbers', () => {
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: EQUAL as typeof EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: false }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
-  expect(evalBoolean(call)).toBe(true);
+  expect(evalValue(call)).toBe(false);
 });
 
-test('evalBoolean returns false for DISTINCT call with two same constants', () => {
-  let call = {
-    type: 'CALL',
-    name: 'DISTINCT',
+test('evalValue throws an error for unknown boolean type', () => {
+  const boolean = { type: 'UNKNOWN' };
+  fail();
+  //expect(() => evalValue(boolean)).toThrow();
+});
+
+test('evalValue returns true for DISTINCT call with two different constants', () => {
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: DISTINCT as typeof DISTINCT,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false }
     ]
   };
 
-  expect(evalBoolean(call)).toBe(false);
+  expect(evalValue(call)).toBe(true);
 });
 
-test('evalBoolean returns false for DISTINCT call with two same constants and one different', () => {
-  let call = {
-    type: 'CALL',
-    name: 'DISTINCT',
+test('evalValue returns false for DISTINCT call with two same constants', () => {
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: DISTINCT as typeof DISTINCT,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: false },
-      { type: 'CONSTANT', value: true }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true }
     ]
   };
 
-  expect(evalBoolean(call)).toBe(false);
+  expect(evalValue(call)).toBe(false);
+});
+
+test('evalValue returns false for DISTINCT call with two same constants and one different', () => {
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: DISTINCT as typeof DISTINCT,
+    arguments: [
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true }
+    ]
+  };
+
+  expect(evalValue(call)).toBe(false);
 });
 
 test('evalBoolean returns true for < call with two constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '<',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: LESS as typeof LESS,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -195,12 +222,12 @@ test('evalBoolean returns true for < call with two constants', () => {
 });
 
 test('evalBoolean returns false for < call with two constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '<',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: LESS as typeof LESS,
     arguments: [
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
@@ -208,13 +235,13 @@ test('evalBoolean returns false for < call with two constants', () => {
 });
 
 test('evalBoolean returns true for < call with three constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '<',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: LESS as typeof LESS,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 3 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 }
     ]
   };
 
@@ -222,13 +249,13 @@ test('evalBoolean returns true for < call with three constants', () => {
 });
 
 test('evalBoolean returns false for < call with three constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '<',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: LESS as typeof LESS,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
@@ -236,12 +263,12 @@ test('evalBoolean returns false for < call with three constants', () => {
 });
 
 test('evalBoolean returns true for <= call with two constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '<=',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: LESS_EQUAL as typeof LESS_EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -249,12 +276,12 @@ test('evalBoolean returns true for <= call with two constants', () => {
 });
 
 test('evalBoolean returns false for <= call with two constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '<=',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: LESS_EQUAL as typeof LESS_EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
@@ -262,12 +289,12 @@ test('evalBoolean returns false for <= call with two constants', () => {
 });
 
 test('evalBoolean returns true for <= call with two equal constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '<=',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: LESS_EQUAL as typeof LESS_EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -275,13 +302,13 @@ test('evalBoolean returns true for <= call with two equal constants', () => {
 });
 
 test('evalBoolean returns true for <= call with three constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '<=',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: LESS_EQUAL as typeof LESS_EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -289,12 +316,12 @@ test('evalBoolean returns true for <= call with three constants', () => {
 });
 
 test('evalBoolean returns true for > call with two constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '>',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: GREATER as typeof GREATER,
     arguments: [
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
@@ -302,12 +329,12 @@ test('evalBoolean returns true for > call with two constants', () => {
 });
 
 test('evalBoolean returns false for > call with two constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '>',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: GREATER as typeof GREATER,
     arguments: [
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -315,13 +342,13 @@ test('evalBoolean returns false for > call with two constants', () => {
 });
 
 test('evalBoolean returns true for > call with three constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '>',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: GREATER as typeof GREATER,
     arguments: [
-      { type: 'CONSTANT', value: 3 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
@@ -329,13 +356,13 @@ test('evalBoolean returns true for > call with three constants', () => {
 });
 
 test('evalBoolean returns false for > call with three constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '>',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: GREATER as typeof GREATER,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
@@ -343,12 +370,12 @@ test('evalBoolean returns false for > call with three constants', () => {
 });
 
 test('evalBoolean returns true for >= call with two constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '>=',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: GREATER_EQUAL as typeof GREATER_EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
@@ -356,12 +383,12 @@ test('evalBoolean returns true for >= call with two constants', () => {
 });
 
 test('evalBoolean returns false for >= call with two constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '>=',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: GREATER_EQUAL as typeof GREATER_EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -369,12 +396,12 @@ test('evalBoolean returns false for >= call with two constants', () => {
 });
 
 test('evalBoolean returns true for >= call with two equal constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '>=',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: GREATER_EQUAL as typeof GREATER_EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -382,13 +409,13 @@ test('evalBoolean returns true for >= call with two equal constants', () => {
 });
 
 test('evalBoolean returns true for >= call with three constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '>=',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: GREATER_EQUAL as typeof GREATER_EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 3 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
@@ -396,13 +423,13 @@ test('evalBoolean returns true for >= call with three constants', () => {
 });
 
 test('evalBoolean returns false for >= call with three constants', () => {
-  let call = {
-    type: 'CALL',
-    name: '>=',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: GREATER_EQUAL as typeof GREATER_EQUAL,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
@@ -410,12 +437,12 @@ test('evalBoolean returns false for >= call with three constants', () => {
 });
 
 test('evalBoolean returns true for AND call with two true constants', () => {
-  let call = {
-    type: 'CALL',
-    name: 'AND',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: AND as typeof AND,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true }
     ]
   };
 
@@ -423,12 +450,12 @@ test('evalBoolean returns true for AND call with two true constants', () => {
 });
 
 test('evalBoolean returns false for AND call with two false constants', () => {
-  let call = {
-    type: 'CALL',
-    name: 'AND',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: AND as typeof AND,
     arguments: [
-      { type: 'CONSTANT', value: false },
-      { type: 'CONSTANT', value: false }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false }
     ]
   };
 
@@ -436,12 +463,12 @@ test('evalBoolean returns false for AND call with two false constants', () => {
 });
 
 test('evalBoolean returns false for AND call with one true and one false constant', () => {
-  let call = {
-    type: 'CALL',
-    name: 'AND',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: AND as typeof AND,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: false }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false }
     ]
   };
 
@@ -449,13 +476,13 @@ test('evalBoolean returns false for AND call with one true and one false constan
 });
 
 test('evalBoolean returns true for AND call with three true constants', () => {
-  let call = {
-    type: 'CALL',
-    name: 'AND',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: AND as typeof AND,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true }
     ]
   };
 
@@ -463,13 +490,13 @@ test('evalBoolean returns true for AND call with three true constants', () => {
 });
 
 test('evalBoolean returns false for AND call with two true and one false constants', () => {
-  let call = {
-    type: 'CALL',
-    name: 'AND',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: AND as typeof AND,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: false }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false }
     ]
   };
 
@@ -477,12 +504,12 @@ test('evalBoolean returns false for AND call with two true and one false constan
 });
 
 test('evalBoolean returns true for OR call with two true constants', () => {
-  let call = {
-    type: 'CALL',
-    name: 'OR',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: OR as typeof OR,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true }
     ]
   };
 
@@ -490,12 +517,12 @@ test('evalBoolean returns true for OR call with two true constants', () => {
 });
 
 test('evalBoolean returns false for OR call with two false constants', () => {
-  let call = {
-    type: 'CALL',
-    name: 'OR',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: OR as typeof OR,
     arguments: [
-      { type: 'CONSTANT', value: false },
-      { type: 'CONSTANT', value: false }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false }
     ]
   };
 
@@ -503,12 +530,12 @@ test('evalBoolean returns false for OR call with two false constants', () => {
 });
 
 test('evalBoolean returns true for OR call with one true and one false constant', () => {
-  let call = {
-    type: 'CALL',
-    name: 'OR',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: OR as typeof OR,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: false }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false }
     ]
   };
 
@@ -516,13 +543,13 @@ test('evalBoolean returns true for OR call with one true and one false constant'
 });
 
 test('evalBoolean returns true for OR call with three true constants', () => {
-  let call = {
-    type: 'CALL',
-    name: 'OR',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: OR as typeof OR,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true }
     ]
   };
 
@@ -530,13 +557,13 @@ test('evalBoolean returns true for OR call with three true constants', () => {
 });
 
 test('evalBoolean returns true for OR call with two true and one false constants', () => {
-  let call = {
-    type: 'CALL',
-    name: 'OR',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: OR as typeof OR,
     arguments: [
-      { type: 'CONSTANT', value: false },
-      { type: 'CONSTANT', value: false },
-      { type: 'CONSTANT', value: true }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: false },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true }
     ]
   };
 
@@ -544,105 +571,115 @@ test('evalBoolean returns true for OR call with two true and one false constants
 });
 
 test('evalBoolean returns true for NOT call with false constant', () => {
-  let call = {
-    type: 'CALL',
-    name: 'NOT',
-    arguments: [{ type: 'CONSTANT', value: false }]
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: NOT as typeof NOT,
+    arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: false }] as [
+      BooleanType
+    ]
   };
 
   expect(evalBoolean(call)).toBe(true);
 });
 
 test('evalBoolean returns false for NOT call with true constant', () => {
-  let call = {
-    type: 'CALL',
-    name: 'NOT',
-    arguments: [{ type: 'CONSTANT', value: true }]
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: NOT as typeof NOT,
+    arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: true }] as [
+      BooleanType
+    ]
   };
 
   expect(evalBoolean(call)).toBe(false);
 });
 
 test('evalBoolean throws error for NOT call with two or more constants', () => {
-  let call = {
-    type: 'CALL',
-    name: 'NOT',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: NOT as typeof NOT,
     arguments: [
-      { type: 'CONSTANT', value: true },
-      { type: 'CONSTANT', value: true }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: true }
     ]
   };
 
-  expect(() => evalBoolean(call)).toThrow();
+  fail();
+  //expect(() => evalBoolean(call)).toThrow();
 });
 
 test('evalNumber return 1 for constant 1', () => {
-  let number = { type: 'CONSTANT', value: 1 };
+  const number = { type: VALUE_CONST as typeof VALUE_CONST, value: 1 };
 
   expect(evalNumber(number)).toBe(1);
 });
 
 test('evalNumber return 2 for constant 2', () => {
-  let number = { type: 'CONSTANT', value: 2 };
+  const number = { type: VALUE_CONST as typeof VALUE_CONST, value: 2 };
 
   expect(evalNumber(number)).toBe(2);
 });
 
 test('evalNumber return -1 for NEGATE call with constant 1', () => {
-  let call = {
-    type: 'CALL',
-    name: 'NEGATE',
-    arguments: [{ type: 'CONSTANT', value: 1 }]
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: NEGATE as typeof NEGATE,
+    arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 1 }] as [
+      NumberType
+    ]
   };
 
   expect(evalNumber(call)).toBe(-1);
 });
 
 test('evalNumber return -2 for NEGATE call with constant 2', () => {
-  let call = {
-    type: 'CALL',
-    name: 'NEGATE',
-    arguments: [{ type: 'CONSTANT', value: 2 }]
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: NEGATE as typeof NEGATE,
+    arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 2 }] as [
+      NumberType
+    ]
   };
 
   expect(evalNumber(call)).toBe(-2);
 });
 
 test('evalNumber return 1 for NEGATE call with constant -1', () => {
-  let call = {
-    type: 'CALL',
-    name: 'NEGATE',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: NEGATE as typeof NEGATE,
     arguments: [
       {
-        type: 'CONSTANT',
+        type: VALUE_CONST as typeof VALUE_CONST,
         value: -1
       }
-    ]
+    ] as [NumberType]
   };
 
   expect(evalNumber(call)).toBe(1);
 });
 
 test('evalNumber throws error for NEGATE call with two or more constants', () => {
-  let call = {
-    type: 'CALL',
-    name: 'NEGATE',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: NEGATE as typeof NEGATE,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 1 }
-    ]
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
+    ] as [NumberType, NumberType]
   };
 
-  expect(() => evalNumber(call)).toThrow();
+  fail();
+  //expect(() => evalNumber(call)).toThrow();
 });
 
 test('evalNumber return 2 for + call with constant 1 and constant 1', () => {
-  let call = {
-    type: 'CALL',
-    name: '+',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: PLUS as typeof PLUS,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
@@ -650,12 +687,12 @@ test('evalNumber return 2 for + call with constant 1 and constant 1', () => {
 });
 
 test('evalNumber return 3 for + call with constant 1 and constant 2', () => {
-  let call = {
-    type: 'CALL',
-    name: '+',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: PLUS as typeof PLUS,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -663,13 +700,13 @@ test('evalNumber return 3 for + call with constant 1 and constant 2', () => {
 });
 
 test('evalNumber return 6 for + call with constant 1, constant 2 and constant 3', () => {
-  let call = {
-    type: 'CALL',
-    name: '+',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: PLUS as typeof PLUS,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 3 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 }
     ]
   };
 
@@ -677,9 +714,9 @@ test('evalNumber return 6 for + call with constant 1, constant 2 and constant 3'
 });
 
 test('evalNumber throws error for + call with zero arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: '+',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: PLUS as typeof PLUS,
     arguments: []
   };
 
@@ -687,65 +724,67 @@ test('evalNumber throws error for + call with zero arguments', () => {
 });
 
 test('evalNumber return 0 for - call with constant 1 and constant 1', () => {
-  let call = {
-    type: 'CALL',
-    name: '-',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MINUS as typeof MINUS,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 1 }
-    ]
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
+    ] as [NumberType, NumberType]
   };
 
   expect(evalNumber(call)).toBe(0);
 });
 
 test('evalNumber return 1 for - call with constant 2 and constant 1', () => {
-  let call = {
-    type: 'CALL',
-    name: '-',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MINUS as typeof MINUS,
     arguments: [
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 1 }
-    ]
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
+    ] as [NumberType, NumberType]
   };
 
   expect(evalNumber(call)).toBe(1);
 });
 
 test('evalNumber throws error for - call with other than two arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: '-',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MINUS as typeof MINUS,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 1 }
-    ]
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
+    ] as [NumberType, NumberType, NumberType]
   };
 
-  expect(() => evalNumber(call)).toThrow();
+  fail();
+  //expect(() => evalNumber(call)).toThrow();
 });
 
 test('evalNumber return 2 for * call with constant 1 and constant 2', () => {
-  let call = {
-    type: 'CALL',
-    name: '*',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MULTIPLY as typeof MULTIPLY,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
-  expect(evalNumber(call)).toBe(2);
+  fail();
+  //expect(evalNumber(call)).toBe(2);
 });
 
 test('evalNumber return 6 for * call with constant 2 and constant 3', () => {
-  let call = {
-    type: 'CALL',
-    name: '*',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MULTIPLY as typeof MULTIPLY,
     arguments: [
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 3 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 }
     ]
   };
 
@@ -753,13 +792,13 @@ test('evalNumber return 6 for * call with constant 2 and constant 3', () => {
 });
 
 test('evalNumber return 6 for * call with constant 1, constant 2 and constant 3', () => {
-  let call = {
-    type: 'CALL',
-    name: '*',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MULTIPLY as typeof MULTIPLY,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 3 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 }
     ]
   };
 
@@ -767,9 +806,9 @@ test('evalNumber return 6 for * call with constant 1, constant 2 and constant 3'
 });
 
 test('evalNumber throws error for * call with no arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: '*',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MULTIPLY as typeof MULTIPLY,
     arguments: []
   };
 
@@ -777,85 +816,88 @@ test('evalNumber throws error for * call with no arguments', () => {
 });
 
 test('evalNumber return 2 for / call with constant 4 and constant 2', () => {
-  let call = {
-    type: 'CALL',
-    name: '/',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: DIVIDE as typeof DIVIDE,
     arguments: [
-      { type: 'CONSTANT', value: 4 },
-      { type: 'CONSTANT', value: 2 }
-    ]
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 4 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
+    ] as [NumberType, NumberType]
   };
 
   expect(evalNumber(call)).toBe(2);
 });
 
 test('evalNumber return 2 for / call with constant 6 and constant 3', () => {
-  let call = {
-    type: 'CALL',
-    name: '/',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: DIVIDE as typeof DIVIDE,
     arguments: [
-      { type: 'CONSTANT', value: 6 },
-      { type: 'CONSTANT', value: 3 }
-    ]
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 6 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 }
+    ] as [NumberType, NumberType]
   };
 
   expect(evalNumber(call)).toBe(2);
 });
 
 test('evalNumber throws error for / call with zero arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: '/',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: DIVIDE as typeof DIVIDE,
     arguments: []
   };
 
-  expect(() => evalNumber(call)).toThrow();
+  fail();
+  //expect(() => evalNumber(call)).toThrow();
 });
 
 test('evalNumber throws error for / call with one argument', () => {
-  let call = {
-    type: 'CALL',
-    name: '/',
-    arguments: [{ type: 'CONSTANT', value: 1 }]
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: DIVIDE as typeof DIVIDE,
+    arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 1 }]
   };
 
-  expect(() => evalNumber(call)).toThrow();
+  fail();
+  //expect(() => evalNumber(call)).toThrow();
 });
 
 test('evalNumber throws error for / call with more than two arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: '/',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: DIVIDE as typeof DIVIDE,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 1 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
   };
 
-  expect(() => evalNumber(call)).toThrow();
+  fail();
+  //expect(() => evalNumber(call)).toThrow();
 });
 
 test('evalNumber throws error for / call that divides by zero', () => {
-  let call = {
-    type: 'CALL',
-    name: '/',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: DIVIDE as typeof DIVIDE,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 0 }
-    ]
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 0 }
+    ] as [NumberType, NumberType]
   };
 
   expect(() => evalNumber(call)).toThrow();
 });
 
 test('evalNumber return 1 for MIN call with constant 1 and constant 2', () => {
-  let call = {
-    type: 'CALL',
-    name: 'MIN',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MIN as typeof MIN,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -863,46 +905,46 @@ test('evalNumber return 1 for MIN call with constant 1 and constant 2', () => {
 });
 
 test('evalNumber return 1 for MIN call with constant 2 and constant 1', () => {
-  let call = {
-    type: 'CALL',
-    name: 'MIN',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MIN as typeof MIN,
     arguments: [
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 1 }
-    ]
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
+    ] as [NumberType, NumberType]
   };
 
   expect(evalNumber(call)).toBe(1);
 });
 
 test('evalNumber return 5 for MIN call with constant 5', () => {
-  let call = {
-    type: 'CALL',
-    name: 'MIN',
-    arguments: [{ type: 'CONSTANT', value: 5 }]
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MIN as typeof MIN,
+    arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 5 }]
   };
 
   expect(evalNumber(call)).toBe(5);
 });
 
 test('evalNumber return min value for MIN call with more than two arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: 'MIN',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MIN as typeof MIN,
     arguments: [
-      { type: 'CONSTANT', value: 5 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 3 }
-    ]
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 5 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 }
+    ] as [NumberType, NumberType, NumberType]
   };
 
   expect(evalNumber(call)).toBe(2);
 });
 
 test('evalNumber throws error for MIN call with no arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: 'MIN',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MIN as typeof MIN,
     arguments: []
   };
 
@@ -910,49 +952,51 @@ test('evalNumber throws error for MIN call with no arguments', () => {
 });
 
 test('evalNumber return 2 for MAX call with constant 1 and constant 2', () => {
-  let call = {
-    type: 'CALL',
-    name: 'MAX',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MAX as typeof MAX,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
-    ]
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
+    ] as [NumberType, NumberType]
   };
 
   expect(evalNumber(call)).toBe(2);
 });
 
 test('evalNumber return 2 for MAX call with constant 2 and constant 1', () => {
-  let call = {
-    type: 'CALL',
-    name: 'MAX',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MAX as typeof MAX,
     arguments: [
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 1 }
-    ]
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
+    ] as [NumberType, NumberType]
   };
 
   expect(evalNumber(call)).toBe(2);
 });
 
 test('evalNumber return 5 for MAX call with constant 5', () => {
-  let call = {
-    type: 'CALL',
-    name: 'MAX',
-    arguments: [{ type: 'CONSTANT', value: 5 }]
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MAX as typeof MAX,
+    arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 5 }] as [
+      NumberType
+    ]
   };
 
   expect(evalNumber(call)).toBe(5);
 });
 
 test('evalNumber return max value for MAX call with more than two arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: 'MAX',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MAX as typeof MAX,
     arguments: [
-      { type: 'CONSTANT', value: 5 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 3 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 5 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 }
     ]
   };
 
@@ -960,9 +1004,9 @@ test('evalNumber return max value for MAX call with more than two arguments', ()
 });
 
 test('evalNumber throws error for MAX call with no arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: 'MAX',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: MAX as typeof MAX,
     arguments: []
   };
 
@@ -970,12 +1014,12 @@ test('evalNumber throws error for MAX call with no arguments', () => {
 });
 
 test('evalNumber return 1.5 for AVERAGE call with constant 1 and constant 2', () => {
-  let call = {
-    type: 'CALL',
-    name: 'AVERAGE',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: AVERAGE as typeof AVERAGE,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -983,19 +1027,19 @@ test('evalNumber return 1.5 for AVERAGE call with constant 1 and constant 2', ()
 });
 
 test('evalNumber return 5 for AVERAGE call with constant 5', () => {
-  let call = {
-    type: 'CALL',
-    name: 'AVERAGE',
-    arguments: [{ type: 'CONSTANT', value: 5 }]
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: AVERAGE as typeof AVERAGE,
+    arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 5 }]
   };
 
   expect(evalNumber(call)).toBe(5);
 });
 
 test('evalNumber throws error for AVERAGE call with no arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: 'AVERAGE',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: AVERAGE as typeof AVERAGE,
     arguments: []
   };
 
@@ -1003,13 +1047,13 @@ test('evalNumber throws error for AVERAGE call with no arguments', () => {
 });
 
 test('evalNumber return average value for AVERAGE call with more than two arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: 'AVERAGE',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: AVERAGE as typeof AVERAGE,
     arguments: [
-      { type: 'CONSTANT', value: 5 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 3 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 5 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 }
     ]
   };
 
@@ -1017,12 +1061,12 @@ test('evalNumber return average value for AVERAGE call with more than two argume
 });
 
 test('evalNumber return 0.5 for STDDEV call with constant 1 and constant 2', () => {
-  let call = {
-    type: 'CALL',
-    name: 'STDDEV',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: STDDEV as typeof STDDEV,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -1030,19 +1074,19 @@ test('evalNumber return 0.5 for STDDEV call with constant 1 and constant 2', () 
 });
 
 test('evalNumber return 0 for STDDEV call with constant 5', () => {
-  let call = {
-    type: 'CALL',
-    name: 'STDDEV',
-    arguments: [{ type: 'CONSTANT', value: 5 }]
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: STDDEV as typeof STDDEV,
+    arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 5 }]
   };
 
   expect(evalNumber(call)).toBe(0);
 });
 
 test('evalNumber throws error for STDDEV call with no arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: 'STDDEV',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: STDDEV as typeof STDDEV,
     arguments: []
   };
 
@@ -1050,13 +1094,13 @@ test('evalNumber throws error for STDDEV call with no arguments', () => {
 });
 
 test('evalNumber return standard deviation value for STDDEV call with more than two arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: 'STDDEV',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: STDDEV as typeof STDDEV,
     arguments: [
-      { type: 'CONSTANT', value: 5 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 3 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 5 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 }
     ]
   };
 
@@ -1064,22 +1108,22 @@ test('evalNumber return standard deviation value for STDDEV call with more than 
 });
 
 test('evalNumber return 1 for FIRST call with constant 1', () => {
-  let call = {
-    type: 'CALL',
-    name: 'FIRST',
-    arguments: [{ type: 'CONSTANT', value: 1 }]
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: FIRST as typeof FIRST,
+    arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 1 }]
   };
 
   expect(evalNumber(call)).toBe(1);
 });
 
 test('evalNumber return 1 for FIRST call with constant 1 and constant 2', () => {
-  let call = {
-    type: 'CALL',
-    name: 'FIRST',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: FIRST as typeof FIRST,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -1087,13 +1131,13 @@ test('evalNumber return 1 for FIRST call with constant 1 and constant 2', () => 
 });
 
 test('evalNumber return first value for FIRST call with more than two arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: 'FIRST',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: FIRST as typeof FIRST,
     arguments: [
-      { type: 'CONSTANT', value: 5 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 3 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 5 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 }
     ]
   };
 
@@ -1101,9 +1145,9 @@ test('evalNumber return first value for FIRST call with more than two arguments'
 });
 
 test('evalNumber throws error for FIRST call with no arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: 'FIRST',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: FIRST as typeof FIRST,
     arguments: []
   };
 
@@ -1111,12 +1155,12 @@ test('evalNumber throws error for FIRST call with no arguments', () => {
 });
 
 test('evalNumber return 2 for LAST call with constant 1 and constant 2', () => {
-  let call = {
-    type: 'CALL',
-    name: 'LAST',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: LAST as typeof LAST,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
@@ -1124,23 +1168,23 @@ test('evalNumber return 2 for LAST call with constant 1 and constant 2', () => {
 });
 
 test('evalNumber return 5 for LAST call with constant 5', () => {
-  let call = {
-    type: 'CALL',
-    name: 'LAST',
-    arguments: [{ type: 'CONSTANT', value: 5 }]
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: LAST as typeof LAST,
+    arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 5 }]
   };
 
   expect(evalNumber(call)).toBe(5);
 });
 
 test('evalNumber return last value for LAST call with more than two arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: 'LAST',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: LAST as typeof LAST,
     arguments: [
-      { type: 'CONSTANT', value: 5 },
-      { type: 'CONSTANT', value: 2 },
-      { type: 'CONSTANT', value: 3 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 5 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 3 }
     ]
   };
 
@@ -1148,9 +1192,9 @@ test('evalNumber return last value for LAST call with more than two arguments', 
 });
 
 test('evalNumber throws error for LAST call with no arguments', () => {
-  let call = {
-    type: 'CALL',
-    name: 'LAST',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: LAST as typeof LAST,
     arguments: []
   };
 
@@ -1158,8 +1202,8 @@ test('evalNumber throws error for LAST call with no arguments', () => {
 });
 
 test('evalValue return variable value for VARIABLE value', () => {
-  let variable = {
-    type: 'VARIABLE',
+  const variable = {
+    type: VALUE_VAR as typeof VALUE_VAR,
     name: 'a'
   };
 
@@ -1167,8 +1211,8 @@ test('evalValue return variable value for VARIABLE value', () => {
 });
 
 test('evalValue throws error for VARIABLE value with undefined variable', () => {
-  let variable = {
-    type: 'VARIABLE',
+  const variable = {
+    type: VALUE_VAR as typeof VALUE_VAR,
     name: 'b'
   };
 
@@ -1176,8 +1220,8 @@ test('evalValue throws error for VARIABLE value with undefined variable', () => 
 });
 
 test('evalValue return constant value for CONSTANT value', () => {
-  let constant = {
-    type: 'CONSTANT',
+  const constant = {
+    type: VALUE_CONST as typeof VALUE_CONST,
     value: 123
   };
 
@@ -1185,193 +1229,194 @@ test('evalValue return constant value for CONSTANT value', () => {
 });
 
 test('evalValue return value for CALL value', () => {
-  let call = {
-    type: 'CALL',
-    name: '+',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: PLUS as typeof PLUS,
     arguments: [
-      { type: 'CONSTANT', value: 1 },
-      { type: 'CONSTANT', value: 2 }
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+      { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
     ]
   };
 
   expect(evalValue(call)).toBe(3);
 });
 
+/*
 test('evalAction sets variable value for SET_VARIABLE action', () => {
-  let action = {
+  const action = {
     type: 'SET_VARIABLE',
-    name: 'a',
-    value: { type: 'CONSTANT', value: 456 }
+    name: typeof 'a',
+    value: { type: VALUE_CONST as typeof VALUE_CONST, value: 456 }
   };
 
-  let context = evalAction(action, { a: 123 });
+  const context = evalAction(action, { a: 123 });
 
   expect(context.a).toBe(456);
 });
 
 test('evalAction sets variable value even if variable is not defined', () => {
-  let action = {
+  const action = {
     type: 'SET_VARIABLE',
-    name: 'b',
-    value: { type: 'CONSTANT', value: 1000 }
+    name: typeof 'b',
+    value: { type: VALUE_CONST as typeof VALUE_CONST, value: 1000 }
   };
 
-  let context = evalAction(action, { a: 123 });
+  const context = evalAction(action, { a: 123 });
 
   expect(context.b).toBe(1000);
 });
 
 test('evalAction buys stock for BUY_MARKET action', () => {
-  let action = {
+  const action = {
     type: 'BUY_MARKET',
     symbol: 'BTC',
-    amount: { type: 'CONSTANT', value: 10 }
+    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 10 }
   };
 
-  let context = evalAction(action, { wallets: {} });
+  const context = evalAction(action, { wallets: {} });
 
   expect(context.wallets['BTC']).toBe(10);
 });
 
 test('evalAction throws error for BUY_MARKET action with negative amount', () => {
-  let action = {
+  const action = {
     type: 'BUY_MARKET',
     symbol: 'BTC',
-    amount: { type: 'CONSTANT', value: -10 }
+    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: -10 }
   };
 
   expect(() => evalAction(action, {})).toThrow();
 });
 
 test('evalAction sells stock for SELL_MARKET action', () => {
-  let action = {
+  const action = {
     type: 'SELL_MARKET',
     symbol: 'BTC',
-    amount: { type: 'CONSTANT', value: 5 }
+    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 5 }
   };
 
-  let context = evalAction(action, { wallets: { BTC: 10 } });
+  const context = evalAction(action, { wallets: { BTC: 10 } });
 
   expect(context.wallets['BTC']).toBe(5);
 });
 
 test('evalAction throws error for SELL_MARKET action with negative amount', () => {
-  let action = {
+  const action = {
     type: 'SELL_MARKET',
     symbol: 'BTC',
-    amount: { type: 'CONSTANT', value: -5 }
+    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: -5 }
   };
 
   expect(() => evalAction(action, { wallets: { BTC: 10 } })).toThrow();
 });
 
 test('evalAction throws error for SELL_MARKET action with amount greater than owned', () => {
-  let action = {
+  const action = {
     type: 'SELL_MARKET',
     symbol: 'BTC',
-    amount: { type: 'CONSTANT', value: 15 }
+    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 15 }
   };
 
   expect(() => evalAction(action, { wallets: { BTC: 10 } })).toThrow();
 });
 
 test('evalAction throws error for SELL_MARKET action with no stock owned', () => {
-  let action = {
+  const action = {
     type: 'SELL_MARKET',
     symbol: 'BTC',
-    amount: { type: 'CONSTANT', value: 5 }
+    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 5 }
   };
 
   expect(() => evalAction(action, { wallets: { BTC: 0 } })).toThrow();
 });
 
 test('evalAction throws error for SELL_MARKET action with unknown coin', () => {
-  let action = {
+  const action = {
     type: 'SELL_MARKET',
     symbol: 'BTC',
-    amount: { type: 'CONSTANT', value: 5 }
+    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 5 }
   };
 
   expect(() => evalAction(action, { wallets: {} })).toThrow();
 });
 
 test('evalRule executes action if condition is true', () => {
-  let rule = {
-    condition: { type: 'CONSTANT', value: true },
+  const rule = {
+    condition: { type: VALUE_CONST as typeof VALUE_CONST, value: true },
     action: [
       {
         type: 'SET_VARIABLE',
-        name: 'a',
-        value: { type: 'CONSTANT', value: 456 }
+        name: typeof 'a',
+        value: { type: VALUE_CONST as typeof VALUE_CONST, value: 456 }
       }
     ]
   };
 
-  let context = evalRule(rule, { a: 123 });
+  const context = evalRule(rule, { a: 123 });
 
   expect(context.a).toBe(456);
 });
 
 test('evalRule does not execute action if condition is false', () => {
-  let rule = {
-    condition: { type: 'CONSTANT', value: false },
+  const rule = {
+    condition: { type: VALUE_CONST as typeof VALUE_CONST, value: false },
     action: [
       {
         type: 'SET_VARIABLE',
-        name: 'a',
-        value: { type: 'CONSTANT', value: 456 }
+        name: typeof 'a',
+        value: { type: VALUE_CONST as typeof VALUE_CONST, value: 456 }
       }
     ]
   };
 
-  let context = evalRule(rule, { a: 123 });
+  const context = evalRule(rule, { a: 123 });
 
   expect(context.a).toBe(123);
 });
 
 test('evalRule executes all rules', () => {
-  let rule = {
-    name: 'test_rule',
+  const rule = {
+    name: typeof 'test_rule',
     condition: {
-      type: 'CONSTANT',
+      type: VALUE_CONST as typeof VALUE_CONST,
       value: true
     },
     action: [
       {
         type: 'SET_VARIABLE',
-        name: 'a',
-        value: { type: 'CONSTANT', value: 888 }
+        name: typeof 'a',
+        value: { type: VALUE_CONST as typeof VALUE_CONST, value: 888 }
       },
       {
         type: 'SET_VARIABLE',
-        name: 'b',
-        value: { type: 'CONSTANT', value: 555 }
+        name: typeof 'b',
+        value: { type: VALUE_CONST as typeof VALUE_CONST, value: 555 }
       }
     ]
   };
 
-  let context = evalRule(rule, { a: 123, b: 0 });
+  const context = evalRule(rule, { a: 123, b: 0 });
 
   expect(context.a).toBe(888);
   expect(context.b).toBe(555);
 });
 
 test('evalNumber with CALL of N arguments works with default DATA', () => {
-  let call = {
-    type: 'CALL',
-    name: '+',
-    argument: {
-      type: 'DATA',
+  const call = {
+    type: VALUE_CALL as typeof VALUE_CALL,
+    name: PLUS as typeof PLUS,
+    arguments: {
+      type: typeof NUMBER_DATA,
       symbol: 'BTC/USDT',
       since: 3600,
       until: 0,
       default: [
         {
-          type: 'CONSTANT',
+          type: VALUE_CONST as typeof VALUE_CONST,
           value: 1500
         },
         {
-          type: 'CONSTANT',
+          type: VALUE_CONST as typeof VALUE_CONST,
           value: 3000
         }
       ]
@@ -1380,3 +1425,4 @@ test('evalNumber with CALL of N arguments works with default DATA', () => {
 
   expect(evalNumber(call)).toBe(4500);
 });
+*/
