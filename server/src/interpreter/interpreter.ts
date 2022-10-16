@@ -25,8 +25,10 @@ import {
   VALUE_VAR,
   VALUE_WALLET,
   ValueCall,
+  ValueConstant,
   ValueOutput,
-  ValueVariable
+  ValueVariable,
+  ValueWallet
 } from './types/value';
 import {
   AND,
@@ -178,6 +180,12 @@ function evalNumberCall(call: NumberCall): number {
   }
 }
 
+export function evalValue(value: BooleanType): boolean;
+export function evalValue(value: NumberType): number;
+export function evalValue(
+  value: ValueVariable | ValueWallet | ValueConstant
+): ValueOutput;
+export function evalValue(value: Value): ValueOutput;
 export function evalValue(value: Value): ValueOutput {
   switch (value.type) {
     case VALUE_CONST:

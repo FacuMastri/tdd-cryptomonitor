@@ -5,7 +5,7 @@ export const VALUE_CONST = 'CONSTANT';
 
 export interface ValueConstant {
   type: typeof VALUE_CONST;
-  value: ValueOutput;
+  value: string;
 }
 
 export const VALUE_VAR = 'VARIABLE';
@@ -31,7 +31,6 @@ export type Value =
   | NumberType
   | BooleanType
   | ValueVariable
-  | ValueCall
   | ValueWallet;
 
 export type ValueOutput = number | string | boolean;
