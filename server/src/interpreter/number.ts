@@ -35,7 +35,7 @@ export function evalDivide(args: [NumberType, NumberType]): number {
   if (args.length != 2) {
     throw new Error('DIVIDE takes exactly two arguments');
   } else {
-    let divisor = evalNumber(args[1]);
+    const divisor = evalNumber(args[1]);
     if (divisor == 0) {
       throw new Error('Division by zero');
     }
@@ -68,7 +68,7 @@ export function evalStddev(args: NumberType[]): number {
   if (args.length == 0) {
     throw new Error('STDDEV takes at least one argument');
   }
-  let mean = evalAverage(args);
+  const mean = evalAverage(args);
   return Math.sqrt(
     args.reduce((sum, arg) => sum + Math.pow(evalNumber(arg) - mean, 2), 0) /
       args.length

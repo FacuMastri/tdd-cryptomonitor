@@ -1,14 +1,6 @@
-import {
-  evalBoolean,
-  evalNumber,
-  evalValue
-} from '../src/interpreter/interpreter';
-import {
-  VALUE_CALL,
-  VALUE_CONST,
-  VALUE_VAR
-} from '../src/interpreter/types/value';
-import { NumberType } from '../src/interpreter/types/number';
+import { evalBoolean, evalNumber, evalValue } from '../interpreter/interpreter';
+import { VALUE_CALL, VALUE_CONST, VALUE_VAR } from '../interpreter/types/value';
+import { NumberType } from '../interpreter/types/number';
 import {
   AND,
   AVERAGE,
@@ -30,8 +22,8 @@ import {
   OR,
   PLUS,
   STDDEV
-} from '../src/interpreter/types/calls';
-import { BooleanType } from '../src/interpreter/types/boolean';
+} from '../interpreter/types/calls';
+import { BooleanType } from '../interpreter/types/boolean';
 
 test('evalBoolean returns true for constant true', () => {
   const boolean = { type: VALUE_CONST as typeof VALUE_CONST, value: true };

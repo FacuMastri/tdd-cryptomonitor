@@ -1,4 +1,3 @@
-import Dict = NodeJS.Dict;
 import {
   evalDistinct,
   evalEqual,
@@ -64,9 +63,9 @@ import {
 } from './types/number';
 import { BooleanCall, BooleanType } from './types/boolean';
 
-type Context = Dict<ValueOutput>;
+type Context = Record<string, ValueOutput>;
 
-export let STORAGE: Context = { a: 123 };
+export const STORAGE: Context = { a: 123 };
 
 function mockGetData(symbol: string, since: number, until: number): number[] {
   return [];

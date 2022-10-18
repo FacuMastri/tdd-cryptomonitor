@@ -7,7 +7,7 @@ export function evalEqual(args: Value[]): boolean {
 }
 
 export function evalDistinct(args: Value[]): boolean {
-  let set = new Set(args.map((arg) => evalValue(arg)));
+  const set = new Set(args.map((arg) => evalValue(arg)));
   return set.size == args.length;
 }
 
