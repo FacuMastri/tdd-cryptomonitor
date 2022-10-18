@@ -155,9 +155,8 @@ test('evalValue returns false for == call with one equal and two unequal constan
 });
 
 test('evalValue throws an error for unknown boolean type', () => {
-  const boolean = { type: 'UNKNOWN' };
-  fail();
-  //expect(() => evalValue(boolean)).toThrow();
+  const boolean = { type: 'UNKNOWN' } as unknown as BooleanType;
+  expect(() => evalValue(boolean)).toThrow();
 });
 
 test('evalValue returns true for DISTINCT call with two different constants', () => {
@@ -581,7 +580,7 @@ test('evalBoolean returns false for NOT call with true constant', () => {
     arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: true }] as [
       BooleanType
     ]
-  };
+  } as unknown as BooleanType;
 
   expect(evalBoolean(call)).toBe(false);
 });
@@ -594,10 +593,9 @@ test('evalBoolean throws error for NOT call with two or more constants', () => {
       { type: VALUE_CONST as typeof VALUE_CONST, value: true },
       { type: VALUE_CONST as typeof VALUE_CONST, value: true }
     ]
-  };
+  } as unknown as BooleanType;
 
-  fail();
-  //expect(() => evalBoolean(call)).toThrow();
+  expect(() => evalBoolean(call)).toThrow();
 });
 
 test('evalNumber return 1 for constant 1', () => {
@@ -659,10 +657,9 @@ test('evalNumber throws error for NEGATE call with two or more constants', () =>
       { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
       { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ] as [NumberType, NumberType]
-  };
+  } as unknown as NumberType;
 
-  fail();
-  //expect(() => evalNumber(call)).toThrow();
+  expect(() => evalNumber(call)).toThrow();
 });
 
 test('evalNumber return 2 for + call with constant 1 and constant 1', () => {
@@ -750,10 +747,9 @@ test('evalNumber throws error for - call with other than two arguments', () => {
       { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
       { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ] as [NumberType, NumberType, NumberType]
-  };
+  } as unknown as NumberType;
 
-  fail();
-  //expect(() => evalNumber(call)).toThrow();
+  expect(() => evalNumber(call)).toThrow();
 });
 
 test('evalNumber return 2 for * call with constant 1 and constant 2', () => {
@@ -766,8 +762,7 @@ test('evalNumber return 2 for * call with constant 1 and constant 2', () => {
     ]
   };
 
-  fail();
-  //expect(evalNumber(call)).toBe(2);
+  expect(evalNumber(call)).toBe(2);
 });
 
 test('evalNumber return 6 for * call with constant 2 and constant 3', () => {
@@ -838,10 +833,9 @@ test('evalNumber throws error for / call with zero arguments', () => {
     type: VALUE_CALL as typeof VALUE_CALL,
     name: DIVIDE as typeof DIVIDE,
     arguments: []
-  };
+  } as unknown as NumberType;
 
-  fail();
-  //expect(() => evalNumber(call)).toThrow();
+  expect(() => evalNumber(call)).toThrow();
 });
 
 test('evalNumber throws error for / call with one argument', () => {
@@ -849,10 +843,9 @@ test('evalNumber throws error for / call with one argument', () => {
     type: VALUE_CALL as typeof VALUE_CALL,
     name: DIVIDE as typeof DIVIDE,
     arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 1 }]
-  };
+  } as unknown as NumberType;
 
-  fail();
-  //expect(() => evalNumber(call)).toThrow();
+  expect(() => evalNumber(call)).toThrow();
 });
 
 test('evalNumber throws error for / call with more than two arguments', () => {
@@ -864,10 +857,9 @@ test('evalNumber throws error for / call with more than two arguments', () => {
       { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
       { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
     ]
-  };
+  } as unknown as NumberType;
 
-  fail();
-  //expect(() => evalNumber(call)).toThrow();
+  expect(() => evalNumber(call)).toThrow();
 });
 
 test('evalNumber throws error for / call that divides by zero', () => {
