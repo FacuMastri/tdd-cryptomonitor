@@ -24,7 +24,6 @@ import {
   VALUE_VAR,
   VALUE_WALLET,
   ValueCall,
-  ValueConstant,
   ValueOutput,
   ValueVariable,
   ValueWallet
@@ -53,13 +52,17 @@ import {
   STDDEV
 } from './types/calls';
 import {
+  ContextData,
+  ContextDatum,
   isNumberCallBinary,
   isNumberCallMany,
   NumberCall,
   NumberCallBinary,
   NumberCallMany,
   NumberData,
-  NumberType
+  NumberType,
+  NUMBER_DATA,
+  WalletDef
 } from './types/number';
 import { BooleanCall, BooleanType } from './types/boolean';
 import {
@@ -71,83 +74,135 @@ import {
   ActionSellMarket,
   ActionSetVariable
 } from './types/action';
-import { Rule } from './types/rule';
+import { Rule, Rules } from './types/rule';
+import { Context } from './types/context';
 
-type Context = Record<string, ValueOutput | ValueOutput[]>;
+const CONTEXT_RESERVED = ['wallets', 'data'];
 
-const CONTEXT_RESERVED = ['wallets'];
+export const STORAGE: Context = { zero: 0, wallets: [], data: {} };
 
-export const STORAGE: Context = { zero: 0, wallets: [] };
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function mockGetData(symbol: string, since: number, until: number): number[] {
-  return [];
-}
-
-export function evalBoolean(boolean: BooleanType): boolean {
+export function evalBoolean(boolean: BooleanType, context?: Context): boolean {
   switch (boolean.type) {
     case VALUE_CONST:
       return boolean.value;
     case VALUE_CALL:
-      return evalBooleanCall(boolean);
+      return evalBooleanCall(boolean, context);
   }
 }
 
-function evalBooleanCall(call: BooleanCall): boolean {
+function evalBooleanCall(call: BooleanCall, context?: Context): boolean {
   switch (call.name) {
     case EQUAL:
-      return evalEqual(call.arguments);
+      return evalEqual(call.arguments, context);
     case DISTINCT:
-      return evalDistinct(call.arguments);
+      return evalDistinct(call.arguments, context);
     case LESS:
-      return evalLessThan(call.arguments);
+      return evalLessThan(call.arguments, context);
     case LESS_EQUAL:
-      return evalLessThanEqual(call.arguments);
+      return evalLessThanEqual(call.arguments, context);
     case GREATER:
-      return evalLessThan(call.arguments.reverse());
+      return evalLessThan(call.arguments.reverse(), context);
     case GREATER_EQUAL:
-      return evalLessThanEqual(call.arguments.reverse());
+      return evalLessThanEqual(call.arguments.reverse(), context);
     case AND:
-      return call.arguments.every((arg) => evalBoolean(arg));
+      return call.arguments.every((arg) => evalBoolean(arg, context));
     case OR:
-      return call.arguments.some((arg) => evalBoolean(arg));
+      return call.arguments.some((arg) => evalBoolean(arg, context));
     case NOT:
       return evalNot(call.arguments);
   }
 }
 
-export function evalNumber(number: NumberType): number {
+export function evalNumberVar(
+  number: ValueVariable,
+  context?: Context
+): number {
+  const value = context && context[number.name];
+  if (value === undefined)
+    throw new Error('Variable not found: ' + number.name);
+
+  if (typeof value === 'number') return value;
+
+  throw new Error('Variable is not a number: ' + number.name);
+}
+
+export function evalNumber(number: NumberType, context?: Context): number {
   switch (number.type) {
     case VALUE_CONST:
       return number.value;
     case VALUE_CALL:
-      return evalNumberCall(number);
+      return evalNumberCall(number, context);
+    case VALUE_VAR:
+      return evalNumberVar(number, context);
+    case VALUE_WALLET:
+      return evalWallet(number, context);
   }
 }
 
-function getData(dataInfo: NumberData): NumberType[] {
-  // TODO
-  const data = mockGetData(dataInfo.symbol, dataInfo.since, dataInfo.until);
-  if (data.length == 0) {
-    if (dataInfo.default) {
-      return dataInfo.default;
-    } else {
-      throw new Error('No data and no default value');
-    }
-  } else {
+export function loadDatum(
+  symbol: string,
+  datum: ContextDatum,
+  context: Context
+): Context {
+  if (!context.data) context.data = {};
+  const data = context.data as ContextData;
+
+  if (!data[symbol]) data[symbol] = [];
+  data[symbol].push(datum);
+  data[symbol].sort((a, b) => a.timestamp - b.timestamp);
+
+  return context;
+}
+
+function secondsAgo(timestamp: number): number {
+  return (Date.now() - timestamp) / 1000;
+}
+
+function getContextData(dataInfo: NumberData, context?: Context): number[] {
+  if (!context) return [];
+
+  const { symbol, from, until } = dataInfo;
+
+  const data = context.data as ContextData;
+  if (!data || !data[symbol]) return [];
+
+  const symbolData = data[symbol]
+    .filter((datum) => {
+      const seconds = secondsAgo(datum.timestamp);
+      return seconds <= from && seconds >= until;
+    })
+    .map((datum) => datum.value);
+
+  return symbolData;
+}
+
+function getData(dataInfo: NumberData, context?: Context): NumberType[] {
+  if (dataInfo.type !== NUMBER_DATA) throw new Error('Invalid data info');
+
+  const data = getContextData(dataInfo, context);
+
+  if (data.length > 0) {
     return data.map((value) => ({ type: VALUE_CONST, value }));
   }
+
+  if (!dataInfo.default) throw new Error('No data and no default value');
+
+  if (Array.isArray(dataInfo.default)) return dataInfo.default;
+  return [dataInfo.default];
 }
 
-function getArguments(call: NumberCallMany): NumberType[] {
+function getArguments(call: NumberCallMany, context?: Context): NumberType[] {
   if (Array.isArray(call.arguments)) {
     return call.arguments;
   }
-  return getData(call.arguments);
+  return getData(call.arguments, context);
 }
 
-function evalNumberCallWithNArgs(call: NumberCallMany): number {
-  const callArgs = getArguments(call);
+function evalNumberCallWithNArgs(
+  call: NumberCallMany,
+  context?: Context
+): number {
+  const callArgs = getArguments(call, context);
   switch (call.name) {
     case PLUS:
       return evalAdd(callArgs);
@@ -181,11 +236,11 @@ function evalNumberCallWith2Args(call: NumberCallBinary): number {
   }
 }
 
-function evalNumberCall(call: NumberCall): number {
+function evalNumberCall(call: NumberCall, context?: Context): number {
   if (isNumberCallBinary(call)) {
     return evalNumberCallWith2Args(call);
   } else if (isNumberCallMany(call)) {
-    return evalNumberCallWithNArgs(call);
+    return evalNumberCallWithNArgs(call, context);
   } else if (call.name == 'NEGATE') {
     return evalNegate(call.arguments);
   } else {
@@ -193,34 +248,54 @@ function evalNumberCall(call: NumberCall): number {
   }
 }
 
-export function evalValue(value: Value): ValueOutput {
+function evalWallet(
+  wallet: WalletDef | ValueWallet,
+  context?: Context
+): number {
+  const valueWallet = wallet as ValueWallet;
+  if (valueWallet.amount !== undefined) return valueWallet.amount;
+
+  const _wallet = wallet as WalletDef;
+  if (!context || !context.wallets) throw new Error('No wallets in context');
+  const wallets = context.wallets as ValueWallet[];
+
+  const resWallet = wallets.find((w) => w.symbol == _wallet.symbol);
+  if (!resWallet) throw new Error('Wallet not found: ' + _wallet.symbol);
+
+  return resWallet.amount;
+}
+
+export function evalValue(value: Value, context?: Context): ValueOutput {
   switch (value.type) {
     case VALUE_CONST:
       return value.value;
     case VALUE_VAR:
-      return evalVariable(value);
+      return evalVariable(value, context);
     case VALUE_CALL:
-      return evalCall(value);
+      return evalCall(value, context);
     case VALUE_WALLET:
-      return value.amount;
+      return evalWallet(value, context);
     default:
       throw new Error('Unknown value type: ' + value);
   }
 }
 
-function evalVariable(variable: ValueVariable): ValueOutput {
-  if (variable.name in STORAGE) {
-    return STORAGE[variable.name] as ValueOutput;
+function evalVariable(
+  variable: ValueVariable,
+  context: Context = {}
+): ValueOutput {
+  if (variable.name in context) {
+    return context[variable.name] as ValueOutput;
   } else {
     throw new Error('Undefined variable: ' + variable.name);
   }
 }
 
-function evalCall(call: ValueCall): ValueOutput {
+function evalCall(call: ValueCall, context?: Context): ValueOutput {
   if (isBooleanCall(call)) {
-    return evalBooleanCall(call);
+    return evalBooleanCall(call, context);
   } else if (isNumberCall(call)) {
-    return evalNumberCall(call);
+    return evalNumberCall(call, context);
   }
   throw new Error('Unknown call name: ' + call);
 }
@@ -236,24 +311,23 @@ export function evalAction(action: Action, context: Context): Context {
     default:
       throw new Error('Unknown action type: ' + action);
   }
-  return context;
 }
 
 function evalSetVariable(action: ActionSetVariable, context: Context): Context {
   if (CONTEXT_RESERVED.includes(action.name))
     throw new Error('Reserved variable name: ' + action.name);
 
-  context[action.name] = evalValue(action.value);
+  context[action.name] = evalValue(action.value, context);
   return context;
 }
 
 function evalBuyMarket(action: ActionBuyMarket, context: Context): Context {
-  const amount = evalValue(action.amount);
+  const amount = evalValue(action.amount, context);
   if (typeof amount !== 'number') throw new Error('Amount must be a number');
   if (amount < 0) throw new Error('Cannot buy negative amount');
 
   if (!context.wallets) context.wallets = [];
-  const wallets = context.wallets as unknown as ValueWallet[];
+  const wallets = context.wallets as ValueWallet[];
 
   const wallet = wallets.find((wallet) => wallet.symbol === action.symbol);
   if (!wallet) {
@@ -269,7 +343,7 @@ function evalBuyMarket(action: ActionBuyMarket, context: Context): Context {
 }
 
 function evalSellMarket(action: ActionSellMarket, context: Context): Context {
-  const amount = evalValue(action.amount);
+  const amount = evalValue(action.amount, context);
   if (typeof amount !== 'number') throw new Error('Amount must be a number');
   if (amount < 0) throw new Error('Cannot sell negative amount');
 
@@ -286,8 +360,17 @@ function evalSellMarket(action: ActionSellMarket, context: Context): Context {
 }
 
 export function evalRule(rule: Rule, context: Context): Context {
-  if (evalBoolean(rule.condition))
+  if (evalBoolean(rule.condition, context))
     rule.actions.forEach((action) => evalAction(action, context));
 
+  return context;
+}
+
+export function evalRules(rules: Rules, context: Context): Context {
+  for (const name of rules.requiredVariables)
+    if (!(name in context))
+      throw new Error('Required variable not set: ' + name);
+
+  rules.rules.forEach((rule) => evalRule(rule, context));
   return context;
 }

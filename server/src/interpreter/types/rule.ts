@@ -6,3 +6,8 @@ export interface Rule {
   condition: BooleanType;
   actions: Action[];
 }
+
+export interface Rules {
+  requiredVariables: string[];
+  rules: Rule[];
+}
