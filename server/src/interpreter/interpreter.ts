@@ -213,23 +213,21 @@ function evalCall(call: ValueCall): ValueOutput {
   throw new Error('Unknown call name: ' + call);
 }
 
-export function evalAction(
-  action: Action,
-  context: Context
-): ValueOutput | undefined {
+export function evalAction(action: Action, context: Context): Context {
   switch (action.type) {
     case ACTION_SET:
       context[action.name] = evalValue(action.value);
-      return;
+      break;
     case ACTION_BUY:
       //return evalBuyMarket(action, context);
-      return;
+      break;
     case ACTION_SELL:
       //return evalSellMarket(action, context);
-      return;
+      break;
     default:
       throw new Error('Unknown action type: ' + action);
   }
+  return context;
 }
 
 /*

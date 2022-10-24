@@ -1259,9 +1259,7 @@ test('evalAction sets variable value even if variable is not defined', () => {
     }
   };
 
-  const context: Record<string, number> = { a: 0 };
-
-  evalAction(action, context);
+  const context = evalAction(action, { a: 0 });
 
   expect(context?.b).toBe(123);
 });
