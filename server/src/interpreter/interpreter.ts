@@ -115,13 +115,28 @@ function evalBooleanCall(call: BooleanCall): boolean {
   }
 }
 
-export function evalNumber(number: NumberType): number {
+export function evalNumber(number: NumberType, context?: Context): number {
   switch (number.type) {
     case VALUE_CONST:
       return number.value;
     case VALUE_CALL:
-      return evalNumberCall(number);
+      return evalNumberCall(number, context);
   }
+}
+
+export function loadDatum(
+  symbol: string,
+  datum: ContextDatum,
+  context: Context
+): Context {
+  if (!context.data) context.data = {};
+  const data = context.data as ContextData;
+
+  if (!data[symbol]) data[symbol] = [];
+  data[symbol].push(datum);
+  data[symbol].sort((a, b) => a.timestamp - b.timestamp);
+
+  return context;
 }
 
 function secondsAgo(timestamp: number): number {
@@ -139,7 +154,7 @@ function getContextData(dataInfo: NumberData, context?: Context): number[] {
   const symbolData = data[symbol]
     .filter((datum) => {
       const seconds = secondsAgo(datum.timestamp);
-      return seconds >= from && seconds <= until;
+      return seconds <= from && seconds >= until;
     })
     .map((datum) => datum.value);
 
@@ -161,15 +176,18 @@ function getData(dataInfo: NumberData, context?: Context): NumberType[] {
   return [dataInfo.default];
 }
 
-function getArguments(call: NumberCallMany): NumberType[] {
+function getArguments(call: NumberCallMany, context?: Context): NumberType[] {
   if (Array.isArray(call.arguments)) {
     return call.arguments;
   }
-  return getData(call.arguments);
+  return getData(call.arguments, context);
 }
 
-function evalNumberCallWithNArgs(call: NumberCallMany): number {
-  const callArgs = getArguments(call);
+function evalNumberCallWithNArgs(
+  call: NumberCallMany,
+  context?: Context
+): number {
+  const callArgs = getArguments(call, context);
   switch (call.name) {
     case PLUS:
       return evalAdd(callArgs);
@@ -203,11 +221,11 @@ function evalNumberCallWith2Args(call: NumberCallBinary): number {
   }
 }
 
-function evalNumberCall(call: NumberCall): number {
+function evalNumberCall(call: NumberCall, context?: Context): number {
   if (isNumberCallBinary(call)) {
     return evalNumberCallWith2Args(call);
   } else if (isNumberCallMany(call)) {
-    return evalNumberCallWithNArgs(call);
+    return evalNumberCallWithNArgs(call, context);
   } else if (call.name == 'NEGATE') {
     return evalNegate(call.arguments);
   } else {
@@ -215,14 +233,14 @@ function evalNumberCall(call: NumberCall): number {
   }
 }
 
-export function evalValue(value: Value): ValueOutput {
+export function evalValue(value: Value, context?: Context): ValueOutput {
   switch (value.type) {
     case VALUE_CONST:
       return value.value;
     case VALUE_VAR:
       return evalVariable(value);
     case VALUE_CALL:
-      return evalCall(value);
+      return evalCall(value, context);
     case VALUE_WALLET:
       return value.amount;
     default:
@@ -238,11 +256,11 @@ function evalVariable(variable: ValueVariable): ValueOutput {
   }
 }
 
-function evalCall(call: ValueCall): ValueOutput {
+function evalCall(call: ValueCall, context?: Context): ValueOutput {
   if (isBooleanCall(call)) {
     return evalBooleanCall(call);
   } else if (isNumberCall(call)) {
-    return evalNumberCall(call);
+    return evalNumberCall(call, context);
   }
   throw new Error('Unknown call name: ' + call);
 }
@@ -265,12 +283,12 @@ function evalSetVariable(action: ActionSetVariable, context: Context): Context {
   if (CONTEXT_RESERVED.includes(action.name))
     throw new Error('Reserved variable name: ' + action.name);
 
-  context[action.name] = evalValue(action.value);
+  context[action.name] = evalValue(action.value, context);
   return context;
 }
 
 function evalBuyMarket(action: ActionBuyMarket, context: Context): Context {
-  const amount = evalValue(action.amount);
+  const amount = evalValue(action.amount, context);
   if (typeof amount !== 'number') throw new Error('Amount must be a number');
   if (amount < 0) throw new Error('Cannot buy negative amount');
 
@@ -291,7 +309,7 @@ function evalBuyMarket(action: ActionBuyMarket, context: Context): Context {
 }
 
 function evalSellMarket(action: ActionSellMarket, context: Context): Context {
-  const amount = evalValue(action.amount);
+  const amount = evalValue(action.amount, context);
   if (typeof amount !== 'number') throw new Error('Amount must be a number');
   if (amount < 0) throw new Error('Cannot sell negative amount');
 

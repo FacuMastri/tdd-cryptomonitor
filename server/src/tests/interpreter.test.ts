@@ -3,7 +3,8 @@ import {
   evalNumber,
   evalValue,
   evalAction,
-  evalRule
+  evalRule,
+  loadDatum
 } from '../interpreter/interpreter';
 import {
   ValueWallet,
@@ -11,7 +12,13 @@ import {
   VALUE_CONST,
   VALUE_VAR
 } from '../interpreter/types/value';
-import { NumberType } from '../interpreter/types/number';
+import {
+  ContextDatum,
+  NumberCallMany,
+  NumberData,
+  NumberType,
+  NUMBER_DATA
+} from '../interpreter/types/number';
 import {
   AND,
   AVERAGE,
@@ -1540,7 +1547,89 @@ describe('evalRule', () => {
 });
 
 describe('data', () => {
-  test('load datum', () => {
-    //TODO
+  test('loaded datum is accesible', () => {
+    const context: Context = {};
+
+    const datum: ContextDatum = {
+      value: 300,
+      timestamp: Date.now()
+    };
+
+    loadDatum('USD/ARG', datum, context);
+
+    const data = context.data['USD/ARG'];
+
+    expect(data[0].value).toBe(300);
+  });
+
+  test('default value is returned when there is no data', () => {
+    const context: Context = {};
+
+    const _arguments: NumberData = {
+      type: NUMBER_DATA,
+      symbol: 'RICE_PRICE',
+      from: 5, // 5sec ago
+      until: 1, // 1sec ago
+      default: {
+        type: VALUE_CONST,
+        value: 404
+      }
+    };
+
+    const call: NumberCallMany = {
+      type: VALUE_CALL,
+      name: PLUS,
+      arguments: _arguments
+    };
+
+    const result = evalNumber(call, context);
+
+    expect(result).toBe(404);
+  });
+
+  test('data outside from/until is excluded', () => {
+    const context: Context = {};
+
+    const data: ContextDatum[] = [
+      {
+        value: 80,
+        timestamp: Date.now()
+      },
+      {
+        value: 40,
+        timestamp: Date.now() - 2000 // 2sec ago
+      },
+      {
+        value: 20,
+        timestamp: Date.now() - 4000 // 4sec ago
+      },
+      {
+        value: 10,
+        timestamp: Date.now() - 6000 // 6sec ago
+      }
+    ];
+
+    data.forEach((datum) => loadDatum('RICE_PRICE', datum, context));
+
+    const _arguments: NumberData = {
+      type: NUMBER_DATA,
+      symbol: 'RICE_PRICE',
+      from: 5, // 5sec ago
+      until: 1, // 1sec ago
+      default: {
+        type: VALUE_CONST,
+        value: 403
+      }
+    };
+
+    const call: NumberCallMany = {
+      type: VALUE_CALL,
+      name: PLUS,
+      arguments: _arguments
+    };
+
+    const result = evalNumber(call, context);
+
+    expect(result).toBe(40 + 20);
   });
 });
