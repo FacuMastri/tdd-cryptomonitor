@@ -5,9 +5,11 @@ import {
   evalAction,
   evalRule,
   loadDatum,
-  STORAGE
+  STORAGE,
+  evalRules
 } from '../interpreter/interpreter';
 import {
+  ValueCall,
   ValueWallet,
   VALUE_CALL,
   VALUE_CONST,
@@ -52,7 +54,7 @@ import {
   ActionSellMarket
 } from '../interpreter/types/action';
 import { Context } from 'vm';
-import { Rule } from '../interpreter/types/rule';
+import { Rule, Rules } from '../interpreter/types/rule';
 
 //describe('text', () => {});
 describe('evalValue', () => {
@@ -260,6 +262,19 @@ describe('evalValue', () => {
     };
 
     expect(evalValue(call)).toBe(3);
+  });
+
+  test('evalValue throws error for unknown CALL', () => {
+    const call = {
+      type: VALUE_CALL as typeof VALUE_CALL,
+      name: 'MEZCLAR HASTA INTEGRAR',
+      arguments: [
+        { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
+        { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
+      ]
+    } as unknown as ValueCall;
+
+    expect(() => evalValue(call)).toThrow();
   });
 });
 
@@ -1325,6 +1340,19 @@ describe('evalAction', () => {
     expect(context?.b).toBe(123);
   });
 
+  test('cant set reserved variable', () => {
+    const action: Action = {
+      type: ACTION_SET,
+      name: 'data',
+      value: {
+        type: VALUE_CONST as typeof VALUE_CONST,
+        value: 123
+      }
+    };
+
+    expect(() => evalAction(action, {})).toThrow();
+  });
+
   test('evalAction buys stock for BUY_MARKET action', () => {
     const action: ActionBuyMarket = {
       type: ACTION_BUY,
@@ -1454,6 +1482,16 @@ describe('evalAction', () => {
 
     expect(() => evalAction(action, context)).toThrow();
   });
+
+  test('evalAction throws error for unknown action', () => {
+    const action = {
+      type: 'DO THE THING',
+      symbol: 'BTC',
+      amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
+    } as unknown as Action;
+
+    expect(() => evalAction(action, {})).toThrow();
+  });
 });
 
 describe('evalRule', () => {
@@ -1548,6 +1586,15 @@ describe('evalRule', () => {
 
     expect(context.a).toBe(101);
     expect(context.b).toBe(102);
+  });
+
+  test('evalRules throws error if required vars are not set', () => {
+    const rules: Rules = {
+      requiredVariables: ['a'],
+      rules: []
+    };
+
+    expect(() => evalRules(rules, {})).toThrow();
   });
 });
 

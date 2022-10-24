@@ -135,7 +135,7 @@ export function evalNumber(number: NumberType, context?: Context): number {
     case VALUE_VAR:
       return evalNumberVar(number, context);
     case VALUE_WALLET:
-      return 0;
+      return evalWallet(number, context);
   }
 }
 
@@ -311,7 +311,6 @@ export function evalAction(action: Action, context: Context): Context {
     default:
       throw new Error('Unknown action type: ' + action);
   }
-  return context;
 }
 
 function evalSetVariable(action: ActionSetVariable, context: Context): Context {
