@@ -4,7 +4,12 @@ import {
   evalValue,
   evalAction
 } from '../interpreter/interpreter';
-import { VALUE_CALL, VALUE_CONST, VALUE_VAR } from '../interpreter/types/value';
+import {
+  ValueWallet,
+  VALUE_CALL,
+  VALUE_CONST,
+  VALUE_VAR
+} from '../interpreter/types/value';
 import { NumberType } from '../interpreter/types/number';
 import {
   AND,
@@ -29,8 +34,14 @@ import {
   STDDEV
 } from '../interpreter/types/calls';
 import { BooleanType } from '../interpreter/types/boolean';
-import { Action, ACTION_SET } from '../interpreter/types/action';
+import {
+  Action,
+  ACTION_SET,
+  ACTION_BUY,
+  ActionBuyMarket
+} from '../interpreter/types/action';
 import { Value } from '../interpreter/types/value';
+import { Context } from 'vm';
 
 test('evalBoolean returns true for constant true', () => {
   const boolean = { type: VALUE_CONST as typeof VALUE_CONST, value: true };
@@ -1264,29 +1275,42 @@ test('evalAction sets variable value even if variable is not defined', () => {
   expect(context?.b).toBe(123);
 });
 
-/*
 test('evalAction buys stock for BUY_MARKET action', () => {
-  const action = {
-    type: 'BUY_MARKET',
+  const action: ActionBuyMarket = {
+    type: ACTION_BUY,
     symbol: 'BTC',
-    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 10 }
+    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 100 }
   };
 
-  const context = evalAction(action, { wallets: {} });
+  const btcWallet: ValueWallet = {
+    type: 'WALLET',
+    symbol: 'BTC',
+    amount: 1000
+  };
+  const context: Context = {
+    wallets: [btcWallet]
+  };
 
-  expect(context.wallets['BTC']).toBe(10);
+  evalAction(action, context);
+
+  const ctxBtcWallet = context.wallets.find(
+    (w: ValueWallet) => w.symbol === 'BTC'
+  );
+
+  expect(ctxBtcWallet.amount).toBe(1100);
 });
 
 test('evalAction throws error for BUY_MARKET action with negative amount', () => {
-  const action = {
-    type: 'BUY_MARKET',
+  const action: ActionBuyMarket = {
+    type: ACTION_BUY,
     symbol: 'BTC',
-    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: -10 }
+    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: -100 }
   };
 
   expect(() => evalAction(action, {})).toThrow();
 });
 
+/*
 test('evalAction sells stock for SELL_MARKET action', () => {
   const action = {
     type: 'SELL_MARKET',

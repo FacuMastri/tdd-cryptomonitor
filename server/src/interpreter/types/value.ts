@@ -19,7 +19,8 @@ export const VALUE_WALLET = 'WALLET';
 
 export interface ValueWallet {
   type: typeof VALUE_WALLET;
-  symbol: number;
+  symbol: string;
+  amount: number;
 }
 
 export const VALUE_CALL = 'CALL';

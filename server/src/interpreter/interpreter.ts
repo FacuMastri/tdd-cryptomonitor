@@ -62,9 +62,16 @@ import {
   NumberType
 } from './types/number';
 import { BooleanCall, BooleanType } from './types/boolean';
-import { Action, ACTION_SET, ACTION_SELL, ACTION_BUY } from './types/action';
+import {
+  Action,
+  ACTION_SET,
+  ACTION_BUY,
+  ActionBuyMarket,
+  ACTION_SELL,
+  ActionSellMarket
+} from './types/action';
 
-type Context = Record<string, ValueOutput>;
+type Context = Record<string, ValueOutput | ValueOutput[]>;
 
 export const STORAGE: Context = { zero: 0 };
 
@@ -219,10 +226,10 @@ export function evalAction(action: Action, context: Context): Context {
       context[action.name] = evalValue(action.value);
       break;
     case ACTION_BUY:
-      //return evalBuyMarket(action, context);
+      evalBuyMarket(action, context);
       break;
     case ACTION_SELL:
-      //return evalSellMarket(action, context);
+      //evalSellMarket(action, context);
       break;
     default:
       throw new Error('Unknown action type: ' + action);
@@ -230,19 +237,28 @@ export function evalAction(action: Action, context: Context): Context {
   return context;
 }
 
-/*
-function evalBuyMarket(action: ActionBuyMarket, context: Context): ValueOutput {
+function evalBuyMarket(action: ActionBuyMarket, context: Context): Context {
   const amount = evalValue(action.amount);
   if (typeof amount !== 'number') throw new Error('Amount must be a number');
   if (amount < 0) throw new Error('Cannot buy negative amount');
 
-  if (!(action.symbol in context.wallets)) {
-    context.wallets[action.symbol] = 0;
+  if (!context.wallets) context.wallets = [];
+  const wallets = context.wallets as unknown as ValueWallet[];
+
+  const wallet = wallets.find((wallet) => wallet.symbol === action.symbol);
+  if (!wallet) {
+    wallets.push({
+      type: VALUE_WALLET,
+      symbol: action.symbol,
+      amount: amount
+    });
+  } else {
+    wallet.amount += amount;
   }
-  context.wallets[action.symbol] += amount;
+  console.log('context', context);
   return context;
 }
-
+/*
 function evalSellMarket(action: ActionSellMarket, context: Context): ValueOutput {
   const amount = evalValue(action.amount);
   if (typeof amount !== 'number') throw new Error('Amount must be a number');
