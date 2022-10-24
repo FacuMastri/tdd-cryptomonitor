@@ -53,13 +53,16 @@ import {
   STDDEV
 } from './types/calls';
 import {
+  ContextData,
+  ContextDatum,
   isNumberCallBinary,
   isNumberCallMany,
   NumberCall,
   NumberCallBinary,
   NumberCallMany,
   NumberData,
-  NumberType
+  NumberType,
+  NUMBER_DATA
 } from './types/number';
 import { BooleanCall, BooleanType } from './types/boolean';
 import {
@@ -73,16 +76,12 @@ import {
 } from './types/action';
 import { Rule } from './types/rule';
 
-type Context = Record<string, ValueOutput | ValueOutput[]>;
+type ContextValue = ValueOutput | ValueOutput[] | ContextData;
+type Context = Record<string, ContextValue>;
 
-const CONTEXT_RESERVED = ['wallets'];
+const CONTEXT_RESERVED = ['wallets', 'data'];
 
-export const STORAGE: Context = { zero: 0, wallets: [] };
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function mockGetData(symbol: string, since: number, until: number): number[] {
-  return [];
-}
+export const STORAGE: Context = { zero: 0, wallets: [], data: {} };
 
 export function evalBoolean(boolean: BooleanType): boolean {
   switch (boolean.type) {
@@ -125,18 +124,41 @@ export function evalNumber(number: NumberType): number {
   }
 }
 
-function getData(dataInfo: NumberData): NumberType[] {
-  // TODO
-  const data = mockGetData(dataInfo.symbol, dataInfo.since, dataInfo.until);
-  if (data.length == 0) {
-    if (dataInfo.default) {
-      return dataInfo.default;
-    } else {
-      throw new Error('No data and no default value');
-    }
-  } else {
+function secondsAgo(timestamp: number): number {
+  return (Date.now() - timestamp) / 1000;
+}
+
+function getContextData(dataInfo: NumberData, context?: Context): number[] {
+  if (!context) return [];
+
+  const { symbol, from, until } = dataInfo;
+
+  const data = context.data as ContextData;
+  if (!data || !data[symbol]) return [];
+
+  const symbolData = data[symbol]
+    .filter((datum) => {
+      const seconds = secondsAgo(datum.timestamp);
+      return seconds >= from && seconds <= until;
+    })
+    .map((datum) => datum.value);
+
+  return symbolData;
+}
+
+function getData(dataInfo: NumberData, context?: Context): NumberType[] {
+  if (dataInfo.type !== NUMBER_DATA) throw new Error('Invalid data info');
+
+  const data = getContextData(dataInfo, context);
+
+  if (data.length > 0) {
     return data.map((value) => ({ type: VALUE_CONST, value }));
   }
+
+  if (!dataInfo.default) throw new Error('No data and no default value');
+
+  if (Array.isArray(dataInfo.default)) return dataInfo.default;
+  return [dataInfo.default];
 }
 
 function getArguments(call: NumberCallMany): NumberType[] {

@@ -1538,3 +1538,9 @@ describe('evalRule', () => {
     expect(context.b).toBe(102);
   });
 });
+
+describe('data', () => {
+  test('load datum', () => {
+    //TODO
+  });
+});
