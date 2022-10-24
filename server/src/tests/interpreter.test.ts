@@ -42,7 +42,7 @@ import {
   PLUS,
   STDDEV
 } from '../interpreter/types/calls';
-import { BooleanType } from '../interpreter/types/boolean';
+import { BooleanCallUnary, BooleanType } from '../interpreter/types/boolean';
 import {
   Action,
   ACTION_SET,
@@ -266,12 +266,12 @@ describe('evalValue', () => {
 describe('evalBoolean', () => {
   test('evalBoolean returns true for constant true', () => {
     const boolean = { type: VALUE_CONST as typeof VALUE_CONST, value: true };
-    expect(evalBoolean(boolean)).toBe(true);
+    expect(evalValue(boolean)).toBe(true);
   });
 
   test('evalBoolean returns false for constant false', () => {
     const boolean = { type: VALUE_CONST as typeof VALUE_CONST, value: false };
-    expect(evalBoolean(boolean)).toBe(false);
+    expect(evalValue(boolean)).toBe(false);
   });
 
   test('evalBoolean returns true for < call with two constants', () => {
@@ -284,7 +284,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns false for < call with two constants', () => {
@@ -297,7 +297,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(false);
+    expect(evalValue(call)).toBe(false);
   });
 
   test('evalBoolean returns true for < call with three constants', () => {
@@ -311,7 +311,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns false for < call with three constants', () => {
@@ -325,7 +325,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(false);
+    expect(evalValue(call)).toBe(false);
   });
 
   test('evalBoolean returns true for <= call with two constants', () => {
@@ -338,7 +338,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns false for <= call with two constants', () => {
@@ -351,7 +351,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(false);
+    expect(evalValue(call)).toBe(false);
   });
 
   test('evalBoolean returns true for <= call with two equal constants', () => {
@@ -364,7 +364,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns true for <= call with three constants', () => {
@@ -378,7 +378,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns true for > call with two constants', () => {
@@ -391,7 +391,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns false for > call with two constants', () => {
@@ -404,7 +404,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(false);
+    expect(evalValue(call)).toBe(false);
   });
 
   test('evalBoolean returns true for > call with three constants', () => {
@@ -418,7 +418,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns false for > call with three constants', () => {
@@ -432,7 +432,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(false);
+    expect(evalValue(call)).toBe(false);
   });
 
   test('evalBoolean returns true for >= call with two constants', () => {
@@ -445,7 +445,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns false for >= call with two constants', () => {
@@ -458,7 +458,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(false);
+    expect(evalValue(call)).toBe(false);
   });
 
   test('evalBoolean returns true for >= call with two equal constants', () => {
@@ -471,7 +471,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns true for >= call with three constants', () => {
@@ -485,7 +485,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns false for >= call with three constants', () => {
@@ -499,7 +499,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(false);
+    expect(evalValue(call)).toBe(false);
   });
 
   test('evalBoolean returns true for AND call with two true constants', () => {
@@ -512,7 +512,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns false for AND call with two false constants', () => {
@@ -525,7 +525,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(false);
+    expect(evalValue(call)).toBe(false);
   });
 
   test('evalBoolean returns false for AND call with one true and one false constant', () => {
@@ -538,7 +538,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(false);
+    expect(evalValue(call)).toBe(false);
   });
 
   test('evalBoolean returns true for AND call with three true constants', () => {
@@ -552,7 +552,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns false for AND call with two true and one false constants', () => {
@@ -566,7 +566,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(false);
+    expect(evalValue(call)).toBe(false);
   });
 
   test('evalBoolean returns true for OR call with two true constants', () => {
@@ -579,7 +579,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns false for OR call with two false constants', () => {
@@ -592,7 +592,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(false);
+    expect(evalValue(call)).toBe(false);
   });
 
   test('evalBoolean returns true for OR call with one true and one false constant', () => {
@@ -605,7 +605,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns true for OR call with three true constants', () => {
@@ -619,7 +619,7 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns true for OR call with two true and one false constants', () => {
@@ -633,19 +633,21 @@ describe('evalBoolean', () => {
       ]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns true for NOT call with false constant', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: NOT as typeof NOT,
-      arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: false }
-      ] as [BooleanType]
+    const value: BooleanType = {
+      type: VALUE_CONST,
+      value: false
+    };
+    const call: BooleanCallUnary = {
+      type: VALUE_CALL,
+      name: NOT,
+      arguments: [value]
     };
 
-    expect(evalBoolean(call)).toBe(true);
+    expect(evalValue(call)).toBe(true);
   });
 
   test('evalBoolean returns false for NOT call with true constant', () => {
@@ -657,7 +659,7 @@ describe('evalBoolean', () => {
       ]
     } as unknown as BooleanType;
 
-    expect(evalBoolean(call)).toBe(false);
+    expect(evalValue(call)).toBe(false);
   });
 
   test('evalBoolean throws error for NOT call with two or more constants', () => {
@@ -670,7 +672,7 @@ describe('evalBoolean', () => {
       ]
     } as unknown as BooleanType;
 
-    expect(() => evalBoolean(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 });
 
@@ -678,13 +680,13 @@ describe('evalNumber', () => {
   test('evalNumber return 1 for constant 1', () => {
     const number = { type: VALUE_CONST as typeof VALUE_CONST, value: 1 };
 
-    expect(evalNumber(number)).toBe(1);
+    expect(evalValue(number)).toBe(1);
   });
 
   test('evalNumber return 2 for constant 2', () => {
     const number = { type: VALUE_CONST as typeof VALUE_CONST, value: 2 };
 
-    expect(evalNumber(number)).toBe(2);
+    expect(evalValue(number)).toBe(2);
   });
 
   test('evalNumber return -1 for NEGATE call with constant 1', () => {
@@ -696,7 +698,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(-1);
+    expect(evalValue(call)).toBe(-1);
   });
 
   test('evalNumber return -2 for NEGATE call with constant 2', () => {
@@ -708,7 +710,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(-2);
+    expect(evalValue(call)).toBe(-2);
   });
 
   test('evalNumber return 1 for NEGATE call with constant -1', () => {
@@ -723,7 +725,7 @@ describe('evalNumber', () => {
       ] as [NumberType]
     };
 
-    expect(evalNumber(call)).toBe(1);
+    expect(evalValue(call)).toBe(1);
   });
 
   test('evalNumber throws error for NEGATE call with two or more constants', () => {
@@ -736,7 +738,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType]
     } as unknown as NumberType;
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber return 2 for + call with constant 1 and constant 1', () => {
@@ -749,7 +751,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(2);
+    expect(evalValue(call)).toBe(2);
   });
 
   test('evalNumber return 3 for + call with constant 1 and constant 2', () => {
@@ -762,7 +764,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(3);
+    expect(evalValue(call)).toBe(3);
   });
 
   test('evalNumber return 6 for + call with constant 1, constant 2 and constant 3', () => {
@@ -776,7 +778,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(6);
+    expect(evalValue(call)).toBe(6);
   });
 
   test('evalNumber throws error for + call with zero arguments', () => {
@@ -786,7 +788,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber return 0 for - call with constant 1 and constant 1', () => {
@@ -799,7 +801,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType]
     };
 
-    expect(evalNumber(call)).toBe(0);
+    expect(evalValue(call)).toBe(0);
   });
 
   test('evalNumber return 1 for - call with constant 2 and constant 1', () => {
@@ -812,7 +814,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType]
     };
 
-    expect(evalNumber(call)).toBe(1);
+    expect(evalValue(call)).toBe(1);
   });
 
   test('evalNumber throws error for - call with other than two arguments', () => {
@@ -826,7 +828,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType, NumberType]
     } as unknown as NumberType;
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber return 2 for * call with constant 1 and constant 2', () => {
@@ -839,7 +841,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(2);
+    expect(evalValue(call)).toBe(2);
   });
 
   test('evalNumber return 6 for * call with constant 2 and constant 3', () => {
@@ -852,7 +854,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(6);
+    expect(evalValue(call)).toBe(6);
   });
 
   test('evalNumber return 6 for * call with constant 1, constant 2 and constant 3', () => {
@@ -866,7 +868,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(6);
+    expect(evalValue(call)).toBe(6);
   });
 
   test('evalNumber throws error for * call with no arguments', () => {
@@ -876,7 +878,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber return 2 for / call with constant 4 and constant 2', () => {
@@ -889,7 +891,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType]
     };
 
-    expect(evalNumber(call)).toBe(2);
+    expect(evalValue(call)).toBe(2);
   });
 
   test('evalNumber return 2 for / call with constant 6 and constant 3', () => {
@@ -902,7 +904,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType]
     };
 
-    expect(evalNumber(call)).toBe(2);
+    expect(evalValue(call)).toBe(2);
   });
 
   test('evalNumber throws error for / call with zero arguments', () => {
@@ -912,7 +914,7 @@ describe('evalNumber', () => {
       arguments: []
     } as unknown as NumberType;
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber throws error for / call with one argument', () => {
@@ -922,7 +924,7 @@ describe('evalNumber', () => {
       arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 1 }]
     } as unknown as NumberType;
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber throws error for / call with more than two arguments', () => {
@@ -936,7 +938,7 @@ describe('evalNumber', () => {
       ]
     } as unknown as NumberType;
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber throws error for / call that divides by zero', () => {
@@ -949,7 +951,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType]
     };
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber return 1 for MIN call with constant 1 and constant 2', () => {
@@ -962,7 +964,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(1);
+    expect(evalValue(call)).toBe(1);
   });
 
   test('evalNumber return 1 for MIN call with constant 2 and constant 1', () => {
@@ -975,7 +977,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType]
     };
 
-    expect(evalNumber(call)).toBe(1);
+    expect(evalValue(call)).toBe(1);
   });
 
   test('evalNumber return 5 for MIN call with constant 5', () => {
@@ -985,7 +987,7 @@ describe('evalNumber', () => {
       arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 5 }]
     };
 
-    expect(evalNumber(call)).toBe(5);
+    expect(evalValue(call)).toBe(5);
   });
 
   test('evalNumber return min value for MIN call with more than two arguments', () => {
@@ -999,7 +1001,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType, NumberType]
     };
 
-    expect(evalNumber(call)).toBe(2);
+    expect(evalValue(call)).toBe(2);
   });
 
   test('evalNumber throws error for MIN call with no arguments', () => {
@@ -1009,7 +1011,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber return 2 for MAX call with constant 1 and constant 2', () => {
@@ -1022,7 +1024,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType]
     };
 
-    expect(evalNumber(call)).toBe(2);
+    expect(evalValue(call)).toBe(2);
   });
 
   test('evalNumber return 2 for MAX call with constant 2 and constant 1', () => {
@@ -1035,7 +1037,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType]
     };
 
-    expect(evalNumber(call)).toBe(2);
+    expect(evalValue(call)).toBe(2);
   });
 
   test('evalNumber return 5 for MAX call with constant 5', () => {
@@ -1047,7 +1049,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(5);
+    expect(evalValue(call)).toBe(5);
   });
 
   test('evalNumber return max value for MAX call with more than two arguments', () => {
@@ -1061,7 +1063,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(5);
+    expect(evalValue(call)).toBe(5);
   });
 
   test('evalNumber throws error for MAX call with no arguments', () => {
@@ -1071,7 +1073,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber return 1.5 for AVERAGE call with constant 1 and constant 2', () => {
@@ -1084,7 +1086,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBeCloseTo(1.5);
+    expect(evalValue(call)).toBeCloseTo(1.5);
   });
 
   test('evalNumber return 5 for AVERAGE call with constant 5', () => {
@@ -1094,7 +1096,7 @@ describe('evalNumber', () => {
       arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 5 }]
     };
 
-    expect(evalNumber(call)).toBe(5);
+    expect(evalValue(call)).toBe(5);
   });
 
   test('evalNumber throws error for AVERAGE call with no arguments', () => {
@@ -1104,7 +1106,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber return average value for AVERAGE call with more than two arguments', () => {
@@ -1118,7 +1120,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBeCloseTo(3.3333333333333335);
+    expect(evalValue(call)).toBeCloseTo(3.3333333333333335);
   });
 
   test('evalNumber return 0.5 for STDDEV call with constant 1 and constant 2', () => {
@@ -1131,7 +1133,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBeCloseTo(0.5);
+    expect(evalValue(call)).toBeCloseTo(0.5);
   });
 
   test('evalNumber return 0 for STDDEV call with constant 5', () => {
@@ -1141,7 +1143,7 @@ describe('evalNumber', () => {
       arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 5 }]
     };
 
-    expect(evalNumber(call)).toBe(0);
+    expect(evalValue(call)).toBe(0);
   });
 
   test('evalNumber throws error for STDDEV call with no arguments', () => {
@@ -1151,7 +1153,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber return standard deviation value for STDDEV call with more than two arguments', () => {
@@ -1165,7 +1167,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBeCloseTo(1.247219128924647);
+    expect(evalValue(call)).toBeCloseTo(1.247219128924647);
   });
 
   test('evalNumber return 1 for FIRST call with constant 1', () => {
@@ -1175,7 +1177,7 @@ describe('evalNumber', () => {
       arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 1 }]
     };
 
-    expect(evalNumber(call)).toBe(1);
+    expect(evalValue(call)).toBe(1);
   });
 
   test('evalNumber return 1 for FIRST call with constant 1 and constant 2', () => {
@@ -1188,7 +1190,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(1);
+    expect(evalValue(call)).toBe(1);
   });
 
   test('evalNumber return first value for FIRST call with more than two arguments', () => {
@@ -1202,7 +1204,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(5);
+    expect(evalValue(call)).toBe(5);
   });
 
   test('evalNumber throws error for FIRST call with no arguments', () => {
@@ -1212,7 +1214,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   test('evalNumber return 2 for LAST call with constant 1 and constant 2', () => {
@@ -1225,7 +1227,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(2);
+    expect(evalValue(call)).toBe(2);
   });
 
   test('evalNumber return 5 for LAST call with constant 5', () => {
@@ -1235,7 +1237,7 @@ describe('evalNumber', () => {
       arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 5 }]
     };
 
-    expect(evalNumber(call)).toBe(5);
+    expect(evalValue(call)).toBe(5);
   });
 
   test('evalNumber return last value for LAST call with more than two arguments', () => {
@@ -1249,7 +1251,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call)).toBe(3);
+    expect(evalValue(call)).toBe(3);
   });
 
   test('evalNumber throws error for LAST call with no arguments', () => {
@@ -1259,7 +1261,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalValue(call)).toThrow();
   });
 
   /*
@@ -1285,7 +1287,7 @@ describe('evalNumber', () => {
       }
     };
 
-    expect(evalNumber(call)).toBe(4500);
+    expect(evalValue(call)).toBe(4500);
   });
   */
 });
@@ -1585,7 +1587,7 @@ describe('data', () => {
       arguments: _arguments
     };
 
-    const result = evalNumber(call, context);
+    const result = evalValue(call, context);
 
     expect(result).toBe(404);
   });
@@ -1631,7 +1633,7 @@ describe('data', () => {
       arguments: _arguments
     };
 
-    const result = evalNumber(call, context);
+    const result = evalValue(call, context);
 
     expect(result).toBe(40 + 20);
   });

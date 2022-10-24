@@ -63,7 +63,8 @@ export function isBooleanCall(call: ValueCall): call is BooleanCall {
   return (
     OPS_COMP_N_BOOLEANS.includes(call.name as any) ||
     OPS_COMP_N_NUMBERS.includes(call.name as any) ||
-    OPS_COMP_N_VALUES.includes(call.name as any)
+    OPS_COMP_N_VALUES.includes(call.name as any) ||
+    call.name == NOT
   );
 }
 
