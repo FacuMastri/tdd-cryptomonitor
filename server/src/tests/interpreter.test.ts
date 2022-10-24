@@ -38,7 +38,9 @@ import {
   Action,
   ACTION_SET,
   ACTION_BUY,
-  ActionBuyMarket
+  ActionBuyMarket,
+  ACTION_SELL,
+  ActionSellMarket
 } from '../interpreter/types/action';
 import { Value } from '../interpreter/types/value';
 import { Context } from 'vm';
@@ -1243,125 +1245,174 @@ test('evalValue return value for CALL value', () => {
   expect(evalValue(call)).toBe(3);
 });
 
-test('evalAction sets variable value for SET_VARIABLE action', () => {
-  const action: Action = {
-    type: ACTION_SET,
-    name: 'a',
-    value: {
-      type: VALUE_CONST as typeof VALUE_CONST,
-      value: 123
-    }
-  };
+describe('evalAction', () => {
+  test('evalAction sets variable value for SET_VARIABLE action', () => {
+    const action: Action = {
+      type: ACTION_SET,
+      name: 'a',
+      value: {
+        type: VALUE_CONST as typeof VALUE_CONST,
+        value: 123
+      }
+    };
 
-  const context = { a: 0 };
+    const context = { a: 0 };
 
-  evalAction(action, context);
+    evalAction(action, context);
 
-  expect(context?.a).toBe(123);
-});
+    expect(context?.a).toBe(123);
+  });
 
-test('evalAction sets variable value even if variable is not defined', () => {
-  const action: Action = {
-    type: ACTION_SET,
-    name: 'b',
-    value: {
-      type: VALUE_CONST as typeof VALUE_CONST,
-      value: 123
-    }
-  };
+  test('evalAction sets variable value even if variable is not defined', () => {
+    const action: Action = {
+      type: ACTION_SET,
+      name: 'b',
+      value: {
+        type: VALUE_CONST as typeof VALUE_CONST,
+        value: 123
+      }
+    };
 
-  const context = evalAction(action, { a: 0 });
+    const context = evalAction(action, { a: 0 });
 
-  expect(context?.b).toBe(123);
-});
+    expect(context?.b).toBe(123);
+  });
 
-test('evalAction buys stock for BUY_MARKET action', () => {
-  const action: ActionBuyMarket = {
-    type: ACTION_BUY,
-    symbol: 'BTC',
-    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 100 }
-  };
+  test('evalAction buys stock for BUY_MARKET action', () => {
+    const action: ActionBuyMarket = {
+      type: ACTION_BUY,
+      symbol: 'BTC',
+      amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 100 }
+    };
 
-  const btcWallet: ValueWallet = {
-    type: 'WALLET',
-    symbol: 'BTC',
-    amount: 1000
-  };
-  const context: Context = {
-    wallets: [btcWallet]
-  };
+    const btcWallet: ValueWallet = {
+      type: 'WALLET',
+      symbol: 'BTC',
+      amount: 1000
+    };
+    const context: Context = {
+      wallets: [btcWallet]
+    };
 
-  evalAction(action, context);
+    evalAction(action, context);
 
-  const ctxBtcWallet = context.wallets.find(
-    (w: ValueWallet) => w.symbol === 'BTC'
-  );
+    const ctxBtcWallet = context.wallets.find(
+      (w: ValueWallet) => w.symbol === 'BTC'
+    );
 
-  expect(ctxBtcWallet.amount).toBe(1100);
-});
+    expect(ctxBtcWallet.amount).toBe(1100);
+  });
 
-test('evalAction throws error for BUY_MARKET action with negative amount', () => {
-  const action: ActionBuyMarket = {
-    type: ACTION_BUY,
-    symbol: 'BTC',
-    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: -100 }
-  };
+  test('evalAction throws error for BUY_MARKET action with negative amount', () => {
+    const action: ActionBuyMarket = {
+      type: ACTION_BUY,
+      symbol: 'BTC',
+      amount: { type: VALUE_CONST as typeof VALUE_CONST, value: -100 }
+    };
 
-  expect(() => evalAction(action, {})).toThrow();
+    expect(() => evalAction(action, {})).toThrow();
+  });
+
+  test('evalAction sells stock for SELL_MARKET action', () => {
+    const action: ActionSellMarket = {
+      type: ACTION_SELL,
+      symbol: 'BTC',
+      amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 100 }
+    };
+
+    const btcWallet: ValueWallet = {
+      type: 'WALLET',
+      symbol: 'BTC',
+      amount: 1000
+    };
+    const context: Context = {
+      wallets: [btcWallet]
+    };
+    evalAction(action, context);
+
+    const ctxBtcWallet = context.wallets.find(
+      (w: ValueWallet) => w.symbol === 'BTC'
+    );
+
+    expect(ctxBtcWallet.amount).toBe(900);
+  });
+
+  test('evalAction throws error for SELL_MARKET action with negative amount', () => {
+    const action: ActionSellMarket = {
+      type: ACTION_SELL,
+      symbol: 'BTC',
+      amount: { type: VALUE_CONST as typeof VALUE_CONST, value: -100 }
+    };
+
+    const btcWallet: ValueWallet = {
+      type: 'WALLET',
+      symbol: 'BTC',
+      amount: 1000
+    };
+    const context: Context = {
+      wallets: [btcWallet]
+    };
+
+    expect(() => evalAction(action, context)).toThrow();
+  });
+
+  test('evalAction throws error for SELL_MARKET action with amount greater than owned', () => {
+    const action: ActionSellMarket = {
+      type: ACTION_SELL,
+      symbol: 'BTC',
+      amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 1000 }
+    };
+
+    const btcWallet: ValueWallet = {
+      type: 'WALLET',
+      symbol: 'BTC',
+      amount: 100
+    };
+    const context: Context = {
+      wallets: [btcWallet]
+    };
+
+    expect(() => evalAction(action, context)).toThrow();
+  });
+
+  test('evalAction throws error for SELL_MARKET action with no stock owned', () => {
+    const action: ActionSellMarket = {
+      type: ACTION_SELL,
+      symbol: 'BTC',
+      amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
+    };
+
+    const btcWallet: ValueWallet = {
+      type: 'WALLET',
+      symbol: 'BTC',
+      amount: 0
+    };
+    const context: Context = {
+      wallets: [btcWallet]
+    };
+
+    expect(() => evalAction(action, context)).toThrow();
+  });
+
+  test('evalAction throws error for SELL_MARKET action with unknown coin', () => {
+    const action: ActionSellMarket = {
+      type: ACTION_SELL,
+      symbol: 'BTC',
+      amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 1000 }
+    };
+
+    const context: Context = {
+      wallets: []
+    };
+
+    expect(() => evalAction(action, context)).toThrow();
+  });
 });
 
 /*
-test('evalAction sells stock for SELL_MARKET action', () => {
-  const action = {
-    type: 'SELL_MARKET',
-    symbol: 'BTC',
-    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 5 }
-  };
 
-  const context = evalAction(action, { wallets: { BTC: 10 } });
 
-  expect(context.wallets['BTC']).toBe(5);
-});
 
-test('evalAction throws error for SELL_MARKET action with negative amount', () => {
-  const action = {
-    type: 'SELL_MARKET',
-    symbol: 'BTC',
-    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: -5 }
-  };
-
-  expect(() => evalAction(action, { wallets: { BTC: 10 } })).toThrow();
-});
-
-test('evalAction throws error for SELL_MARKET action with amount greater than owned', () => {
-  const action = {
-    type: 'SELL_MARKET',
-    symbol: 'BTC',
-    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 15 }
-  };
-
-  expect(() => evalAction(action, { wallets: { BTC: 10 } })).toThrow();
-});
-
-test('evalAction throws error for SELL_MARKET action with no stock owned', () => {
-  const action = {
-    type: 'SELL_MARKET',
-    symbol: 'BTC',
-    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 5 }
-  };
-
-  expect(() => evalAction(action, { wallets: { BTC: 0 } })).toThrow();
-});
-
-test('evalAction throws error for SELL_MARKET action with unknown coin', () => {
-  const action = {
-    type: 'SELL_MARKET',
-    symbol: 'BTC',
-    amount: { type: VALUE_CONST as typeof VALUE_CONST, value: 5 }
-  };
-
-  expect(() => evalAction(action, { wallets: {} })).toThrow();
-});
 
 test('evalRule executes action if condition is true', () => {
   const rule = {

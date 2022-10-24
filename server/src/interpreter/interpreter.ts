@@ -226,11 +226,9 @@ export function evalAction(action: Action, context: Context): Context {
       context[action.name] = evalValue(action.value);
       break;
     case ACTION_BUY:
-      evalBuyMarket(action, context);
-      break;
+      return evalBuyMarket(action, context);
     case ACTION_SELL:
-      //evalSellMarket(action, context);
-      break;
+      return evalSellMarket(action, context);
     default:
       throw new Error('Unknown action type: ' + action);
   }
@@ -258,20 +256,24 @@ function evalBuyMarket(action: ActionBuyMarket, context: Context): Context {
   console.log('context', context);
   return context;
 }
-/*
-function evalSellMarket(action: ActionSellMarket, context: Context): ValueOutput {
+
+function evalSellMarket(action: ActionSellMarket, context: Context): Context {
   const amount = evalValue(action.amount);
   if (typeof amount !== 'number') throw new Error('Amount must be a number');
-  if (!(action.symbol in context.wallets)) throw new Error('Cannot sell symbol that is not in wallet');
+  if (amount < 0) throw new Error('Cannot sell negative amount');
 
-  const total_owned = context.wallets[action.symbol];
-  if (total_owned < amount) {
-    throw new Error('Insufficient funds');
-  }
-  context.wallets[action.symbol] -= amount;
+  const wallets = context.wallets as unknown as ValueWallet[];
+
+  const wallet = wallets.find((wallet) => wallet.symbol === action.symbol);
+  if (!wallet) throw new Error('No wallet for symbol: ' + action.symbol);
+
+  if (wallet.amount < amount) throw new Error('Not enough funds in wallet');
+
+  wallet.amount -= amount;
+
   return context;
 }
-
+/*
 export function evalRule(rule: Rule, context: Context): Context {
   if (evalBoolean(rule.condition)) {
     return rule.action.reduce(
