@@ -40,6 +40,16 @@ export interface NumberData {
   default?: NumberType | NumberType[];
 }
 
+export interface WalletDef {
+  type: 'WALLET';
+  symbol: string;
+}
+
+export interface NumberVariable {
+  type: 'VARIABLE';
+  name: string;
+}
+
 export interface ContextDatum {
   value: number;
   timestamp: number;
@@ -56,4 +66,8 @@ export function isNumberCallMany(call: ValueCall): call is NumberCallMany {
 }
 
 export type NumberCall = NumberCallBinary | NumberCallMany | NumberCallUnary;
-export type NumberType = NumberConstant | NumberCall;
+export type NumberType =
+  | NumberConstant
+  | NumberCall
+  | WalletDef
+  | NumberVariable;

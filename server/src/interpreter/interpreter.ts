@@ -24,7 +24,6 @@ import {
   VALUE_VAR,
   VALUE_WALLET,
   ValueCall,
-  ValueConstant,
   ValueOutput,
   ValueVariable,
   ValueWallet
@@ -62,7 +61,8 @@ import {
   NumberCallMany,
   NumberData,
   NumberType,
-  NUMBER_DATA
+  NUMBER_DATA,
+  WalletDef
 } from './types/number';
 import { BooleanCall, BooleanType } from './types/boolean';
 import {
@@ -74,45 +74,56 @@ import {
   ActionSellMarket,
   ActionSetVariable
 } from './types/action';
-import { Rule } from './types/rule';
-
-type ContextValue = ValueOutput | ValueOutput[] | ContextData;
-type Context = Record<string, ContextValue>;
+import { Rule, Rules } from './types/rule';
+import { Context } from './types/context';
 
 const CONTEXT_RESERVED = ['wallets', 'data'];
 
 export const STORAGE: Context = { zero: 0, wallets: [], data: {} };
 
-export function evalBoolean(boolean: BooleanType): boolean {
+export function evalBoolean(boolean: BooleanType, context?: Context): boolean {
   switch (boolean.type) {
     case VALUE_CONST:
       return boolean.value;
     case VALUE_CALL:
-      return evalBooleanCall(boolean);
+      return evalBooleanCall(boolean, context);
   }
 }
 
-function evalBooleanCall(call: BooleanCall): boolean {
+function evalBooleanCall(call: BooleanCall, context?: Context): boolean {
   switch (call.name) {
     case EQUAL:
-      return evalEqual(call.arguments);
+      return evalEqual(call.arguments, context);
     case DISTINCT:
-      return evalDistinct(call.arguments);
+      return evalDistinct(call.arguments, context);
     case LESS:
-      return evalLessThan(call.arguments);
+      return evalLessThan(call.arguments, context);
     case LESS_EQUAL:
-      return evalLessThanEqual(call.arguments);
+      return evalLessThanEqual(call.arguments, context);
     case GREATER:
-      return evalLessThan(call.arguments.reverse());
+      return evalLessThan(call.arguments.reverse(), context);
     case GREATER_EQUAL:
-      return evalLessThanEqual(call.arguments.reverse());
+      return evalLessThanEqual(call.arguments.reverse(), context);
     case AND:
-      return call.arguments.every((arg) => evalBoolean(arg));
+      return call.arguments.every((arg) => evalBoolean(arg, context));
     case OR:
-      return call.arguments.some((arg) => evalBoolean(arg));
+      return call.arguments.some((arg) => evalBoolean(arg, context));
     case NOT:
       return evalNot(call.arguments);
   }
+}
+
+export function evalNumberVar(
+  number: ValueVariable,
+  context?: Context
+): number {
+  const value = context && context[number.name];
+  if (value === undefined)
+    throw new Error('Variable not found: ' + number.name);
+
+  if (typeof value === 'number') return value;
+
+  throw new Error('Variable is not a number: ' + number.name);
 }
 
 export function evalNumber(number: NumberType, context?: Context): number {
@@ -121,6 +132,10 @@ export function evalNumber(number: NumberType, context?: Context): number {
       return number.value;
     case VALUE_CALL:
       return evalNumberCall(number, context);
+    case VALUE_VAR:
+      return evalNumberVar(number, context);
+    case VALUE_WALLET:
+      return 0;
   }
 }
 
@@ -233,24 +248,44 @@ function evalNumberCall(call: NumberCall, context?: Context): number {
   }
 }
 
+function evalWallet(
+  wallet: WalletDef | ValueWallet,
+  context?: Context
+): number {
+  const valueWallet = wallet as ValueWallet;
+  if (valueWallet.amount !== undefined) return valueWallet.amount;
+
+  const _wallet = wallet as WalletDef;
+  if (!context || !context.wallets) throw new Error('No wallets in context');
+  const wallets = context.wallets as ValueWallet[];
+
+  const resWallet = wallets.find((w) => w.symbol == _wallet.symbol);
+  if (!resWallet) throw new Error('Wallet not found: ' + _wallet.symbol);
+
+  return resWallet.amount;
+}
+
 export function evalValue(value: Value, context?: Context): ValueOutput {
   switch (value.type) {
     case VALUE_CONST:
       return value.value;
     case VALUE_VAR:
-      return evalVariable(value);
+      return evalVariable(value, context);
     case VALUE_CALL:
       return evalCall(value, context);
     case VALUE_WALLET:
-      return value.amount;
+      return evalWallet(value, context);
     default:
       throw new Error('Unknown value type: ' + value);
   }
 }
 
-function evalVariable(variable: ValueVariable): ValueOutput {
-  if (variable.name in STORAGE) {
-    return STORAGE[variable.name] as ValueOutput;
+function evalVariable(
+  variable: ValueVariable,
+  context: Context = {}
+): ValueOutput {
+  if (variable.name in context) {
+    return context[variable.name] as ValueOutput;
   } else {
     throw new Error('Undefined variable: ' + variable.name);
   }
@@ -258,7 +293,7 @@ function evalVariable(variable: ValueVariable): ValueOutput {
 
 function evalCall(call: ValueCall, context?: Context): ValueOutput {
   if (isBooleanCall(call)) {
-    return evalBooleanCall(call);
+    return evalBooleanCall(call, context);
   } else if (isNumberCall(call)) {
     return evalNumberCall(call, context);
   }
@@ -293,7 +328,7 @@ function evalBuyMarket(action: ActionBuyMarket, context: Context): Context {
   if (amount < 0) throw new Error('Cannot buy negative amount');
 
   if (!context.wallets) context.wallets = [];
-  const wallets = context.wallets as unknown as ValueWallet[];
+  const wallets = context.wallets as ValueWallet[];
 
   const wallet = wallets.find((wallet) => wallet.symbol === action.symbol);
   if (!wallet) {
@@ -326,8 +361,17 @@ function evalSellMarket(action: ActionSellMarket, context: Context): Context {
 }
 
 export function evalRule(rule: Rule, context: Context): Context {
-  if (evalBoolean(rule.condition))
+  if (evalBoolean(rule.condition, context))
     rule.actions.forEach((action) => evalAction(action, context));
 
+  return context;
+}
+
+export function evalRules(rules: Rules, context: Context): Context {
+  for (const name of rules.requiredVariables)
+    if (!(name in context))
+      throw new Error('Required variable not set: ' + name);
+
+  rules.rules.forEach((rule) => evalRule(rule, context));
   return context;
 }
