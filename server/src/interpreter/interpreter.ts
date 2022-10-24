@@ -67,6 +67,7 @@ type Context = Record<string, ValueOutput>;
 
 export const STORAGE: Context = { a: 123 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function mockGetData(symbol: string, since: number, until: number): number[] {
   return [];
 }
