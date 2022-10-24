@@ -1,4 +1,9 @@
-import { evalBoolean, evalNumber, evalValue } from '../interpreter/interpreter';
+import {
+  evalBoolean,
+  evalNumber,
+  evalValue,
+  evalAction
+} from '../interpreter/interpreter';
 import { VALUE_CALL, VALUE_CONST, VALUE_VAR } from '../interpreter/types/value';
 import { NumberType } from '../interpreter/types/number';
 import {
@@ -24,6 +29,8 @@ import {
   STDDEV
 } from '../interpreter/types/calls';
 import { BooleanType } from '../interpreter/types/boolean';
+import { Action, ACTION_SET } from '../interpreter/types/action';
+import { Value } from '../interpreter/types/value';
 
 test('evalBoolean returns true for constant true', () => {
   const boolean = { type: VALUE_CONST as typeof VALUE_CONST, value: true };
@@ -1188,10 +1195,10 @@ test('evalNumber throws error for LAST call with no arguments', () => {
 test('evalValue return variable value for VARIABLE value', () => {
   const variable = {
     type: VALUE_VAR as typeof VALUE_VAR,
-    name: 'a'
+    name: 'zero'
   };
 
-  expect(evalValue(variable)).toBe(123);
+  expect(evalValue(variable)).toBe(0);
 });
 
 test('evalValue throws error for VARIABLE value with undefined variable', () => {
@@ -1225,31 +1232,41 @@ test('evalValue return value for CALL value', () => {
   expect(evalValue(call)).toBe(3);
 });
 
-/*
 test('evalAction sets variable value for SET_VARIABLE action', () => {
-  const action = {
-    type: 'SET_VARIABLE',
-    name: typeof 'a',
-    value: { type: VALUE_CONST as typeof VALUE_CONST, value: 456 }
+  const action: Action = {
+    type: ACTION_SET,
+    name: 'a',
+    value: {
+      type: VALUE_CONST as typeof VALUE_CONST,
+      value: 123
+    }
   };
 
-  const context = evalAction(action, { a: 123 });
+  const context = { a: 0 };
 
-  expect(context.a).toBe(456);
+  evalAction(action, context);
+
+  expect(context?.a).toBe(123);
 });
 
 test('evalAction sets variable value even if variable is not defined', () => {
-  const action = {
-    type: 'SET_VARIABLE',
-    name: typeof 'b',
-    value: { type: VALUE_CONST as typeof VALUE_CONST, value: 1000 }
+  const action: Action = {
+    type: ACTION_SET,
+    name: 'b',
+    value: {
+      type: VALUE_CONST as typeof VALUE_CONST,
+      value: 123
+    }
   };
 
-  const context = evalAction(action, { a: 123 });
+  const context: Record<string, number> = { a: 0 };
 
-  expect(context.b).toBe(1000);
+  evalAction(action, context);
+
+  expect(context?.b).toBe(123);
 });
 
+/*
 test('evalAction buys stock for BUY_MARKET action', () => {
   const action = {
     type: 'BUY_MARKET',

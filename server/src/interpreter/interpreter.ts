@@ -62,10 +62,11 @@ import {
   NumberType
 } from './types/number';
 import { BooleanCall, BooleanType } from './types/boolean';
+import { Action, ACTION_SET, ACTION_SELL, ACTION_BUY } from './types/action';
 
 type Context = Record<string, ValueOutput>;
 
-export const STORAGE: Context = { a: 123 };
+export const STORAGE: Context = { zero: 0 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function mockGetData(symbol: string, since: number, until: number): number[] {
@@ -180,12 +181,6 @@ function evalNumberCall(call: NumberCall): number {
   }
 }
 
-export function evalValue(value: BooleanType): boolean;
-export function evalValue(value: NumberType): number;
-export function evalValue(
-  value: ValueVariable | ValueWallet | ValueConstant
-): ValueOutput;
-export function evalValue(value: Value): ValueOutput;
 export function evalValue(value: Value): ValueOutput {
   switch (value.type) {
     case VALUE_CONST:
@@ -218,21 +213,26 @@ function evalCall(call: ValueCall): ValueOutput {
   throw new Error('Unknown call name: ' + call);
 }
 
-/*
-export function evalAction(action: Action, context: Context): ValueOutput {
+export function evalAction(
+  action: Action,
+  context: Context
+): ValueOutput | undefined {
   switch (action.type) {
     case ACTION_SET:
       context[action.name] = evalValue(action.value);
-      return context;
+      return;
     case ACTION_BUY:
-      return evalBuyMarket(action, context);
+      //return evalBuyMarket(action, context);
+      return;
     case ACTION_SELL:
-      return evalSellMarket(action, context);
+      //return evalSellMarket(action, context);
+      return;
     default:
       throw new Error('Unknown action type: ' + action);
   }
 }
 
+/*
 function evalBuyMarket(action: ActionBuyMarket, context: Context): ValueOutput {
   const amount = evalValue(action.amount);
   if (typeof amount !== 'number') throw new Error('Amount must be a number');
