@@ -4,7 +4,8 @@ import {
   evalValue,
   evalAction,
   evalRule,
-  loadDatum
+  loadDatum,
+  STORAGE
 } from '../interpreter/interpreter';
 import {
   ValueWallet,
@@ -225,7 +226,9 @@ describe('evalValue', () => {
       name: 'zero'
     };
 
-    expect(evalValue(variable)).toBe(0);
+    const context = STORAGE;
+
+    expect(evalValue(variable, context)).toBe(0);
   });
 
   test('evalValue throws error for VARIABLE value with undefined variable', () => {
