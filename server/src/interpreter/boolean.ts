@@ -1,15 +1,17 @@
 import { evalBoolean, evalValue } from './interpreter';
+import { Value } from './types/value';
+import { BooleanType } from './types/boolean';
 
-export function evalEqual(args: any[]): boolean {
+export function evalEqual(args: Value[]): boolean {
   return args.every((arg) => evalValue(arg) == evalValue(args[0]));
 }
 
-export function evalDistinct(args: any[]): boolean {
-  let set = new Set(args.map((arg) => evalValue(arg)));
+export function evalDistinct(args: Value[]): boolean {
+  const set = new Set(args.map((arg) => evalValue(arg)));
   return set.size == args.length;
 }
 
-export function evalLessThan(args: any[]): boolean {
+export function evalLessThan(args: Value[]): boolean {
   return args.every((arg, index) => {
     if (index == 0) {
       return true;
@@ -19,7 +21,7 @@ export function evalLessThan(args: any[]): boolean {
   });
 }
 
-export function evalLessThanEqual(args: any[]): boolean {
+export function evalLessThanEqual(args: Value[]): boolean {
   return args.every((arg, index) => {
     if (index == 0) {
       return true;
@@ -29,7 +31,7 @@ export function evalLessThanEqual(args: any[]): boolean {
   });
 }
 
-export function evalNot(args: any[]): boolean {
+export function evalNot(args: BooleanType[]): boolean {
   if (args.length != 1) {
     throw new Error('NOT takes exactly one argument');
   } else {
