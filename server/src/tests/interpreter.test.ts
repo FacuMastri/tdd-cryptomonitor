@@ -2,7 +2,8 @@ import {
   evalBoolean,
   evalNumber,
   evalValue,
-  evalAction
+  evalAction,
+  evalRule
 } from '../interpreter/interpreter';
 import {
   ValueWallet,
@@ -42,8 +43,8 @@ import {
   ACTION_SELL,
   ActionSellMarket
 } from '../interpreter/types/action';
-import { Value } from '../interpreter/types/value';
 import { Context } from 'vm';
+import { Rule } from '../interpreter/types/rule';
 
 //describe('text', () => {});
 describe('evalValue', () => {
@@ -1250,6 +1251,33 @@ describe('evalNumber', () => {
 
     expect(() => evalNumber(call)).toThrow();
   });
+
+  /*
+  test('evalNumber with CALL of N arguments works with default DATA', () => {
+    const call = {
+      type: VALUE_CALL as typeof VALUE_CALL,
+      name: PLUS as typeof PLUS,
+      arguments: {
+        type: typeof NUMBER_DATA,
+        symbol: 'BTC/USDT',
+        since: 3600,
+        until: 0,
+        default: [
+          {
+            type: VALUE_CONST as typeof VALUE_CONST,
+            value: 1500
+          },
+          {
+            type: VALUE_CONST as typeof VALUE_CONST,
+            value: 3000
+          }
+        ]
+      }
+    };
+
+    expect(evalNumber(call)).toBe(4500);
+  });
+  */
 });
 
 describe('evalAction', () => {
@@ -1416,94 +1444,97 @@ describe('evalAction', () => {
   });
 });
 
-/*
-
-
-
-
-test('evalRule executes action if condition is true', () => {
-  const rule = {
-    condition: { type: VALUE_CONST as typeof VALUE_CONST, value: true },
-    action: [
-      {
-        type: 'SET_VARIABLE',
-        name: typeof 'a',
-        value: { type: VALUE_CONST as typeof VALUE_CONST, value: 456 }
-      }
-    ]
-  };
-
-  const context = evalRule(rule, { a: 123 });
-
-  expect(context.a).toBe(456);
-});
-
-test('evalRule does not execute action if condition is false', () => {
-  const rule = {
-    condition: { type: VALUE_CONST as typeof VALUE_CONST, value: false },
-    action: [
-      {
-        type: 'SET_VARIABLE',
-        name: typeof 'a',
-        value: { type: VALUE_CONST as typeof VALUE_CONST, value: 456 }
-      }
-    ]
-  };
-
-  const context = evalRule(rule, { a: 123 });
-
-  expect(context.a).toBe(123);
-});
-
-test('evalRule executes all rules', () => {
-  const rule = {
-    name: typeof 'test_rule',
-    condition: {
-      type: VALUE_CONST as typeof VALUE_CONST,
+describe('evalRule', () => {
+  test('evalRule executes action if condition is true', () => {
+    const condition: BooleanType = {
+      type: VALUE_CONST,
       value: true
-    },
-    action: [
-      {
-        type: 'SET_VARIABLE',
-        name: typeof 'a',
-        value: { type: VALUE_CONST as typeof VALUE_CONST, value: 888 }
-      },
-      {
-        type: 'SET_VARIABLE',
-        name: typeof 'b',
-        value: { type: VALUE_CONST as typeof VALUE_CONST, value: 555 }
+    };
+
+    const action: Action = {
+      type: ACTION_SET,
+      name: 'a',
+      value: {
+        type: VALUE_CONST as typeof VALUE_CONST,
+        value: 123
       }
-    ]
-  };
+    };
 
-  const context = evalRule(rule, { a: 123, b: 0 });
+    const rule: Rule = {
+      name: 'test',
+      condition,
+      actions: [action]
+    };
 
-  expect(context.a).toBe(888);
-  expect(context.b).toBe(555);
+    const context = { a: 0 };
+
+    evalRule(rule, context);
+
+    expect(context.a).toBe(123);
+  });
+  test('evalRule does not execute action if condition is false', () => {
+    const condition: BooleanType = {
+      type: VALUE_CONST,
+      value: false
+    };
+
+    const action: Action = {
+      type: ACTION_SET,
+      name: 'a',
+      value: {
+        type: VALUE_CONST as typeof VALUE_CONST,
+        value: 123
+      }
+    };
+
+    const rule: Rule = {
+      name: 'test',
+      condition,
+      actions: [action]
+    };
+
+    const context = { a: 0 };
+
+    evalRule(rule, context);
+
+    expect(context.a).toBe(0);
+  });
+
+  test('evalRule executes all rules', () => {
+    const condition: BooleanType = {
+      type: VALUE_CONST,
+      value: true
+    };
+
+    const action_a: Action = {
+      type: ACTION_SET,
+      name: 'a',
+      value: {
+        type: VALUE_CONST,
+        value: 101
+      }
+    };
+
+    const action_b: Action = {
+      type: ACTION_SET,
+      name: 'b',
+      value: {
+        type: VALUE_CONST,
+        value: 102
+      }
+    };
+
+    const rule: Rule = {
+      name: 'test',
+      condition,
+      actions: [action_a, action_b]
+    };
+
+    const context: Context = { a: 0 };
+
+    evalRule(rule, context);
+
+    expect(context.a).toBe(101);
+    expect(context.b).toBe(102);
+  });
 });
-
-test('evalNumber with CALL of N arguments works with default DATA', () => {
-  const call = {
-    type: VALUE_CALL as typeof VALUE_CALL,
-    name: PLUS as typeof PLUS,
-    arguments: {
-      type: typeof NUMBER_DATA,
-      symbol: 'BTC/USDT',
-      since: 3600,
-      until: 0,
-      default: [
-        {
-          type: VALUE_CONST as typeof VALUE_CONST,
-          value: 1500
-        },
-        {
-          type: VALUE_CONST as typeof VALUE_CONST,
-          value: 3000
-        }
-      ]
-    }
-  };
-
-  expect(evalNumber(call)).toBe(4500);
-});
-*/

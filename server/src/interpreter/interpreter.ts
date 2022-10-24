@@ -68,12 +68,16 @@ import {
   ACTION_BUY,
   ActionBuyMarket,
   ACTION_SELL,
-  ActionSellMarket
+  ActionSellMarket,
+  ActionSetVariable
 } from './types/action';
+import { Rule } from './types/rule';
 
 type Context = Record<string, ValueOutput | ValueOutput[]>;
 
-export const STORAGE: Context = { zero: 0 };
+const CONTEXT_RESERVED = ['wallets'];
+
+export const STORAGE: Context = { zero: 0, wallets: [] };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function mockGetData(symbol: string, since: number, until: number): number[] {
@@ -122,6 +126,7 @@ export function evalNumber(number: NumberType): number {
 }
 
 function getData(dataInfo: NumberData): NumberType[] {
+  // TODO
   const data = mockGetData(dataInfo.symbol, dataInfo.since, dataInfo.until);
   if (data.length == 0) {
     if (dataInfo.default) {
@@ -197,7 +202,7 @@ export function evalValue(value: Value): ValueOutput {
     case VALUE_CALL:
       return evalCall(value);
     case VALUE_WALLET:
-      throw new Error('TODO');
+      return value.amount;
     default:
       throw new Error('Unknown value type: ' + value);
   }
@@ -223,8 +228,7 @@ function evalCall(call: ValueCall): ValueOutput {
 export function evalAction(action: Action, context: Context): Context {
   switch (action.type) {
     case ACTION_SET:
-      context[action.name] = evalValue(action.value);
-      break;
+      return evalSetVariable(action, context);
     case ACTION_BUY:
       return evalBuyMarket(action, context);
     case ACTION_SELL:
@@ -232,6 +236,14 @@ export function evalAction(action: Action, context: Context): Context {
     default:
       throw new Error('Unknown action type: ' + action);
   }
+  return context;
+}
+
+function evalSetVariable(action: ActionSetVariable, context: Context): Context {
+  if (CONTEXT_RESERVED.includes(action.name))
+    throw new Error('Reserved variable name: ' + action.name);
+
+  context[action.name] = evalValue(action.value);
   return context;
 }
 
@@ -253,7 +265,6 @@ function evalBuyMarket(action: ActionBuyMarket, context: Context): Context {
   } else {
     wallet.amount += amount;
   }
-  console.log('context', context);
   return context;
 }
 
@@ -273,15 +284,10 @@ function evalSellMarket(action: ActionSellMarket, context: Context): Context {
 
   return context;
 }
-/*
+
 export function evalRule(rule: Rule, context: Context): Context {
-  if (evalBoolean(rule.condition)) {
-    return rule.action.reduce(
-      (context: Context, action: Action) => evalAction(action, context),
-      context
-    );
-  } else {
-    return context;
-  }
+  if (evalBoolean(rule.condition))
+    rule.actions.forEach((action) => evalAction(action, context));
+
+  return context;
 }
-*/
