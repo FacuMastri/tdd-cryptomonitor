@@ -1,5 +1,9 @@
-import { VALUE_CALL, VALUE_CONST } from '../../interpreter/types/value';
-import { evalValue } from '../../interpreter/interpreter';
+import {
+  VALUE_CALL,
+  VALUE_CONST,
+  VALUE_VAR
+} from '../../interpreter/types/value';
+import { evalNumber, evalValue } from '../../interpreter/interpreter';
 import {
   AVERAGE,
   DIVIDE,
@@ -629,4 +633,106 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(4500);
   });
   */
+
+  test('evalNumber calculates maximum between the stddev of {-1, -2, -3} and the sum of squares of three variables', () => {
+    const call = {
+      type: VALUE_CALL as typeof VALUE_CALL,
+      name: MAX as typeof MAX,
+      arguments: [
+        {
+          type: VALUE_CALL as typeof VALUE_CALL,
+          name: STDDEV as typeof STDDEV,
+          arguments: [
+            {
+              type: VALUE_CALL as typeof VALUE_CALL,
+              name: NEGATE as typeof NEGATE,
+              arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 1 }]
+            },
+            {
+              type: VALUE_CALL as typeof VALUE_CALL,
+              name: NEGATE as typeof NEGATE,
+              arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 2 }]
+            },
+            {
+              type: VALUE_CALL as typeof VALUE_CALL,
+              name: NEGATE as typeof NEGATE,
+              arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 3 }]
+            }
+          ]
+        },
+        {
+          type: VALUE_CALL as typeof VALUE_CALL,
+          name: PLUS as typeof PLUS,
+          arguments: [
+            {
+              type: VALUE_CALL as typeof VALUE_CALL,
+              name: MULTIPLY as typeof MULTIPLY,
+              arguments: [
+                { type: VALUE_VAR as typeof VALUE_VAR, name: 'var1' },
+                { type: VALUE_VAR as typeof VALUE_VAR, name: 'var1' }
+              ] as [NumberType, NumberType]
+            },
+            {
+              type: VALUE_CALL as typeof VALUE_CALL,
+              name: MULTIPLY as typeof MULTIPLY,
+              arguments: [
+                { type: VALUE_VAR as typeof VALUE_VAR, name: 'var2' },
+                { type: VALUE_VAR as typeof VALUE_VAR, name: 'var2' }
+              ] as [NumberType, NumberType]
+            },
+            {
+              type: VALUE_CALL as typeof VALUE_CALL,
+              name: MULTIPLY as typeof MULTIPLY,
+              arguments: [
+                { type: VALUE_VAR as typeof VALUE_VAR, name: 'var3' },
+                { type: VALUE_VAR as typeof VALUE_VAR, name: 'var3' }
+              ] as [NumberType, NumberType]
+            }
+          ] as [NumberType, NumberType, NumberType]
+        }
+      ] as [NumberType, NumberType]
+    };
+
+    expect(evalNumber(call, { var1: 5, var2: 8, var3: 3 })).toBe(98);
+  });
+
+  test('evalNumber throws error for / call with a divisor that evaluates to 0', () => {
+    const call = {
+      type: VALUE_CALL as typeof VALUE_CALL,
+      name: DIVIDE as typeof DIVIDE,
+      arguments: [
+        {
+          type: VALUE_CALL as typeof VALUE_CALL,
+          name: MULTIPLY as typeof MULTIPLY,
+          arguments: [
+            { type: VALUE_CONST as typeof VALUE_CONST, value: 3 },
+            { type: VALUE_CONST as typeof VALUE_CONST, value: 5 }
+          ]
+        },
+        {
+          type: VALUE_CALL as typeof VALUE_CALL,
+          name: PLUS as typeof PLUS,
+          arguments: [
+            { type: VALUE_CONST as typeof VALUE_CONST, value: 8 },
+            {
+              type: VALUE_CALL as typeof VALUE_CALL,
+              name: MULTIPLY as typeof MULTIPLY,
+              arguments: [
+                {
+                  type: VALUE_CALL as typeof VALUE_CALL,
+                  name: NEGATE as typeof NEGATE,
+                  arguments: [
+                    { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
+                  ]
+                },
+                { type: VALUE_CONST as typeof VALUE_CONST, value: 8 }
+              ] as [NumberType, NumberType]
+            }
+          ] as [NumberType, NumberType]
+        }
+      ] as [NumberType, NumberType]
+    };
+
+    expect(() => evalNumber(call)).toThrow();
+  });
 });
