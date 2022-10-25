@@ -1,14 +1,18 @@
-import { evalAction, evalRules, evalValue } from '../interpreter/interpreter';
+import {
+  evalAction,
+  evalRules,
+  evalValue
+} from '../../interpreter/interpreter';
 import {
   ValueCall,
   ValueVariable,
   ValueWallet
-} from '../interpreter/types/value';
-import { ContextData, NUMBER_DATA } from '../interpreter/types/number';
+} from '../../interpreter/types/value';
+import { ContextData, NUMBER_DATA } from '../../interpreter/types/number';
 import { Context } from 'vm';
-import { Rules } from '../interpreter/types/rule';
-import { BooleanCall } from '../interpreter/types/boolean';
-import { Action } from '../interpreter/types/action';
+import { Rules } from '../../interpreter/types/rule';
+import { BooleanCall } from '../../interpreter/types/boolean';
+import { Action } from '../../interpreter/types/action';
 
 describe('Si el precio BTC/USDT cae bajo un nivel determinado por una variable, vender todo el BTC disponible ', () => {
   const lastPrice: ValueCall = {
