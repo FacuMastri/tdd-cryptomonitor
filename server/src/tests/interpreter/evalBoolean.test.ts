@@ -49,7 +49,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(false);
   });
 
-  test('evalBoolean returns true for < call with three constants', () => {
+  test('evalBoolean returns true for < call with three constants (1, 2, 3)', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: LESS as typeof LESS,
@@ -63,7 +63,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(true);
   });
 
-  test('evalBoolean returns false for < call with three constants', () => {
+  test('evalBoolean returns false for < call with three constants (1, 2, 1)', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: LESS as typeof LESS,
@@ -77,7 +77,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(false);
   });
 
-  test('evalBoolean returns true for <= call with two constants', () => {
+  test('evalBoolean returns true for <= call with first constant lesser than the second one', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: LESS_EQUAL as typeof LESS_EQUAL,
@@ -90,7 +90,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(true);
   });
 
-  test('evalBoolean returns false for <= call with two constants', () => {
+  test('evalBoolean returns false for <= call with first constant greater than the second one', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: LESS_EQUAL as typeof LESS_EQUAL,
@@ -116,7 +116,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(true);
   });
 
-  test('evalBoolean returns true for <= call with three constants', () => {
+  test('evalBoolean returns true for <= call with three constants (1, 2, 2)', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: LESS_EQUAL as typeof LESS_EQUAL,
@@ -130,7 +130,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(true);
   });
 
-  test('evalBoolean returns true for > call with two constants', () => {
+  test('evalBoolean returns true for > call with first constant greater than the second one', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: GREATER as typeof GREATER,
@@ -143,7 +143,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(true);
   });
 
-  test('evalBoolean returns false for > call with two constants', () => {
+  test('evalBoolean returns false for > call with two equal constants', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: GREATER as typeof GREATER,
@@ -156,7 +156,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(false);
   });
 
-  test('evalBoolean returns true for > call with three constants', () => {
+  test('evalBoolean returns true for > call with three constants (3, 2, 1)', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: GREATER as typeof GREATER,
@@ -170,7 +170,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(true);
   });
 
-  test('evalBoolean returns false for > call with three constants', () => {
+  test('evalBoolean returns false for > call with three constants (1, 2, 1)', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: GREATER as typeof GREATER,
@@ -184,7 +184,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(false);
   });
 
-  test('evalBoolean returns true for >= call with two constants', () => {
+  test('evalBoolean returns true for >= call with first constant greater than the second one', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: GREATER_EQUAL as typeof GREATER_EQUAL,
@@ -197,7 +197,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(true);
   });
 
-  test('evalBoolean returns false for >= call with two constants', () => {
+  test('evalBoolean returns false for >= call with first constant lesser than the second one', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: GREATER_EQUAL as typeof GREATER_EQUAL,
@@ -223,7 +223,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(true);
   });
 
-  test('evalBoolean returns true for >= call with three constants', () => {
+  test('evalBoolean returns true for >= call with three constants (3, 2, 1)', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: GREATER_EQUAL as typeof GREATER_EQUAL,
@@ -237,7 +237,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(true);
   });
 
-  test('evalBoolean returns false for >= call with three constants', () => {
+  test('evalBoolean returns false for >= call with three constants (1, 2, 1)', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: GREATER_EQUAL as typeof GREATER_EQUAL,
@@ -421,7 +421,7 @@ describe('evalBoolean', () => {
       ]
     } as unknown as BooleanType;
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test("evalBoolean confirms De Morgan's laws", () => {
