@@ -20,19 +20,19 @@ import {
 import { NumberType } from '../../interpreter/types/number';
 
 describe('evalNumber', () => {
-  test('evalNumber return 1 for constant 1', () => {
+  test('evalNumber returns 1 for constant 1', () => {
     const number = { type: VALUE_CONST as typeof VALUE_CONST, value: 1 };
 
     expect(evalValue(number)).toBe(1);
   });
 
-  test('evalNumber return 2 for constant 2', () => {
+  test('evalNumber returns 2 for constant 2', () => {
     const number = { type: VALUE_CONST as typeof VALUE_CONST, value: 2 };
 
     expect(evalValue(number)).toBe(2);
   });
 
-  test('evalNumber return -1 for NEGATE call with constant 1', () => {
+  test('evalNumber returns -1 for NEGATE call with constant 1', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: NEGATE as typeof NEGATE,
@@ -44,7 +44,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(-1);
   });
 
-  test('evalNumber return -2 for NEGATE call with constant 2', () => {
+  test('evalNumber returns -2 for NEGATE call with constant 2', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: NEGATE as typeof NEGATE,
@@ -56,7 +56,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(-2);
   });
 
-  test('evalNumber return 1 for NEGATE call with constant -1', () => {
+  test('evalNumber returns 1 for NEGATE call with constant -1', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: NEGATE as typeof NEGATE,
@@ -84,7 +84,7 @@ describe('evalNumber', () => {
     expect(() => evalValue(call)).toThrow(Error);
   });
 
-  test('evalNumber return 2 for + call with constant 1 and constant 1', () => {
+  test('evalNumber returns 2 for + call with constant 1 and constant 1', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: PLUS as typeof PLUS,
@@ -97,7 +97,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(2);
   });
 
-  test('evalNumber return 3 for + call with constant 1 and constant 2', () => {
+  test('evalNumber returns 3 for + call with constant 1 and constant 2', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: PLUS as typeof PLUS,
@@ -110,7 +110,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(3);
   });
 
-  test('evalNumber return 6 for + call with constant 1, constant 2 and constant 3', () => {
+  test('evalNumber returns 6 for + call with constant 1, constant 2 and constant 3', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: PLUS as typeof PLUS,
@@ -134,7 +134,7 @@ describe('evalNumber', () => {
     expect(() => evalValue(call)).toThrow(Error);
   });
 
-  test('evalNumber return 0 for - call with constant 1 and constant 1', () => {
+  test('evalNumber returns 0 for - call with constant 1 and constant 1', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MINUS as typeof MINUS,
@@ -147,7 +147,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(0);
   });
 
-  test('evalNumber return 1 for - call with constant 2 and constant 1', () => {
+  test('evalNumber returns 1 for - call with constant 2 and constant 1', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MINUS as typeof MINUS,
@@ -174,7 +174,7 @@ describe('evalNumber', () => {
     expect(() => evalValue(call)).toThrow(Error);
   });
 
-  test('evalNumber return 2 for * call with constant 1 and constant 2', () => {
+  test('evalNumber returns 2 for * call with constant 1 and constant 2', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MULTIPLY as typeof MULTIPLY,
@@ -187,7 +187,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(2);
   });
 
-  test('evalNumber return 6 for * call with constant 2 and constant 3', () => {
+  test('evalNumber returns 6 for * call with constant 2 and constant 3', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MULTIPLY as typeof MULTIPLY,
@@ -200,7 +200,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(6);
   });
 
-  test('evalNumber return 6 for * call with constant 1, constant 2 and constant 3', () => {
+  test('evalNumber returns 6 for * call with constant 1, constant 2 and constant 3', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MULTIPLY as typeof MULTIPLY,
@@ -224,7 +224,7 @@ describe('evalNumber', () => {
     expect(() => evalValue(call)).toThrow(Error);
   });
 
-  test('evalNumber return 2 for / call with constant 4 and constant 2', () => {
+  test('evalNumber returns 2 for / call with constant 4 and constant 2', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: DIVIDE as typeof DIVIDE,
@@ -237,7 +237,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(2);
   });
 
-  test('evalNumber return 2 for / call with constant 6 and constant 3', () => {
+  test('evalNumber returns 2 for / call with constant 6 and constant 3', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: DIVIDE as typeof DIVIDE,
@@ -297,7 +297,7 @@ describe('evalNumber', () => {
     expect(() => evalValue(call)).toThrow(Error);
   });
 
-  test('evalNumber return 1 for MIN call with constant 1 and constant 2', () => {
+  test('evalNumber returns 1 for MIN call with constant 1 and constant 2', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MIN as typeof MIN,
@@ -310,7 +310,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(1);
   });
 
-  test('evalNumber return 1 for MIN call with constant 2 and constant 1', () => {
+  test('evalNumber returns 1 for MIN call with constant 2 and constant 1', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MIN as typeof MIN,
@@ -323,7 +323,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(1);
   });
 
-  test('evalNumber return 5 for MIN call with constant 5', () => {
+  test('evalNumber returns 5 for MIN call with constant 5', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MIN as typeof MIN,
@@ -333,7 +333,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(5);
   });
 
-  test('evalNumber return min value for MIN call with more than two arguments', () => {
+  test('evalNumber returns min value for MIN call with more than two arguments', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MIN as typeof MIN,
@@ -357,7 +357,7 @@ describe('evalNumber', () => {
     expect(() => evalValue(call)).toThrow(Error);
   });
 
-  test('evalNumber return 2 for MAX call with constant 1 and constant 2', () => {
+  test('evalNumber returns 2 for MAX call with constant 1 and constant 2', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MAX as typeof MAX,
@@ -370,7 +370,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(2);
   });
 
-  test('evalNumber return 2 for MAX call with constant 2 and constant 1', () => {
+  test('evalNumber returns 2 for MAX call with constant 2 and constant 1', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MAX as typeof MAX,
@@ -383,7 +383,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(2);
   });
 
-  test('evalNumber return 5 for MAX call with constant 5', () => {
+  test('evalNumber returns 5 for MAX call with constant 5', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MAX as typeof MAX,
@@ -395,7 +395,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(5);
   });
 
-  test('evalNumber return max value for MAX call with more than two arguments', () => {
+  test('evalNumber returns max value for MAX call with more than two arguments', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: MAX as typeof MAX,
@@ -419,7 +419,7 @@ describe('evalNumber', () => {
     expect(() => evalValue(call)).toThrow(Error);
   });
 
-  test('evalNumber return 1.5 for AVERAGE call with constant 1 and constant 2', () => {
+  test('evalNumber returns 1.5 for AVERAGE call with constant 1 and constant 2', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: AVERAGE as typeof AVERAGE,
@@ -432,7 +432,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBeCloseTo(1.5);
   });
 
-  test('evalNumber return 5 for AVERAGE call with constant 5', () => {
+  test('evalNumber returns 5 for AVERAGE call with constant 5', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: AVERAGE as typeof AVERAGE,
@@ -452,7 +452,7 @@ describe('evalNumber', () => {
     expect(() => evalValue(call)).toThrow(Error);
   });
 
-  test('evalNumber return average value for AVERAGE call with more than two arguments', () => {
+  test('evalNumber returns average value for AVERAGE call with more than two arguments', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: AVERAGE as typeof AVERAGE,
@@ -466,7 +466,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBeCloseTo(3.3333333333333335);
   });
 
-  test('evalNumber return 0.5 for STDDEV call with constant 1 and constant 2', () => {
+  test('evalNumber returns 0.5 for STDDEV call with constant 1 and constant 2', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: STDDEV as typeof STDDEV,
@@ -479,7 +479,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBeCloseTo(0.5);
   });
 
-  test('evalNumber return 0 for STDDEV call with constant 5', () => {
+  test('evalNumber returns 0 for STDDEV call with constant 5', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: STDDEV as typeof STDDEV,
@@ -499,7 +499,7 @@ describe('evalNumber', () => {
     expect(() => evalValue(call)).toThrow(Error);
   });
 
-  test('evalNumber return standard deviation value for STDDEV call with more than two arguments', () => {
+  test('evalNumber returns standard deviation value for STDDEV call with more than two arguments', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: STDDEV as typeof STDDEV,
@@ -513,7 +513,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBeCloseTo(1.247219128924647);
   });
 
-  test('evalNumber return 1 for FIRST call with constant 1', () => {
+  test('evalNumber returns 1 for FIRST call with constant 1', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: FIRST as typeof FIRST,
@@ -523,7 +523,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(1);
   });
 
-  test('evalNumber return 1 for FIRST call with constant 1 and constant 2', () => {
+  test('evalNumber returns 1 for FIRST call with constant 1 and constant 2', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: FIRST as typeof FIRST,
@@ -536,7 +536,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(1);
   });
 
-  test('evalNumber return first value for FIRST call with more than two arguments', () => {
+  test('evalNumber returns first value for FIRST call with more than two arguments', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: FIRST as typeof FIRST,
@@ -560,7 +560,7 @@ describe('evalNumber', () => {
     expect(() => evalValue(call)).toThrow(Error);
   });
 
-  test('evalNumber return 2 for LAST call with constant 1 and constant 2', () => {
+  test('evalNumber returns 2 for LAST call with constant 1 and constant 2', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: LAST as typeof LAST,
@@ -573,7 +573,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(2);
   });
 
-  test('evalNumber return 5 for LAST call with constant 5', () => {
+  test('evalNumber returns 5 for LAST call with constant 5', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: LAST as typeof LAST,
@@ -583,7 +583,7 @@ describe('evalNumber', () => {
     expect(evalValue(call)).toBe(5);
   });
 
-  test('evalNumber return last value for LAST call with more than two arguments', () => {
+  test('evalNumber returns last value for LAST call with more than two arguments', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: LAST as typeof LAST,
