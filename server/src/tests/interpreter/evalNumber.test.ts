@@ -81,7 +81,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType]
     } as unknown as NumberType;
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber return 2 for + call with constant 1 and constant 1', () => {
@@ -131,7 +131,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber return 0 for - call with constant 1 and constant 1', () => {
@@ -171,7 +171,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType, NumberType]
     } as unknown as NumberType;
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber return 2 for * call with constant 1 and constant 2', () => {
@@ -221,7 +221,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber return 2 for / call with constant 4 and constant 2', () => {
@@ -257,7 +257,7 @@ describe('evalNumber', () => {
       arguments: []
     } as unknown as NumberType;
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber throws error for / call with one argument', () => {
@@ -267,7 +267,7 @@ describe('evalNumber', () => {
       arguments: [{ type: VALUE_CONST as typeof VALUE_CONST, value: 1 }]
     } as unknown as NumberType;
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber throws error for / call with more than two arguments', () => {
@@ -281,7 +281,7 @@ describe('evalNumber', () => {
       ]
     } as unknown as NumberType;
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber throws error for / call that divides by zero', () => {
@@ -294,7 +294,7 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType]
     };
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber return 1 for MIN call with constant 1 and constant 2', () => {
@@ -354,7 +354,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber return 2 for MAX call with constant 1 and constant 2', () => {
@@ -416,7 +416,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber return 1.5 for AVERAGE call with constant 1 and constant 2', () => {
@@ -449,7 +449,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber return average value for AVERAGE call with more than two arguments', () => {
@@ -496,7 +496,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber return standard deviation value for STDDEV call with more than two arguments', () => {
@@ -557,7 +557,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   test('evalNumber return 2 for LAST call with constant 1 and constant 2', () => {
@@ -604,7 +604,7 @@ describe('evalNumber', () => {
       arguments: []
     };
 
-    expect(() => evalValue(call)).toThrow();
+    expect(() => evalValue(call)).toThrow(Error);
   });
 
   /*
@@ -733,6 +733,6 @@ describe('evalNumber', () => {
       ] as [NumberType, NumberType]
     };
 
-    expect(() => evalNumber(call)).toThrow();
+    expect(() => evalNumber(call)).toThrow(Error);
   });
 });

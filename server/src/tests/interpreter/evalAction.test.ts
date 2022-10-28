@@ -169,7 +169,7 @@ describe('evalAction', () => {
       wallets: [btcWallet]
     };
 
-    expect(() => evalAction(action, context)).toThrow();
+    expect(() => evalAction(action, context)).toThrow(Error);
   });
 
   test('evalAction throws error for SELL_MARKET action with unknown coin', () => {
@@ -183,7 +183,7 @@ describe('evalAction', () => {
       wallets: []
     };
 
-    expect(() => evalAction(action, context)).toThrow();
+    expect(() => evalAction(action, context)).toThrow(Error);
   });
 
   test('evalAction throws error for unknown action', () => {
@@ -193,6 +193,6 @@ describe('evalAction', () => {
       amount: { type: VALUE_CONST, value: 1 }
     } as unknown as Action;
 
-    expect(() => evalAction(action, {})).toThrow();
+    expect(() => evalAction(action, {})).toThrow(Error);
   });
 });
