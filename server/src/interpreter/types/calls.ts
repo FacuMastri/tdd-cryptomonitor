@@ -61,17 +61,17 @@ export type OpCompManyValues = typeof OPS_COMP_N_VALUES[number];
 
 export function isBooleanCall(call: ValueCall): call is BooleanCall {
   return (
-    OPS_COMP_N_BOOLEANS.includes(call.name as any) ||
-    OPS_COMP_N_NUMBERS.includes(call.name as any) ||
-    OPS_COMP_N_VALUES.includes(call.name as any) ||
+    OPS_COMP_N_BOOLEANS.includes(call.name as never) ||
+    OPS_COMP_N_NUMBERS.includes(call.name as never) ||
+    OPS_COMP_N_VALUES.includes(call.name as never) ||
     call.name == NOT
   );
 }
 
 export function isNumberCall(call: ValueCall): call is NumberCall {
   return (
-    OPS_N_NUMBERS.includes(call.name as any) ||
-    OPS_2_NUMBERS.includes(call.name as any) ||
-    OPS_1_NUMBER.includes(call.name as any)
+    OPS_N_NUMBERS.includes(call.name as never) ||
+    OPS_2_NUMBERS.includes(call.name as never) ||
+    OPS_1_NUMBER.includes(call.name as never)
   );
 }
