@@ -163,7 +163,7 @@ function secondsAgo(timestamp: number): number {
 function getContextData(dataInfo: NumberData, context?: Context): number[] {
   if (!context) return [];
 
-  const { symbol, from, until } = dataInfo;
+  const { symbol, since, until } = dataInfo;
 
   const data = context.data as ContextData;
   if (!data || !data[symbol]) return [];
@@ -171,7 +171,7 @@ function getContextData(dataInfo: NumberData, context?: Context): number[] {
   const symbolData = data[symbol]
     .filter((datum) => {
       const seconds = secondsAgo(datum.timestamp);
-      return seconds <= from && seconds >= until;
+      return seconds <= since && seconds >= until;
     })
     .map((datum) => datum.value);
 

@@ -35,7 +35,7 @@ export const NUMBER_DATA = 'DATA';
 export interface NumberData {
   type: typeof NUMBER_DATA;
   symbol: string;
-  from: number; // seconds ago
+  since: number; // seconds ago
   until: number; // seconds ago
   default?: NumberType | NumberType[];
 }

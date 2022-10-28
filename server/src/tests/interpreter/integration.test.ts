@@ -21,8 +21,7 @@ describe('Si el precio BTC/USDT cae bajo un nivel determinado por una variable, 
     arguments: {
       type: NUMBER_DATA,
       symbol: 'BTC/USDT',
-      // FIXME: docs seems to use from/since interchangeably, choose one
-      from: 3600,
+      since: 3600,
       until: 0,
       default: {
         type: 'VARIABLE',

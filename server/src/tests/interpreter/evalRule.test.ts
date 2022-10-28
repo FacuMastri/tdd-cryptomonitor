@@ -28,7 +28,7 @@ describe('evalRule', () => {
       type: ACTION_SET,
       name: 'a',
       value: {
-        type: VALUE_CONST as typeof VALUE_CONST,
+        type: VALUE_CONST,
         value: 123
       }
     };
@@ -55,7 +55,7 @@ describe('evalRule', () => {
       type: ACTION_SET,
       name: 'a',
       value: {
-        type: VALUE_CONST as typeof VALUE_CONST,
+        type: VALUE_CONST,
         value: 123
       }
     };
@@ -73,7 +73,7 @@ describe('evalRule', () => {
     expect(context.a).toBe(0);
   });
 
-  test('evalRule executes all rules', () => {
+  test('evalRule executes two actions with condition being true', () => {
     const condition: BooleanType = {
       type: VALUE_CONST,
       value: true
@@ -111,18 +111,18 @@ describe('evalRule', () => {
     expect(context.b).toBe(102);
   });
 
-  test('evalRules throws error if required vars are not set', () => {
+  test('evalRules throws error if required variables are not set', () => {
     const rules: Rules = {
       requiredVariables: ['a'],
       rules: []
     };
 
-    expect(() => evalRules(rules, {})).toThrow();
+    expect(() => evalRules(rules, {})).toThrow(Error);
   });
 });
 
 describe('data', () => {
-  test('loaded datum is accesible', () => {
+  test('loaded datum is accessible', () => {
     const context: Context = {};
 
     const datum: ContextDatum = {
@@ -143,7 +143,7 @@ describe('data', () => {
     const _arguments: NumberData = {
       type: NUMBER_DATA,
       symbol: 'RICE_PRICE',
-      from: 5, // 5sec ago
+      since: 5, // 5sec ago
       until: 1, // 1sec ago
       default: {
         type: VALUE_CONST,
@@ -189,7 +189,7 @@ describe('data', () => {
     const _arguments: NumberData = {
       type: NUMBER_DATA,
       symbol: 'RICE_PRICE',
-      from: 5, // 5sec ago
+      since: 5, // 5sec ago
       until: 1, // 1sec ago
       default: {
         type: VALUE_CONST,
