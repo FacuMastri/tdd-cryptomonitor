@@ -31,7 +31,7 @@ export interface BooleanCallCompValues {
   arguments: Value[];
 }
 
-interface BooleanConstant {
+export interface BooleanConstant {
   type: typeof VALUE_CONST;
   value: boolean;
 }

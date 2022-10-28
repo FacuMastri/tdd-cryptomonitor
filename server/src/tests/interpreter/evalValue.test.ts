@@ -2,45 +2,47 @@ import {
   VALUE_CALL,
   VALUE_CONST,
   VALUE_VAR,
-  ValueCall
+  ValueCall,
+  ValueVariable
 } from '../../interpreter/types/value';
 import { DISTINCT, EQUAL, PLUS } from '../../interpreter/types/calls';
-import { evalValue, STORAGE } from '../../interpreter/interpreter';
+import { evalValue } from '../../interpreter/interpreter';
 import { BooleanType } from '../../interpreter/types/boolean';
+import { Context } from '../../interpreter/types/context';
+import { NumberConstant } from '../../interpreter/types/number';
 
-//describe('text', () => {});
 describe('evalValue', () => {
   test('evalValue returns true for == call with two true constants', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: EQUAL as typeof EQUAL,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: EQUAL,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true }
+        { type: VALUE_CONST, value: true },
+        { type: VALUE_CONST, value: true }
       ]
     };
     expect(evalValue(call)).toBe(true);
   });
 
   test('evalValue returns false for == call with two false constants', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: EQUAL as typeof EQUAL,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: EQUAL,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: false },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: false }
+        { type: VALUE_CONST, value: false },
+        { type: VALUE_CONST, value: false }
       ]
     };
     expect(evalValue(call)).toBe(true);
   });
 
   test('evalValue returns false for == call with one true and one false constant', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: EQUAL as typeof EQUAL,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: EQUAL,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: false }
+        { type: VALUE_CONST, value: true },
+        { type: VALUE_CONST, value: false }
       ]
     };
 
@@ -48,13 +50,13 @@ describe('evalValue', () => {
   });
 
   test('evalValue returns true for == call with three true constants', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: EQUAL as typeof EQUAL,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: EQUAL,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true }
+        { type: VALUE_CONST, value: true },
+        { type: VALUE_CONST, value: true },
+        { type: VALUE_CONST, value: true }
       ]
     };
 
@@ -62,13 +64,13 @@ describe('evalValue', () => {
   });
 
   test('evalValue returns false for == call with one true and two false constants', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: EQUAL as typeof EQUAL,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: EQUAL,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: false }
+        { type: VALUE_CONST, value: true },
+        { type: VALUE_CONST, value: true },
+        { type: VALUE_CONST, value: false }
       ]
     };
 
@@ -76,12 +78,12 @@ describe('evalValue', () => {
   });
 
   test('evalValue returns true for == call with two equal constant numbers', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: EQUAL as typeof EQUAL,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: EQUAL,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
+        { type: VALUE_CONST, value: 1 },
+        { type: VALUE_CONST, value: 1 }
       ]
     };
 
@@ -89,12 +91,12 @@ describe('evalValue', () => {
   });
 
   test('evalValue returns false for == call with two unequal constant numbers', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: EQUAL as typeof EQUAL,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: EQUAL,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
+        { type: VALUE_CONST, value: 1 },
+        { type: VALUE_CONST, value: 2 }
       ]
     };
 
@@ -102,13 +104,13 @@ describe('evalValue', () => {
   });
 
   test('evalValue returns true for == call with three equal constant numbers', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: EQUAL as typeof EQUAL,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: EQUAL,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 1 }
+        { type: VALUE_CONST, value: 1 },
+        { type: VALUE_CONST, value: 1 },
+        { type: VALUE_CONST, value: 1 }
       ]
     };
 
@@ -116,13 +118,13 @@ describe('evalValue', () => {
   });
 
   test('evalValue returns false for == call with one equal and two unequal constant numbers', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: EQUAL as typeof EQUAL,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: EQUAL,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
+        { type: VALUE_CONST, value: 1 },
+        { type: VALUE_CONST, value: 1 },
+        { type: VALUE_CONST, value: 2 }
       ]
     };
 
@@ -135,12 +137,12 @@ describe('evalValue', () => {
   });
 
   test('evalValue returns true for DISTINCT call with two different constants', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: DISTINCT as typeof DISTINCT,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: DISTINCT,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: false }
+        { type: VALUE_CONST, value: true },
+        { type: VALUE_CONST, value: false }
       ]
     };
 
@@ -148,12 +150,12 @@ describe('evalValue', () => {
   });
 
   test('evalValue returns false for DISTINCT call with two same constants', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: DISTINCT as typeof DISTINCT,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: DISTINCT,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true }
+        { type: VALUE_CONST, value: true },
+        { type: VALUE_CONST, value: true }
       ]
     };
 
@@ -161,13 +163,13 @@ describe('evalValue', () => {
   });
 
   test('evalValue returns false for DISTINCT call with two same constants and one different', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: DISTINCT as typeof DISTINCT,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: DISTINCT,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: false },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: true }
+        { type: VALUE_CONST, value: true },
+        { type: VALUE_CONST, value: false },
+        { type: VALUE_CONST, value: true }
       ]
     };
 
@@ -175,19 +177,19 @@ describe('evalValue', () => {
   });
 
   test('evalValue return variable value for VARIABLE value', () => {
-    const variable = {
-      type: VALUE_VAR as typeof VALUE_VAR,
+    const variable: ValueVariable = {
+      type: VALUE_VAR,
       name: 'zero'
     };
 
-    const context = STORAGE;
+    const context: Context = { zero: 0, wallets: [], data: {} };
 
     expect(evalValue(variable, context)).toBe(0);
   });
 
   test('evalValue throws error for VARIABLE value with undefined variable', () => {
-    const variable = {
-      type: VALUE_VAR as typeof VALUE_VAR,
+    const variable: ValueVariable = {
+      type: VALUE_VAR,
       name: 'b'
     };
 
@@ -195,8 +197,8 @@ describe('evalValue', () => {
   });
 
   test('evalValue return constant value for CONSTANT value', () => {
-    const constant = {
-      type: VALUE_CONST as typeof VALUE_CONST,
+    const constant: NumberConstant = {
+      type: VALUE_CONST,
       value: 123
     };
 
@@ -204,12 +206,12 @@ describe('evalValue', () => {
   });
 
   test('evalValue return value for CALL value', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
-      name: PLUS as typeof PLUS,
+    const call: ValueCall = {
+      type: VALUE_CALL,
+      name: PLUS,
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
+        { type: VALUE_CONST, value: 1 },
+        { type: VALUE_CONST, value: 2 }
       ]
     };
 
@@ -217,12 +219,12 @@ describe('evalValue', () => {
   });
 
   test('evalValue throws error for unknown CALL', () => {
-    const call = {
-      type: VALUE_CALL as typeof VALUE_CALL,
+    const call: ValueCall = {
+      type: VALUE_CALL,
       name: 'MEZCLAR HASTA INTEGRAR',
       arguments: [
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 1 },
-        { type: VALUE_CONST as typeof VALUE_CONST, value: 2 }
+        { type: VALUE_CONST, value: 1 },
+        { type: VALUE_CONST, value: 2 }
       ]
     } as unknown as ValueCall;
 

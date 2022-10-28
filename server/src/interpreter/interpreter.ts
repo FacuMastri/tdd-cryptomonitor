@@ -79,8 +79,6 @@ import { Context } from './types/context';
 
 const CONTEXT_RESERVED = ['wallets', 'data'];
 
-export const STORAGE: Context = { zero: 0, wallets: [], data: {} };
-
 export function evalBoolean(boolean: BooleanType, context?: Context): boolean {
   switch (boolean.type) {
     case VALUE_CONST:
