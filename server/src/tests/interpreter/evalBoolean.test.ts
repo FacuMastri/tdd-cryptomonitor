@@ -23,7 +23,7 @@ describe('evalBoolean', () => {
     expect(evalValue(boolean)).toBe(false);
   });
 
-  test('evalBoolean returns true for < call with two constants', () => {
+  test('evalBoolean returns true for < call with first constant lesser than the second one', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: LESS as typeof LESS,
@@ -36,7 +36,7 @@ describe('evalBoolean', () => {
     expect(evalValue(call)).toBe(true);
   });
 
-  test('evalBoolean returns false for < call with two constants', () => {
+  test('evalBoolean returns false for < call with first constant greater than the second one', () => {
     const call = {
       type: VALUE_CALL as typeof VALUE_CALL,
       name: LESS as typeof LESS,
