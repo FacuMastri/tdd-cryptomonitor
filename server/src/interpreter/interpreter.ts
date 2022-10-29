@@ -99,9 +99,9 @@ function evalBooleanCall(call: BooleanCall, context?: Context): boolean {
     case LESS_EQUAL:
       return evalLessThanEqual(call.arguments, context);
     case GREATER:
-      return evalLessThan(call.arguments.reverse(), context);
+      return evalLessThan([...call.arguments].reverse(), context);
     case GREATER_EQUAL:
-      return evalLessThanEqual(call.arguments.reverse(), context);
+      return evalLessThanEqual([...call.arguments].reverse(), context);
     case AND:
       return call.arguments.every((arg) => evalBoolean(arg, context));
     case OR:
@@ -219,7 +219,7 @@ function evalNumberCallWithNArgs(
     case FIRST:
       return evalFirst(callArgs, context);
     case LAST:
-      return evalFirst(callArgs.reverse(), context);
+      return evalFirst([...callArgs].reverse(), context);
     default:
       throw new Error('Unknown number call for N arguments: ' + call.name);
   }
