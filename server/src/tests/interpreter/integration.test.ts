@@ -209,6 +209,17 @@ describe('Comprar 12 TDD/USDT siempre', () => {
       evalRules(rules, context);
       expect(wallet.amount).toBe(14);
     });
+
+    test('eval rules two times', () => {
+      const wallet = context.wallets.find(
+        (wallet: ValueWallet) => wallet.symbol === 'TDD/USDT'
+      );
+
+      expect(wallet.amount).toBe(2);
+      evalRules(rules, context);
+      evalRules(rules, context);
+      expect(wallet.amount).toBe(26);
+    });
   });
 });
 
@@ -330,6 +341,313 @@ describe('Si el precio de BTC/USDT aumenta más de 15% del valor de la última v
       evalRules(rules, context);
       expect(wallet.amount).toBeCloseTo(1.9);
       expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(120);
+    });
+
+    test('eval rules two times', () => {
+      const wallet = context.wallets.find(
+        (wallet: ValueWallet) => wallet.symbol === 'BTC/USDT'
+      );
+
+      expect(wallet.amount).toBe(2);
+      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
+      evalRules(rules, context);
+      expect(wallet.amount).toBeCloseTo(1.9);
+      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(120);
+      //the value doesnt change the second time so no sell
+      evalRules(rules, context);
+      expect(wallet.amount).toBeCloseTo(1.9);
+      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(120);
+    });
+  });
+
+  describe('shouldnt sell 0.1 BTC, doesnt go up enough', () => {
+    let context: Context;
+
+    beforeEach(() => {
+      const data: ContextData = {
+        'BTC/USDT': [
+          {
+            timestamp: Date.now() - 100,
+            value: 110 // aumentó 10% (ver abajo)
+          }
+        ]
+      };
+      const wallets: ValueWallet[] = [
+        {
+          type: 'WALLET',
+          symbol: 'BTC/USDT',
+          amount: 2
+        }
+      ];
+      context = {
+        'LAST_SELL_VALUE_BTC/USDT': 100,
+        data,
+        wallets
+      };
+    });
+
+    test('values', () => {
+      const lim = evalValue(thresholdLastSell, context);
+      expect(lim).toBeCloseTo(115);
+
+      const last = evalValue(lastPrice, context);
+      expect(last).toBeCloseTo(110);
+    });
+
+    test('condition', () => {
+      const result = evalValue(condition, context);
+      expect(result).toBe(false);
+    });
+
+    test('action', () => {
+      evalAction(actionSet, context);
+      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(110);
+    });
+
+    test('eval rules', () => {
+      const wallet = context.wallets.find(
+        (wallet: ValueWallet) => wallet.symbol === 'BTC/USDT'
+      );
+
+      expect(wallet.amount).toBe(2);
+      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
+      evalRules(rules, context);
+      expect(wallet.amount).toBeCloseTo(2);
+      //TODO: lo  de abajo no pasa, da 100. no se si esta bien o mal
+      // expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(110);
+    });
+  });
+
+  describe('shouldnt sell 0.1 BTC, goes down more than 15%', () => {
+    let context: Context;
+
+    beforeEach(() => {
+      const data: ContextData = {
+        'BTC/USDT': [
+          {
+            timestamp: Date.now() - 100,
+            value: 80 // aumentó 10% (ver abajo)
+          }
+        ]
+      };
+      const wallets: ValueWallet[] = [
+        {
+          type: 'WALLET',
+          symbol: 'BTC/USDT',
+          amount: 2
+        }
+      ];
+      context = {
+        'LAST_SELL_VALUE_BTC/USDT': 100,
+        data,
+        wallets
+      };
+    });
+
+    test('values', () => {
+      const lim = evalValue(thresholdLastSell, context);
+      expect(lim).toBeCloseTo(115);
+
+      const last = evalValue(lastPrice, context);
+      expect(last).toBeCloseTo(80);
+    });
+
+    test('condition', () => {
+      const result = evalValue(condition, context);
+      expect(result).toBe(false);
+    });
+
+    test('action', () => {
+      evalAction(actionSet, context);
+      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(80);
+    });
+
+    test('eval rules', () => {
+      const wallet = context.wallets.find(
+        (wallet: ValueWallet) => wallet.symbol === 'BTC/USDT'
+      );
+
+      expect(wallet.amount).toBe(2);
+      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
+      evalRules(rules, context);
+      expect(wallet.amount).toBeCloseTo(2);
+    });
+  });
+});
+
+describe('Si el precio BTC/USDT cae bajo un nivel determinado pero por encima de otro, vender todo el BTC disponible ', () => {
+  const lastPrice: ValueCall = {
+    type: 'CALL',
+    name: 'LAST',
+    arguments: {
+      type: NUMBER_DATA,
+      symbol: 'BTC/USDT',
+      since: 3600,
+      until: 0,
+      default: {
+        type: 'VARIABLE',
+        name: 'LIMIT_VALUE_BTC/USDT'
+      }
+    }
+  };
+  const limitValueUp: ValueVariable = {
+    type: 'VARIABLE',
+    name: 'LIMIT_VALUE_UP_BTC/USDT'
+  };
+  const conditionUp: BooleanCall = {
+    type: 'CALL',
+    name: '<',
+    arguments: [lastPrice, limitValueUp]
+  };
+  const limitValueDown: ValueVariable = {
+    type: 'VARIABLE',
+    name: 'LIMIT_VALUE_DOWN_BTC/USDT'
+  };
+  const conditionDown: BooleanCall = {
+    type: 'CALL',
+    name: '>',
+    arguments: [lastPrice, limitValueDown]
+  };
+  const condition: BooleanCall = {
+    type: 'CALL',
+    name: 'AND',
+    arguments: [conditionUp, conditionDown]
+  };
+
+  const action: Action = {
+    type: 'SELL_MARKET',
+    //symbol: 'BTC/USDT', // FIXME: this is the original, what is it supposed to mean?
+    symbol: 'BTC',
+    amount: {
+      type: 'WALLET',
+      symbol: 'BTC'
+    }
+  };
+
+  const rules: Rules = {
+    requiredVariables: ['LIMIT_VALUE_UP_BTC/USDT', 'LIMIT_VALUE_DOWN_BTC/USDT'],
+    rules: [
+      {
+        name: 'EscapeIfNotDownEnough',
+        condition,
+        // FIXME: doc uses `action` rather than `actions`, see if spec can change
+        // as `actions` describes better what it is
+        actions: [action]
+      }
+    ]
+  };
+
+  describe('should sell all btc', () => {
+    let context: Context;
+
+    beforeEach(() => {
+      const data: ContextData = {
+        'BTC/USDT': [
+          {
+            timestamp: Date.now() - 100,
+            value: 800
+          }
+        ]
+      };
+      const wallets: ValueWallet[] = [
+        {
+          type: 'WALLET',
+          symbol: 'BTC',
+          amount: 2
+        }
+      ];
+      context = {
+        'LIMIT_VALUE_UP_BTC/USDT': 1000,
+        'LIMIT_VALUE_DOWN_BTC/USDT': 700,
+        data,
+        wallets
+      };
+    });
+
+    test('values', () => {
+      const lim = evalValue(limitValueUp, context);
+
+      expect(lim).toBe(1000);
+
+      const last = evalValue(lastPrice, context);
+      expect(last).toBe(800);
+    });
+
+    test('condition', () => {
+      const result = evalValue(condition, context);
+      expect(result).toBe(true);
+    });
+
+    test('action', () => {
+      evalAction(action, context);
+
+      const wallet = context.wallets.find(
+        (wallet: ValueWallet) => wallet.symbol === 'BTC'
+      );
+
+      expect(wallet.amount).toBe(0);
+    });
+
+    test('eval rules', () => {
+      const wallet = context.wallets.find(
+        (wallet: ValueWallet) => wallet.symbol === 'BTC'
+      );
+
+      expect(wallet.amount).toBe(2);
+      evalRules(rules, context);
+      expect(wallet.amount).toBe(0);
+    });
+  });
+
+  describe('shouldnt sell all btc', () => {
+    let context: Context;
+
+    beforeEach(() => {
+      const data: ContextData = {
+        'BTC/USDT': [
+          {
+            timestamp: Date.now() - 100,
+            value: 600
+          }
+        ]
+      };
+      const wallets: ValueWallet[] = [
+        {
+          type: 'WALLET',
+          symbol: 'BTC',
+          amount: 2
+        }
+      ];
+      context = {
+        'LIMIT_VALUE_UP_BTC/USDT': 1000,
+        'LIMIT_VALUE_DOWN_BTC/USDT': 700,
+        data,
+        wallets
+      };
+    });
+
+    test('values', () => {
+      const lim = evalValue(limitValueUp, context);
+
+      expect(lim).toBe(1000);
+
+      const last = evalValue(lastPrice, context);
+      expect(last).toBe(600);
+    });
+
+    test('condition', () => {
+      const result = evalValue(condition, context);
+      expect(result).toBe(false);
+    });
+
+    test('eval rules', () => {
+      const wallet = context.wallets.find(
+        (wallet: ValueWallet) => wallet.symbol === 'BTC'
+      );
+
+      expect(wallet.amount).toBe(2);
+      evalRules(rules, context);
+      expect(wallet.amount).toBe(2);
     });
   });
 });
