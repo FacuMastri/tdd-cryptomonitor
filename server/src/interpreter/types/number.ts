@@ -35,7 +35,7 @@ export const NUMBER_DATA = 'DATA';
 export interface NumberData {
   type: typeof NUMBER_DATA;
   symbol: string;
-  from: number; // seconds ago
+  since: number; // seconds ago
   until: number; // seconds ago
   default?: NumberType | NumberType[];
 }
@@ -58,11 +58,11 @@ export interface ContextDatum {
 export type ContextData = Record<string, ContextDatum[]>;
 
 export function isNumberCallBinary(call: NumberCall): call is NumberCallBinary {
-  return OPS_2_NUMBERS.includes(call.name as any);
+  return OPS_2_NUMBERS.includes(call.name as never);
 }
 
 export function isNumberCallMany(call: ValueCall): call is NumberCallMany {
-  return OPS_N_NUMBERS.includes(call.name as any);
+  return OPS_N_NUMBERS.includes(call.name as never);
 }
 
 export type NumberCall = NumberCallBinary | NumberCallMany | NumberCallUnary;

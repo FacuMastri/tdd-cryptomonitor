@@ -56,21 +56,21 @@ import {
   ContextDatum,
   isNumberCallBinary,
   isNumberCallMany,
+  NUMBER_DATA,
   NumberCall,
   NumberCallBinary,
   NumberCallMany,
   NumberData,
   NumberType,
-  NUMBER_DATA,
   WalletDef
 } from './types/number';
 import { BooleanCall, BooleanType } from './types/boolean';
 import {
   Action,
-  ACTION_SET,
   ACTION_BUY,
-  ActionBuyMarket,
   ACTION_SELL,
+  ACTION_SET,
+  ActionBuyMarket,
   ActionSellMarket,
   ActionSetVariable
 } from './types/action';
@@ -78,8 +78,6 @@ import { Rule, Rules } from './types/rule';
 import { Context } from './types/context';
 
 const CONTEXT_RESERVED = ['wallets', 'data'];
-
-export const STORAGE: Context = { zero: 0, wallets: [], data: {} };
 
 export function evalBoolean(boolean: BooleanType, context?: Context): boolean {
   switch (boolean.type) {
@@ -101,9 +99,9 @@ function evalBooleanCall(call: BooleanCall, context?: Context): boolean {
     case LESS_EQUAL:
       return evalLessThanEqual(call.arguments, context);
     case GREATER:
-      return evalLessThan(call.arguments.reverse(), context);
+      return evalLessThan([...call.arguments].reverse(), context);
     case GREATER_EQUAL:
-      return evalLessThanEqual(call.arguments.reverse(), context);
+      return evalLessThanEqual([...call.arguments].reverse(), context);
     case AND:
       return call.arguments.every((arg) => evalBoolean(arg, context));
     case OR:
@@ -119,7 +117,9 @@ export function evalNumberVar(
 ): number {
   const value = context && context[number.name];
   if (value === undefined)
-    throw new Error('Variable not found: ' + number.name);
+    throw new Error(
+      'Variable not found: ' + number.name + ' in context ' + context
+    );
 
   if (typeof value === 'number') return value;
 
@@ -161,7 +161,7 @@ function secondsAgo(timestamp: number): number {
 function getContextData(dataInfo: NumberData, context?: Context): number[] {
   if (!context) return [];
 
-  const { symbol, from, until } = dataInfo;
+  const { symbol, since, until } = dataInfo;
 
   const data = context.data as ContextData;
   if (!data || !data[symbol]) return [];
@@ -169,7 +169,7 @@ function getContextData(dataInfo: NumberData, context?: Context): number[] {
   const symbolData = data[symbol]
     .filter((datum) => {
       const seconds = secondsAgo(datum.timestamp);
-      return seconds <= from && seconds >= until;
+      return seconds <= since && seconds >= until;
     })
     .map((datum) => datum.value);
 
@@ -205,32 +205,35 @@ function evalNumberCallWithNArgs(
   const callArgs = getArguments(call, context);
   switch (call.name) {
     case PLUS:
-      return evalAdd(callArgs);
+      return evalAdd(callArgs, context);
     case MULTIPLY:
-      return evalMultiply(callArgs);
+      return evalMultiply(callArgs, context);
     case MIN:
-      return evalMin(callArgs);
+      return evalMin(callArgs, context);
     case MAX:
-      return evalMax(callArgs);
+      return evalMax(callArgs, context);
     case AVERAGE:
-      return evalAverage(callArgs);
+      return evalAverage(callArgs, context);
     case STDDEV:
-      return evalStddev(callArgs);
+      return evalStddev(callArgs, context);
     case FIRST:
-      return evalFirst(callArgs);
+      return evalFirst(callArgs, context);
     case LAST:
-      return evalFirst(callArgs.reverse());
+      return evalFirst([...callArgs].reverse(), context);
     default:
       throw new Error('Unknown number call for N arguments: ' + call.name);
   }
 }
 
-function evalNumberCallWith2Args(call: NumberCallBinary): number {
+function evalNumberCallWith2Args(
+  call: NumberCallBinary,
+  context?: Context
+): number {
   switch (call.name) {
     case MINUS:
-      return evalSubtract(call.arguments);
+      return evalSubtract(call.arguments, context);
     case DIVIDE:
-      return evalDivide(call.arguments);
+      return evalDivide(call.arguments, context);
     default:
       throw new Error('Unknown number call for 2 arguments: ' + call.name);
   }
@@ -238,11 +241,11 @@ function evalNumberCallWith2Args(call: NumberCallBinary): number {
 
 function evalNumberCall(call: NumberCall, context?: Context): number {
   if (isNumberCallBinary(call)) {
-    return evalNumberCallWith2Args(call);
+    return evalNumberCallWith2Args(call, context);
   } else if (isNumberCallMany(call)) {
     return evalNumberCallWithNArgs(call, context);
   } else if (call.name == 'NEGATE') {
-    return evalNegate(call.arguments);
+    return evalNegate(call.arguments, context);
   } else {
     throw new Error('Unknown number call: ' + call.name);
   }
