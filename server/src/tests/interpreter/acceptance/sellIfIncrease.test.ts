@@ -207,8 +207,8 @@ describe('Si el precio de BTC/USDT aumenta más de 15% del valor de la última v
       expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
       evalRules(rules, context);
       expect(wallet.amount).toBeCloseTo(2);
-      //TODO: lo  de abajo no pasa, da 100. no se si esta bien o mal
-      // expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(110);
+      // Since we did not sell (the condition was not met), the last sell value is not updated
+      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
     });
   });
 

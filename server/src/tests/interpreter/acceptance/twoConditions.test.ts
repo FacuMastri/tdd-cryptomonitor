@@ -55,7 +55,6 @@ describe('Si el precio BTC/USDT cae bajo un nivel determinado pero por encima de
 
   const action: Action = {
     type: 'SELL_MARKET',
-    //symbol: 'BTC/USDT', // FIXME: this is the original, what is it supposed to mean?
     symbol: 'BTC',
     amount: {
       type: 'WALLET',
@@ -69,8 +68,6 @@ describe('Si el precio BTC/USDT cae bajo un nivel determinado pero por encima de
       {
         name: 'EscapeIfNotDownEnough',
         condition,
-        // FIXME: doc uses `action` rather than `actions`, see if spec can change
-        // as `actions` describes better what it is
         actions: [action]
       }
     ]
