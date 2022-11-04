@@ -10,7 +10,6 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "sourceMap": true,
     "inlineSourceMap": true,
     "types": ["jest", "node"],
     "typeRoots": ["./types", "./node_modules/@types"]
