@@ -47,7 +47,7 @@ const requestListener: Handler = async (req: Req, res: Res) => {
   );
 
   const returnError = (err: Error, code = 400) => {
-    res.writeHead(code, { 'Content-Type': 'text/html' });
+    res.writeHead(code, headers);
     res.end(err.message);
   };
 

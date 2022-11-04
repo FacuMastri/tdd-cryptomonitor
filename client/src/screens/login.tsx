@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { loginAPI, checkOk, intoText } from "../util/requests";
+import { toast } from "react-toastify";
 
 type Props = {
   setJwt: (jwt: string) => void;
@@ -25,14 +26,15 @@ const Login = ({ setJwt }: Props) => {
       },
       body: JSON.stringify({ user, password }),
     })
-      .then(checkOk)
+      .then(checkOk("Invalid username or password"))
       .then(intoText)
       .then((jwt) => {
-        if (!jwt) throw new Error("Failed to login");
+        if (!jwt) throw new Error("Failed to login unexpectedly");
         setJwt(jwt);
       })
       .catch((error) => {
         console.log(error.message ?? error);
+        toast.error(error.message ?? "Error");
         setProcessing(false);
       });
   };

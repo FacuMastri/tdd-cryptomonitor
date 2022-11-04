@@ -3,32 +3,45 @@ type Props = {
 };
 
 const Dashboard = ({ jwt }: Props) => {
-  const onSubmit = (values: any) => {
-    console.log(values);
-  };
-
   return (
     <section>
       <h1>Dashboard</h1>
 
       <h2>Rules</h2>
-      <p>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Atque eum
-        consectetur temporibus! Saepe tempore assumenda numquam quaerat ducimus
-        ullam. Voluptas illum suscipit modi placeat delectus veritatis soluta
-        illo culpa ratione veniam fugit obcaecati assumenda doloribus dolorum
-        magni voluptatum, nam non nemo odit vitae. Culpa sed beatae tempora
-        perspiciatis perferendis? Recusandae.
-      </p>
+
+      <pre style={{ whiteSpace: "pre-wrap" }}>
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣤⣤⣴⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣄⠀⣠⣴⡿⠋⢉⢙⠟⠛⠉⢿⣀⣠⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⠃⠀⠊⢿⣿⡏⢠⣖⣉⢹⠀⣞⢀⡾⠋⡉⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⢿⠀⠨⠀⢸⣿⣧⣌⢙⣛⠛⠚⡟⣓⠄⠠⣡⠗⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⢷⣤⣠⣼⣿⣿⣿⡾⢟⡉⠀⠋⠛⣦⠞⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⠃⠀⠀⠀⠄⠀⢃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡿⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⣇⠀⠀⠀⠀⠀⠀⣤⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣷⣦⡤⠤⣤⣬⣙⠖⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⡧⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⢀⠙⠛⢿⣿⣿⣿⣿⣴⠑⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⣤⠈⠀⠳⡄⠀⡀⢙⣙⣿⣿⣨⣼⠾⢐⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⡀⡀⡀⠈⠠⢧⡀⠘⢁⠀⢿⣿⡟⡍⠀⢸⢣⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠆⠆⠀⠀⣸⠁⠀⠙⠀⠈⠲⡆⠸⠌⠟⠘⠚⠒⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+      </pre>
 
       <h2>Coins</h2>
       <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt veniam
-        voluptatem suscipit atque vero saepe itaque explicabo doloremque ipsum
-        earum laudantium, facilis perspiciatis impedit animi rem unde laborum
-        quo sint! Fugiat aut cupiditate eius sit placeat architecto sed illum?
-        Ad.
+        The year is 2035, you enter your local 7/11 to buy yourself a g fuel
+        before your shift in the local crypto mine. The android working the
+        counter says they only accept doge coin. You pull out your phone, draw a
+        stick man in less than five seconds on a yellow back ground and then
+        sell it as an NFT. From the sell you make 6 doge coin, about 5 million
+        dollars in old world money. You go to buy the drink only to find out
+        that from the time you closed your phone to the time you talked to the
+        cashier the coins had dropped in value to only 3 dollars per coin and
+        you now owe at least 10 doge coin to the robot for the gamer fuel. You
+        leave the store, frustrated, and drive off in your Tesla
       </p>
+
+      <footer>{jwt}</footer>
     </section>
   );
 };

@@ -1,8 +1,9 @@
 export const loginAPI = "http://localhost:8080/login";
 
-export const checkOk = (res: Response) => {
+export const checkOk = (errorMsg: string) => (res: Response) => {
   if (res.status >= 300) {
-    throw new Error(res.statusText);
+    console.log("checkOk", errorMsg, res.status, res.statusText);
+    throw new Error(errorMsg ?? res.statusText);
   }
   console.log("checkOk", res);
   return res;
