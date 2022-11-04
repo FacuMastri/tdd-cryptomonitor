@@ -1,5 +1,6 @@
 import fs from 'fs';
 import crypto from 'crypto';
+import { HttpError } from '../routes/routes';
 
 type User = {
   id: number;
@@ -28,7 +29,7 @@ const createUserSession = (user: string, password: string): string => {
   );
 
   if (!user_obj) {
-    throw new Error('Invalid user or password');
+    throw new HttpError(401, 'Invalid user or password');
   }
 
   const sessionId = crypto.randomUUID();
@@ -41,7 +42,7 @@ const getUserFromSession = (sessionId: string): User => {
   const userId = sessions[sessionId];
 
   if (!userId) {
-    throw new Error('Invalid session');
+    throw new HttpError(401, 'Invalid session');
   }
 
   return users[userId];

@@ -1,4 +1,4 @@
-import { Res, Req, AddRoute, getBody, headers } from './routes';
+import { Res, Req, AddRoute, getBody, headers, HttpError } from './routes';
 import { Rules } from '../interpreter/types/rule';
 
 // TODO: Move this to interpreter
@@ -10,7 +10,7 @@ const parseRules = (body: string): Rules => {
     return json;
   }
   // TODO: Add more specific error messages (Nice to have)
-  throw new Error('Invalid Rules');
+  throw new HttpError(406, 'Invalid Rules');
 };
 
 const addRoutes = (addRoute: AddRoute) => {

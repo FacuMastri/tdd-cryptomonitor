@@ -4,6 +4,13 @@ type Req = http.IncomingMessage;
 type Res = http.ServerResponse; //http.ServerResponse<http.IncomingMessage> & {req: http.IncomingMessage;}
 type Handler = (req: Req, res: Res) => Promise<void>;
 
+class HttpError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+
 type AddRoute = (method: string, path: string, handler: Handler) => void;
 
 type Route = {
@@ -46,13 +53,14 @@ const requestListener: Handler = async (req: Req, res: Res) => {
     (r) => r.method === req.method && urlMatch(req.url ?? '', r.path)
   );
 
-  const returnError = (err: Error, code = 400) => {
+  const returnError = (err: HttpError) => {
+    const code = err?.status ?? 500;
     res.writeHead(code, headers);
     res.end(err.message);
   };
 
   if (!route) {
-    return returnError(new Error('Not Found'));
+    return returnError(new HttpError(404, 'Not Found'));
   }
 
   route.handler(req, res).catch((err) => {
@@ -84,5 +92,6 @@ addRoute('GET', '/*', async (req, res) => {
 });
 
 export type { Req, Res, AddRoute, Handler };
-export { addRoute, getBody, headers };
+export { HttpError, headers };
+export { addRoute, getBody };
 export default requestListener;

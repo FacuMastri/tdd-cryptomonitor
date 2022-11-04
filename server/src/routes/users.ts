@@ -1,4 +1,4 @@
-import { Res, Req, AddRoute, getBody, headers } from './routes';
+import { Res, Req, AddRoute, getBody, headers, HttpError } from './routes';
 import { createUserSession } from '../users';
 
 const addRoutes = (addRoute: AddRoute) => {
@@ -9,8 +9,8 @@ const addRoutes = (addRoute: AddRoute) => {
     const user = json.user;
     const password = json.password;
 
-    if (!user) throw new Error('No User');
-    if (!password) throw new Error('No Password');
+    if (!user) throw new HttpError(401, 'No User');
+    if (!password) throw new HttpError(401, 'No Password');
 
     const jwt = createUserSession(user, password);
 
