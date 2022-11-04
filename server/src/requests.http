@@ -1,0 +1,13 @@
+# Using the 'REST Client' vscode extension
+
+GET http://localhost:8080/no/why
+
+###
+
+POST http://localhost:8080/rules
+
+{
+  "id": "testId",
+  "rules": [
+  ]
+}
