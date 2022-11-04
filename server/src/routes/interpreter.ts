@@ -1,4 +1,4 @@
-import { Res, Req, AddRoute, getBody } from './routes';
+import { Res, Req, AddRoute, getBody, headers } from './routes';
 import { Rules } from '../interpreter/types/rule';
 
 // TODO: Move this to interpreter
@@ -21,7 +21,7 @@ const addRoutes = (addRoute: AddRoute) => {
 
     // TODO: Add rules to user
 
-    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.writeHead(200, headers);
     res.end('Ok');
   });
 };

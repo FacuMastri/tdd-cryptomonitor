@@ -1,4 +1,4 @@
-import { Res, Req, AddRoute, getBody } from './routes';
+import { Res, Req, AddRoute, getBody, headers } from './routes';
 import { createUserSession } from '../users';
 
 const addRoutes = (addRoute: AddRoute) => {
@@ -14,7 +14,7 @@ const addRoutes = (addRoute: AddRoute) => {
 
     const jwt = createUserSession(user, password);
 
-    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.writeHead(200, headers);
     res.end(jwt);
   });
 };
