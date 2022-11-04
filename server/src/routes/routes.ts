@@ -2,7 +2,7 @@ import http from 'http';
 
 type Req = http.IncomingMessage;
 type Res = http.ServerResponse; //http.ServerResponse<http.IncomingMessage> & {req: http.IncomingMessage;}
-type Handler = (req: Req, res: Res) => void;
+type Handler = (req: Req, res: Res) => Promise<void>;
 
 type AddRoute = (method: string, path: string, handler: Handler) => void;
 
@@ -20,7 +20,7 @@ const addRoute: AddRoute = (method: string, path: string, handler: Handler) => {
   routes.unshift({ method, path, handler });
 };
 
-const requestListener: Handler = (req: Req, res: Res) => {
+const requestListener: Handler = async (req: Req, res: Res) => {
   // Returns if a path matches a route that can contain a wildcard w/ regex
   const urlMatch = (path: string, route: string): boolean =>
     new RegExp(`^${route.replace(/\*/g, '.*')}$`).test(path);
@@ -30,13 +30,18 @@ const requestListener: Handler = (req: Req, res: Res) => {
     (r) => r.method === req.method && urlMatch(req.url ?? '', r.path)
   );
 
-  if (route) {
-    route.handler(req, res);
-  } else {
-    console.log('No route found', req.method, req.url);
-    res.statusCode = 404;
-    res.end();
+  const returnError = (err: Error, code = 400) => {
+    res.writeHead(code, { 'Content-Type': 'text/html' });
+    res.end(err.message);
+  };
+
+  if (!route) {
+    return returnError(new Error('Not Found'));
   }
+
+  route.handler(req, res).catch((err) => {
+    returnError(err);
+  });
 };
 
 const getBody = async (req: Req): Promise<string> => {
@@ -56,7 +61,7 @@ const getBody = async (req: Req): Promise<string> => {
   });
 };
 
-addRoute('GET', '/*', (req, res) => {
+addRoute('GET', '/*', async (req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/html' });
   res.end('Hello World!');
   console.log('Routes', routes);

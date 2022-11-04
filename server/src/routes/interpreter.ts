@@ -17,14 +17,7 @@ const addRoutes = (addRoute: AddRoute) => {
   addRoute('POST', '/*', async (req: Req, res: Res) => {
     const body = await getBody(req);
 
-    let rules: Rules;
-    try {
-      rules = parseRules(body);
-    } catch (e) {
-      res.statusCode = 400;
-      res.end((e as Error).message);
-      return;
-    }
+    const rules = parseRules(body);
 
     // TODO: Add rules to user
 

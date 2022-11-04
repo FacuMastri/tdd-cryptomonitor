@@ -1,8 +1,19 @@
 # Using the 'REST Client' vscode extension
 
+### Getting any route has a default response
+
 GET http://localhost:8080/no/why
 
-###
+### Logging in as fdelu
+
+POST http://localhost:8080/login
+
+{
+  "user": "fdelu",
+  "password": "fdelu"
+}
+
+### Posting rules
 
 POST http://localhost:8080/rules
 
