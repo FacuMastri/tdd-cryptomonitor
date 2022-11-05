@@ -7,6 +7,7 @@ GET http://localhost:8080/no/why
 ### Logging in as fdelu
 
 POST http://localhost:8080/login
+Content-Type: application/json
 
 {
   "user": "fdelu",
@@ -22,6 +23,7 @@ jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0Ij
 
 POST http://localhost:8080/rules
 jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg
+Content-Type: application/json
 
 {
   "requiredVariables": "ninguna",
