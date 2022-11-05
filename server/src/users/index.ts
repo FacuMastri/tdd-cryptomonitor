@@ -9,6 +9,27 @@ type User = {
   context: any;
 };
 
+class InvalidTokenError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'InvalidTokenError';
+  }
+}
+
+class UserNotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'UserNotFoundError';
+  }
+}
+
+class InvalidUserOrPasswordError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'InvalidUserOrPasswordError';
+  }
+}
+
 const users: Record<string, User> = {};
 
 // TODO: This is not a good way to store jwt config
@@ -32,7 +53,7 @@ const createUserJwt = (user: string, password: string): string => {
   );
 
   if (!user_obj) {
-    throw new HttpError(401, 'Invalid user or password');
+    throw new InvalidUserOrPasswordError('Invalid user or password');
   }
 
   const jwt = sign({ id: user_obj.id, user: user_obj.user }, SECRET, {
@@ -42,26 +63,24 @@ const createUserJwt = (user: string, password: string): string => {
   return jwt;
 };
 
-const getUserFromJwt = (jwt: string): User => {
+const findUserByJwt = (jwt: string): User => {
   let userId: number;
   try {
     const payload = verify(jwt, SECRET) as { id: number };
     userId = payload?.id;
   } catch (err) {
-    throw new HttpError(401, 'Invalid token');
+    throw new InvalidTokenError('Invalid token');
   }
 
   if (!userId) {
-    throw new HttpError(401, 'Invalid user');
+    throw new UserNotFoundError('Invalid user');
   }
 
   return users[userId];
 };
 
-const getUser = (req: Req) => {
-  const jwt = req.headers.jwt as string;
-  if (!jwt) throw new HttpError(401, 'No token');
-  return getUserFromJwt(jwt);
+const findUser = (req: Req) => {
+  return findUserByJwt(req.headers.jwt as string);
 };
 
-export { loadUsers, createUserJwt, getUserFromJwt, getUser };
+export { loadUsers, createUserJwt, findUserByJwt, findUser };

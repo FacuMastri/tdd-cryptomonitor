@@ -1,5 +1,5 @@
 import { Res, Req, AddRoute, getBody, HttpError, resText } from './routes';
-import { createUserJwt, getUser } from '../users';
+import { createUserJwt, findUser } from '../users';
 
 const addRoutes = (addRoute: AddRoute) => {
   addRoute('POST', '/login', async (req: Req, res: Res) => {
@@ -17,7 +17,7 @@ const addRoutes = (addRoute: AddRoute) => {
     resText(res, jwt);
   });
   addRoute('GET', '/verify', async (req: Req, res: Res) => {
-    const { id } = getUser(req);
+    const { id } = findUser(req);
     resText(res, String(id));
   });
 };

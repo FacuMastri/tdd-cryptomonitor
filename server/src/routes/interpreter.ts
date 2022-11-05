@@ -8,7 +8,7 @@ import {
   resText
 } from './routes';
 import { Rules } from '../interpreter/types/rule';
-import { getUser } from '../users';
+import { findUser } from '../users';
 
 // TODO: Move this to interpreter
 const parseRules = (body: string): Rules => {
@@ -24,7 +24,7 @@ const parseRules = (body: string): Rules => {
 
 const addRoutes = (addRoute: AddRoute) => {
   addRoute('POST', '/rules', async (req: Req, res: Res) => {
-    const user = getUser(req);
+    const user = findUser(req);
     const body = await getBody(req);
 
     const rules = parseRules(body);
@@ -34,7 +34,7 @@ const addRoutes = (addRoute: AddRoute) => {
     resText(res, 'Ok');
   });
   addRoute('GET', '/rules', async (req: Req, res: Res) => {
-    const user = getUser(req);
+    const user = findUser(req);
 
     const rules = user.context.rules;
 
