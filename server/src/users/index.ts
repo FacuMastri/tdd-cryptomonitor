@@ -1,6 +1,10 @@
 import fs from 'fs';
-import { HttpError, Req } from '../routes/routes';
 import { sign, verify } from 'jsonwebtoken';
+import {
+  InvalidTokenError,
+  InvalidUserOrPasswordError,
+  UserNotFoundError
+} from './errors';
 
 type User = {
   id: number;
@@ -8,27 +12,6 @@ type User = {
   password: string;
   context: any;
 };
-
-class InvalidTokenError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'InvalidTokenError';
-  }
-}
-
-class UserNotFoundError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'UserNotFoundError';
-  }
-}
-
-class InvalidUserOrPasswordError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'InvalidUserOrPasswordError';
-  }
-}
 
 const users: Record<string, User> = {};
 
@@ -79,8 +62,4 @@ const findUserByJwt = (jwt: string): User => {
   return users[userId];
 };
 
-const findUser = (req: Req) => {
-  return findUserByJwt(req.headers.jwt as string);
-};
-
-export { loadUsers, createUserJwt, findUserByJwt, findUser };
+export { loadUsers, createUserJwt, findUserByJwt };

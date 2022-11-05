@@ -21,13 +21,18 @@ function verifyCredentialsBody(
   res: Response,
   next: NextFunction
 ) {
-  const { user, password } = req.body;
-
-  if (!user) {
+  if (!req.body.user) {
     return res.status(401).send('No user provided');
   }
-  if (!password) {
+  if (!req.body.password) {
     return res.status(401).send('No password provided');
+  }
+  next();
+}
+
+function verifyRulesBody(req: Request, res: Response, next: NextFunction) {
+  if (!req.body.rules || !req.body.requiredVariables) {
+    return res.status(406).send('Invalid rules, verify the format required');
   }
   next();
 }
@@ -64,25 +69,36 @@ app.post(
       const jwt = createUserJwt(user, password);
       res.status(200).send(jwt);
     } catch (err) {
-      const message = getErrorMessage(err);
-      res.status(401).send(message);
+      res.status(401).send(getErrorMessage(err));
     }
   }
 );
 
-app.post('/rules', verifyJwtHeader, async (req: Request, res: Response) => {
-  // TODO ver manejo de errores interno porque se repite codigo
-  const user = findUserByJwt(req.headers.jwt as string);
-  if (!req.body.rules || !req.body.requiredVariables) {
-    return res.status(406).send('Invalid rules');
+app.post(
+  '/rules',
+  verifyJwtHeader,
+  verifyRulesBody,
+  async (req: Request, res: Response) => {
+    // TODO ver manejo de errores interno porque se repite codigo try/catch
+    let user;
+    try {
+      user = findUserByJwt(req.headers.jwt as string);
+    } catch (err) {
+      return res.status(401).send(getErrorMessage(err));
+    }
+    user.context.rules = req.body;
+    res.status(200).send('Rules added');
   }
-  user.context.rules = req.body;
-  res.status(200).send('Rules added');
-});
+);
 
 app.get('/rules', verifyJwtHeader, async (req: Request, res: Response) => {
-  // TODO ver manejo de errores interno porque se repite codigo
-  const user = findUserByJwt(req.headers.jwt as string);
+  // TODO ver manejo de errores interno porque se repite codigo try/catch
+  let user;
+  try {
+    user = findUserByJwt(req.headers.jwt as string);
+  } catch (err) {
+    return res.status(401).send(getErrorMessage(err));
+  }
   const rules = user.context.rules;
   res.status(200).send(rules);
 });

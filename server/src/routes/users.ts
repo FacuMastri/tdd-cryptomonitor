@@ -1,5 +1,5 @@
 import { Res, Req, AddRoute, getBody, HttpError, resText } from './routes';
-import { createUserJwt, findUser } from '../users';
+import { createUserJwt } from '../users';
 
 const addRoutes = (addRoute: AddRoute) => {
   addRoute('POST', '/login', async (req: Req, res: Res) => {
