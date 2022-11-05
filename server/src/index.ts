@@ -1,5 +1,5 @@
 import cors from 'cors';
-import express, { Express, Request, Response } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import { createUserJwt, findUserByJwt, loadUsers } from './users';
 import morgan from 'morgan';
 
@@ -9,34 +9,18 @@ loadUsers('db/users.json');
 
 const app: Express = express();
 
-app.use(express.json());
-app.use(cors());
-app.use(morgan('dev'));
-
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
-});
-
-app.get('/verify', async (req: Request, res: Response) => {
+function verifyJwtHeader(req: Request, res: Response, next: NextFunction) {
   if (!req.headers.jwt) {
-    res.status(401).send('No token was provided');
+    return res.status(401).send('No token was provided');
   }
-  try {
-    const { id } = findUserByJwt(req.headers.jwt as string);
-    res.status(200).send(String(id));
-    // resText(res, String(id));
-  } catch (err) {
-    let message;
-    if (err instanceof Error) {
-      message = err.message;
-    } else {
-      message = String(err);
-    }
-    res.status(401).send(message);
-  }
-});
+  next();
+}
 
-app.post('/login', async (req: Request, res: Response) => {
+function verifyCredentialsBody(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const { user, password } = req.body;
 
   if (!user) {
@@ -45,26 +29,48 @@ app.post('/login', async (req: Request, res: Response) => {
   if (!password) {
     return res.status(401).send('No password provided');
   }
+  next();
+}
 
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
+app.use(express.json());
+app.use(cors());
+app.use(morgan('dev'));
+
+app.get('/', (req: Request, res: Response) => {
+  res.send('Hello World!');
+});
+
+app.get('/verify', verifyJwtHeader, async (req: Request, res: Response) => {
   try {
-    const jwt = createUserJwt(user, password);
-    res.status(200).send(jwt);
+    const { id } = findUserByJwt(req.headers.jwt as string);
+    res.status(200).send(String(id));
   } catch (err) {
-    let message;
-    if (err instanceof Error) {
-      message = err.message;
-    } else {
-      message = String(err);
-    }
-    res.status(401).send(message);
+    res.status(401).send(getErrorMessage(err));
   }
 });
 
-app.post('/rules', async (req: Request, res: Response) => {
-  if (!req.headers.jwt) {
-    return res.status(401).send('No token was provided');
-  }
+app.post(
+  '/login',
+  verifyCredentialsBody,
+  async (req: Request, res: Response) => {
+    const { user, password } = req.body;
 
+    try {
+      const jwt = createUserJwt(user, password);
+      res.status(200).send(jwt);
+    } catch (err) {
+      const message = getErrorMessage(err);
+      res.status(401).send(message);
+    }
+  }
+);
+
+app.post('/rules', verifyJwtHeader, async (req: Request, res: Response) => {
   // TODO ver manejo de errores interno porque se repite codigo
   const user = findUserByJwt(req.headers.jwt as string);
   if (!req.body.rules || !req.body.requiredVariables) {
@@ -74,11 +80,8 @@ app.post('/rules', async (req: Request, res: Response) => {
   res.status(200).send('Rules added');
 });
 
-app.get('/rules', async (req: Request, res: Response) => {
-  if (!req.headers.jwt) {
-    res.status(401).send('No token was provided');
-  }
-
+app.get('/rules', verifyJwtHeader, async (req: Request, res: Response) => {
+  // TODO ver manejo de errores interno porque se repite codigo
   const user = findUserByJwt(req.headers.jwt as string);
   const rules = user.context.rules;
   res.status(200).send(rules);
