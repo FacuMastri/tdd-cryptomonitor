@@ -13,12 +13,25 @@ POST http://localhost:8080/login
   "password": "fdelu"
 }
 
+### Verify jwt
+
+GET http://localhost:8080/verify
+jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg
+
 ### Posting rules
 
 POST http://localhost:8080/rules
+jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg
 
 {
-  "id": "testId",
+  "requiredVariables": "ninguna",
   "rules": [
+    "hola",
+    "mundo"
   ]
 }
+
+### Getting rules
+
+GET http://localhost:8080/rules
+jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg

@@ -28,7 +28,21 @@ const headers = {
   'Access-Control-Max-Age': 2592000, // 30 days
   // Make it work :)
   'Access-Control-Allow-Headers':
-    'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With'
+    'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With, jwt'
+};
+const jsonHeaders = {
+  ...headers,
+  'Content-Type': 'application/json'
+};
+
+const resText = (res: Res, text: string, status = 200) => {
+  res.writeHead(status, headers);
+  res.end(text);
+};
+
+const resJson = (res: Res, json: any, status = 200) => {
+  res.writeHead(status, jsonHeaders);
+  res.end(JSON.stringify(json));
 };
 
 const addRoute: AddRoute = (method: string, path: string, handler: Handler) => {
@@ -92,6 +106,6 @@ addRoute('GET', '/*', async (req, res) => {
 });
 
 export type { Req, Res, AddRoute, Handler };
-export { HttpError, headers };
+export { HttpError, resText, resJson };
 export { addRoute, getBody };
 export default requestListener;

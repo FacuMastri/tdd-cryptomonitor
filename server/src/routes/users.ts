@@ -1,5 +1,5 @@
-import { Res, Req, AddRoute, getBody, headers, HttpError } from './routes';
-import { createUserSession } from '../users';
+import { Res, Req, AddRoute, getBody, HttpError, resText } from './routes';
+import { createUserJwt, getUser } from '../users';
 
 const addRoutes = (addRoute: AddRoute) => {
   addRoute('POST', '/login', async (req: Req, res: Res) => {
@@ -12,10 +12,13 @@ const addRoutes = (addRoute: AddRoute) => {
     if (!user) throw new HttpError(401, 'No User');
     if (!password) throw new HttpError(401, 'No Password');
 
-    const jwt = createUserSession(user, password);
+    const jwt = createUserJwt(user, password);
 
-    res.writeHead(200, headers);
-    res.end(jwt);
+    resText(res, jwt);
+  });
+  addRoute('GET', '/verify', async (req: Req, res: Res) => {
+    const { id } = getUser(req);
+    resText(res, String(id));
   });
 };
 

@@ -1,5 +1,14 @@
-import { Res, Req, AddRoute, getBody, headers, HttpError } from './routes';
+import {
+  Res,
+  Req,
+  AddRoute,
+  getBody,
+  HttpError,
+  resJson,
+  resText
+} from './routes';
 import { Rules } from '../interpreter/types/rule';
+import { getUser } from '../users';
 
 // TODO: Move this to interpreter
 const parseRules = (body: string): Rules => {
@@ -14,15 +23,22 @@ const parseRules = (body: string): Rules => {
 };
 
 const addRoutes = (addRoute: AddRoute) => {
-  addRoute('POST', '/*', async (req: Req, res: Res) => {
+  addRoute('POST', '/rules', async (req: Req, res: Res) => {
+    const user = getUser(req);
     const body = await getBody(req);
 
     const rules = parseRules(body);
 
-    // TODO: Add rules to user
+    user.context.rules = rules;
 
-    res.writeHead(200, headers);
-    res.end('Ok');
+    resText(res, 'Ok');
+  });
+  addRoute('GET', '/rules', async (req: Req, res: Res) => {
+    const user = getUser(req);
+
+    const rules = user.context.rules;
+
+    resJson(res, rules);
   });
 };
 

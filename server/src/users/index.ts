@@ -1,6 +1,6 @@
 import fs from 'fs';
-import crypto from 'crypto';
-import { HttpError } from '../routes/routes';
+import { HttpError, Req } from '../routes/routes';
+import { sign, verify } from 'jsonwebtoken';
 
 type User = {
   id: number;
@@ -10,7 +10,10 @@ type User = {
 };
 
 const users: Record<string, User> = {};
-const sessions: Record<string, number> = {};
+
+// TODO: This is not a good way to store jwt config
+const SECRET = 'mysecret';
+const EXPIRATION = '30d';
 
 const loadUsers = (filePath: string) => {
   const users_str = fs.readFileSync(filePath, 'utf-8');
@@ -23,7 +26,7 @@ const loadUsers = (filePath: string) => {
   console.log('Users loaded', users);
 };
 
-const createUserSession = (user: string, password: string): string => {
+const createUserJwt = (user: string, password: string): string => {
   const user_obj = Object.values(users).find(
     (usr: User) => usr.user === user && usr.password === password
   );
@@ -32,20 +35,33 @@ const createUserSession = (user: string, password: string): string => {
     throw new HttpError(401, 'Invalid user or password');
   }
 
-  const sessionId = crypto.randomUUID();
-  sessions[sessionId] = user_obj.id;
+  const jwt = sign({ id: user_obj.id, user: user_obj.user }, SECRET, {
+    expiresIn: EXPIRATION
+  });
 
-  return sessionId;
+  return jwt;
 };
 
-const getUserFromSession = (sessionId: string): User => {
-  const userId = sessions[sessionId];
+const getUserFromJwt = (jwt: string): User => {
+  let userId: number;
+  try {
+    const payload = verify(jwt, SECRET) as { id: number };
+    userId = payload?.id;
+  } catch (err) {
+    throw new HttpError(401, 'Invalid token');
+  }
 
   if (!userId) {
-    throw new HttpError(401, 'Invalid session');
+    throw new HttpError(401, 'Invalid user');
   }
 
   return users[userId];
 };
 
-export { loadUsers, createUserSession, getUserFromSession };
+const getUser = (req: Req) => {
+  const jwt = req.headers.jwt as string;
+  if (!jwt) throw new HttpError(401, 'No token');
+  return getUserFromJwt(jwt);
+};
+
+export { loadUsers, createUserJwt, getUserFromJwt, getUser };
