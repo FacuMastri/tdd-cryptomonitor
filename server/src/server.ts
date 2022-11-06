@@ -9,7 +9,7 @@ import {
   verifyJwtHandler,
   verifyJwtHeader,
   verifyRulesBody
-} from './routes';
+} from './handlers';
 
 export default class Server {
   private app: Express;
