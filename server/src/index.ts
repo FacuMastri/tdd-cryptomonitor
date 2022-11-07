@@ -1,9 +1,11 @@
-import http from 'http';
+import express, { Express } from 'express';
+import { loadUsers } from './users';
+import Server from './server';
 
-http
-  .createServer(function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.end('Hello World!');
-  })
-  .listen(8080);
-console.log('Server running at http://localhost:8080/');
+const PORT = 8080;
+
+loadUsers('db/users.json');
+
+const app: Express = express();
+const server: Server = new Server(app, PORT);
+server.start();

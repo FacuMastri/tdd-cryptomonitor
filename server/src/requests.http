@@ -1,0 +1,39 @@
+# Using the 'REST Client' vscode extension
+
+### Getting any route has a default response
+
+GET http://localhost:8080/no/why
+
+### Logging in as fdelu
+
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "user": "fdelu",
+  "password": "fdelu"
+}
+
+### Verify jwt
+
+GET http://localhost:8080/verify
+jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg
+
+### Posting rules
+
+POST http://localhost:8080/rules
+jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg
+Content-Type: application/json
+
+{
+  "requiredVariables": "ninguna",
+  "rules": [
+    "hola",
+    "mundo"
+  ]
+}
+
+### Getting rules
+
+GET http://localhost:8080/rules
+jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg

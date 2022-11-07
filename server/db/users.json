@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "user": "fdelu",
+    "password": "fdelu",
+    "context": {}
+  },
+  {
+    "id": 2,
+    "user": "efoppiano",
+    "password": "efoppiano",
+    "context": {}
+  },
+  {
+    "id": 3,
+    "user": "fmastri",
+    "password": "fmastri",
+    "context": {}
+  },
+  {
+    "id": 4,
+    "user": "acivini",
+    "password": "acivini",
+    "context": {}
+  },
+  {
+    "id": 5,
+    "user": "nzu",
+    "password": "nzu",
+    "context": {}
+  },
+  {
+    "id": 6,
+    "user": "user",
+    "password": "password",
+    "context": {}
+  }
+]
