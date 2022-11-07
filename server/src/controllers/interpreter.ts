@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
-import { findUserByJwt } from '../users';
+import { User } from '../users';
 import { getErrorMessage } from './utils';
 
-export function getRulesHandler() {
+export function makeGetRulesController(
+  findUserByJwt: (jwt: string) => Promise<User>
+) {
   return async (req: Request, res: Response) => {
     let user;
     try {
@@ -15,7 +17,9 @@ export function getRulesHandler() {
   };
 }
 
-export function addRulesHandler() {
+export function makeAddRulesController(
+  findUserByJwt: (jwt: string) => Promise<User>
+) {
   return async (req: Request, res: Response) => {
     let user;
     try {

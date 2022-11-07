@@ -2,14 +2,13 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import {
-  addRulesHandler,
-  getRulesHandler,
+  addRulesController,
+  getRulesController,
   verifyCredentialsBody,
-  makeVerifyJwtController,
   verifyJwtHeader,
   verifyRulesBody
-} from './handlers';
-import { loginController, verifyJwtController } from './handlers/';
+} from './controllers';
+import { loginController, verifyJwtController } from './controllers/';
 
 export default class Server {
   private app: Express;
@@ -22,7 +21,7 @@ export default class Server {
 
   public start() {
     this.addHelpers();
-    this.addHandlers();
+    this.addControllers();
     this.app.listen(this.port, () => {
       console.log(
         `Server is running on port ${this.port} at http://localhost:${this.port}/`
@@ -30,7 +29,7 @@ export default class Server {
     });
   }
 
-  private addHandlers() {
+  private addControllers() {
     this.app.get('/', (req: Request, res: Response) => {
       res.send('Hello World!');
     });
@@ -40,9 +39,9 @@ export default class Server {
       '/rules',
       verifyJwtHeader,
       verifyRulesBody,
-      addRulesHandler()
+      addRulesController
     );
-    this.app.get('/rules', verifyJwtHeader, getRulesHandler());
+    this.app.get('/rules', verifyJwtHeader, getRulesController);
   }
 
   private addHelpers() {

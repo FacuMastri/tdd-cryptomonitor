@@ -27,6 +27,7 @@ const loadUsers = (filePath: string) => {
   console.log('Users loaded', users);
 };
 
+// TODO: mover esto a un UserService asi no repetimos la logica por todos lados
 export const createUserJwt = makeCreateUserJwt(
   new InMemoryUserRepository(users),
   SECRET,
