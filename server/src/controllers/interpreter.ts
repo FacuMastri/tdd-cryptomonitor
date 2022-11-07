@@ -27,6 +27,7 @@ export function makeAddRulesController(
     } catch (err) {
       return res.status(401).send(getErrorMessage(err));
     }
+    // TODO: esta linea seria responsabilidad de la persistencia, hay que moverlo al UserRepository
     user.context.rules = req.body;
     res.status(200).send('Rules added');
   };
