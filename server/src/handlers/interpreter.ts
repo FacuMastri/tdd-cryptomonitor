@@ -6,7 +6,7 @@ export function getRulesHandler() {
   return async (req: Request, res: Response) => {
     let user;
     try {
-      user = findUserByJwt(req.headers.jwt as string);
+      user = await findUserByJwt(req.headers.jwt as string);
     } catch (err) {
       return res.status(401).send(getErrorMessage(err));
     }
@@ -19,7 +19,7 @@ export function addRulesHandler() {
   return async (req: Request, res: Response) => {
     let user;
     try {
-      user = findUserByJwt(req.headers.jwt as string);
+      user = await findUserByJwt(req.headers.jwt as string);
     } catch (err) {
       return res.status(401).send(getErrorMessage(err));
     }

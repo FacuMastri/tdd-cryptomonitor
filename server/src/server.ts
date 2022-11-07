@@ -4,12 +4,12 @@ import morgan from 'morgan';
 import {
   addRulesHandler,
   getRulesHandler,
-  loginHandler,
   verifyCredentialsBody,
-  verifyJwtHandler,
+  makeVerifyJwtController,
   verifyJwtHeader,
   verifyRulesBody
 } from './handlers';
+import { loginController, verifyJwtController } from './handlers/';
 
 export default class Server {
   private app: Express;
@@ -34,8 +34,8 @@ export default class Server {
     this.app.get('/', (req: Request, res: Response) => {
       res.send('Hello World!');
     });
-    this.app.get('/verify', verifyJwtHeader, verifyJwtHandler());
-    this.app.post('/login', verifyCredentialsBody, loginHandler());
+    this.app.get('/verify', verifyJwtHeader, verifyJwtController);
+    this.app.post('/login', verifyCredentialsBody, loginController);
     this.app.post(
       '/rules',
       verifyJwtHeader,

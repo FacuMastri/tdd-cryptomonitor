@@ -1,19 +1,16 @@
 import fs from 'fs';
-import { sign, verify } from 'jsonwebtoken';
-import {
-  InvalidTokenError,
-  InvalidUserOrPasswordError,
-  UserNotFoundError
-} from './errors';
+import { makeCreateUserJwt } from './createUserJwt';
+import InMemoryUserRepository from './InMemoryUserRepository';
+import makeFindUserByJwt from './verifyUserJwt';
 
-type User = {
+export type User = {
   id: number;
   user: string;
   password: string;
   context: any;
 };
 
-const users: Record<string, User> = {};
+export const users: Record<string, User> = {};
 
 // TODO: This is not a good way to store jwt config
 const SECRET = 'mysecret';
@@ -30,36 +27,15 @@ const loadUsers = (filePath: string) => {
   console.log('Users loaded', users);
 };
 
-const createUserJwt = (user: string, password: string): string => {
-  const user_obj = Object.values(users).find(
-    (usr: User) => usr.user === user && usr.password === password
-  );
+export const createUserJwt = makeCreateUserJwt(
+  new InMemoryUserRepository(users),
+  SECRET,
+  EXPIRATION
+);
 
-  if (!user_obj) {
-    throw new InvalidUserOrPasswordError('Invalid user or password');
-  }
+export const findUserByJwt = makeFindUserByJwt(
+  new InMemoryUserRepository(users),
+  SECRET
+);
 
-  const jwt = sign({ id: user_obj.id, user: user_obj.user }, SECRET, {
-    expiresIn: EXPIRATION
-  });
-
-  return jwt;
-};
-
-const findUserByJwt = (jwt: string): User => {
-  let userId: number;
-  try {
-    const payload = verify(jwt, SECRET) as { id: number };
-    userId = payload?.id;
-  } catch (err) {
-    throw new InvalidTokenError('Invalid token');
-  }
-
-  if (!userId) {
-    throw new UserNotFoundError('Invalid user');
-  }
-
-  return users[userId];
-};
-
-export { loadUsers, createUserJwt, findUserByJwt };
+export { loadUsers };
