@@ -39,6 +39,12 @@ nav {
   padding: 0 2rem;
 }
 
+nav > div {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
 nav a {
   padding: 0.5rem 1rem;
   margin: 1rem;
