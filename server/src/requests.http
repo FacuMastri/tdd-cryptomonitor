@@ -43,3 +43,9 @@ jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0Ij
 
 GET http://localhost:8080/binance/exchangeInfo
 jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg
+
+
+### accountInfo
+
+GET http://localhost:8080/binance/account
+jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg
