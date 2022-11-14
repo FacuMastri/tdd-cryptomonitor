@@ -29,7 +29,7 @@ const Dashboard = ({ jwt }: Props) => {
 
       <h2>Coins</h2>
       <p>
-        The year is 2035, you enter your local 7/11 to buy yourself a g fuel
+        The year is 2036, you enter your local 7/11 to buy yourself a g fuel
         before your shift in the local crypto mine. The android working the
         counter says they only accept doge coin. You pull out your phone, draw a
         stick man in less than five seconds on a yellow back ground and then
