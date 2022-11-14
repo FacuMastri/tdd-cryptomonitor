@@ -24,7 +24,7 @@ type NavProps = {
 function Nav({ admin, user, logout }: NavProps) {
   return (
     <nav>
-      <h1>Rostov's Crypto Monitor {user}</h1>
+      <h1>Rostov's Crypto Monitor</h1>
       {user && (
         <div>
           <div>
