@@ -7,7 +7,7 @@ const Dashboard = ({ jwt }: Props) => {
     <section>
       <h1>Dashboard</h1>
 
-      <h2>Rules</h2>
+      <h2>Coins</h2>
 
       <pre style={{ whiteSpace: "pre-wrap" }}>
         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -27,7 +27,7 @@ const Dashboard = ({ jwt }: Props) => {
         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠆⠆⠀⠀⣸⠁⠀⠙⠀⠈⠲⡆⠸⠌⠟⠘⠚⠒⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
       </pre>
 
-      <h2>Coins</h2>
+      <h2>Transaction</h2>
       <p>
         The year is 2036, you enter your local 7/11 to buy yourself a g fuel
         before your shift in the local crypto mine. The android working the
