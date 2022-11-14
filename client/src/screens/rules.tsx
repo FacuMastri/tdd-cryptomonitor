@@ -1,8 +1,19 @@
+import TextField from '@mui/material/TextField';
+import { useState } from "react";
+import Button from '@mui/material/Button';
+
 type Props = {
   jwt: string;
 };
 
 const Rules = ({ jwt }: Props) => {
+
+  const [rules, setRules] = useState("");
+
+  const sendRules = () => {
+    console.log(rules);
+    //TODO post rules
+  }
   return (
     <section>
       <h1>Rules</h1>
@@ -29,8 +40,19 @@ const Rules = ({ jwt }: Props) => {
       </table>
 
       <h2>Add Rule</h2>
-      <p>+++</p>
-
+      <TextField
+          id="rules-field"
+          label="Add Rules"
+          multiline
+          rows={4}
+          style={{"width": "100%"}}
+          onChange={(e) => {
+            setRules(e.target.value);
+        }}
+      />
+      <Button variant="contained" onClick={sendRules} style={{"float": "right", "marginTop": "10px"}}>
+        Set Rules
+      </Button>
       <footer>{jwt}</footer>
     </section>
   );

@@ -38,7 +38,7 @@ export default function BasicMenu({ children, items }: Props) {
         }}
       >
         {items.map((item) => (
-          <MenuItem onClick={item.onClick}>{item.label}</MenuItem>
+          <MenuItem key={item.label} onClick={item.onClick}>{item.label}</MenuItem>
         ))}
       </Menu>
     </div>
