@@ -3,7 +3,8 @@
     "id": 1,
     "user": "fdelu",
     "password": "fdelu",
-    "context": {}
+    "context": {},
+    "admin": true
   },
   {
     "id": 2,

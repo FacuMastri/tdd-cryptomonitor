@@ -8,6 +8,7 @@ export type User = {
   user: string;
   password: string;
   context: any;
+  admin?: boolean;
 };
 
 export const users: Record<string, User> = {};

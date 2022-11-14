@@ -16,8 +16,12 @@ export function makeCreateUserJwt(
     if (!user_obj) {
       throw new InvalidUserOrPasswordError('Invalid user or password');
     }
-    return sign({ id: user_obj.id, user: user_obj.user }, secret, {
-      expiresIn: expiration
-    });
+    return sign(
+      { id: user_obj.id, user: user_obj.user, admin: user_obj.admin },
+      secret,
+      {
+        expiresIn: expiration
+      }
+    );
   };
 }
