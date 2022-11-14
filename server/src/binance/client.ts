@@ -2,6 +2,7 @@ import { URLSearchParams } from 'url';
 import * as crypto from 'crypto';
 import { RequestOptions } from 'https';
 import https from 'https';
+import { Request, Response } from 'express';
 
 const apiHost = 'testnet.binance.vision';
 const apiPath = '/api/v3';
@@ -117,3 +118,23 @@ export default class BinanceClient {
     return this.doOrder(symbol, 'SELL', 'MARKET', quantity, price);
   }
 }
+
+export const getExchangeInfoController =
+  (client: BinanceClient) => (req: Request, res: Response) => {
+    const symbol = req.query.symbol;
+    const symbols = req.query.symbols;
+    const params = {
+      symbol: symbol,
+      symbols: symbols
+    } as ExchangeInfoParams;
+    client.getExchangeInfo(params).then((data) => {
+      res.send(data);
+    });
+  };
+
+export const getAccountController =
+  (client: BinanceClient) => (req: Request, res: Response) => {
+    client.getAccountInfo().then((data) => {
+      res.send(data);
+    });
+  };

@@ -9,7 +9,10 @@ import {
   verifyRulesBody
 } from './controllers';
 import { loginController, verifyJwtController } from './controllers/';
-import BinanceClient, { ExchangeInfoParams } from './binance/client';
+import BinanceClient, {
+  getAccountController,
+  getExchangeInfoController
+} from './binance/client';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -58,24 +61,17 @@ export default class Server {
     );
     this.app.get('/rules', verifyJwtHeader, getRulesController);
 
-    // TODO: add jwt verification
-    this.app.get('/binance/exchangeInfo', (req, resp) => {
-      const symbol = req.query.symbol;
-      const symbols = req.query.symbols;
-      const params = {
-        symbol: symbol,
-        symbols: symbols
-      } as ExchangeInfoParams;
-      this.client.getExchangeInfo(params).then((data) => {
-        resp.send(data);
-      });
-    });
+    this.app.get(
+      '/binance/exchangeInfo',
+      verifyJwtHeader,
+      getExchangeInfoController(this.client)
+    );
 
-    this.app.get('/binance/account', (req, resp) => {
-      this.client.getAccountInfo().then((data) => {
-        resp.send(data);
-      });
-    });
+    this.app.get(
+      '/binance/account',
+      verifyJwtHeader,
+      getAccountController(this.client)
+    );
 
     // These are not meant to be endpoints
     this.app.get('/binance/buyOrders', (req: Request<BuyOrderParams>, resp) => {
