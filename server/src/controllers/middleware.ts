@@ -1,12 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
+import { findUserByJwt, User } from '../users';
 
-export function verifyJwtHeader(
-  req: Request,
+export async function verifyJwtHeader(
+  req: Request & { user?: User },
   res: Response,
   next: NextFunction
 ) {
-  if (!req.headers.jwt) {
-    return res.status(401).send('No token was provided');
+  try {
+    const jwt = String(req.headers.jwt);
+    const user = await findUserByJwt(jwt);
+    req.user = user;
+  } catch {
+    return res.status(401).send('Token error');
   }
   next();
 }

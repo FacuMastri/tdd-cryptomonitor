@@ -1,8 +1,7 @@
-import {URLSearchParams} from "url";
-import * as crypto from "crypto";
-import {RequestOptions} from "https";
-
-const https = require('https');
+import { URLSearchParams } from 'url';
+import * as crypto from 'crypto';
+import { RequestOptions } from 'https';
+import https from 'https';
 
 const apiHost = 'testnet.binance.vision';
 const apiPath = '/api/v3';
@@ -11,7 +10,7 @@ const apiUrl = `https://${apiHost}${apiPath}`;
 export type ExchangeInfoParams = {
   symbol?: string;
   symbols?: string;
-}
+};
 
 export default class BinanceClient {
   private readonly apiKey: string;
@@ -33,7 +32,7 @@ export default class BinanceClient {
           resolve(data);
         });
       });
-    })
+    });
   }
 
   private buildExchangeInfoQuery(params?: ExchangeInfoParams): string {
@@ -49,17 +48,20 @@ export default class BinanceClient {
 
   private buildSignedQuery(query?: string): string {
     const timestamp = Date.now();
-    const queryWithTimestamp = query ? `${query}&timestamp=${timestamp}` : `timestamp=${timestamp}`;
-    const signature = crypto.createHmac('sha256', this.apiSecret
-    ).update
-    (queryWithTimestamp).digest('hex');
+    const queryWithTimestamp = query
+      ? `${query}&timestamp=${timestamp}`
+      : `timestamp=${timestamp}`;
+    const signature = crypto
+      .createHmac('sha256', this.apiSecret)
+      .update(queryWithTimestamp)
+      .digest('hex');
 
     return `${queryWithTimestamp}&signature=${signature}`;
   }
 
   public getExchangeInfo(params?: ExchangeInfoParams): Promise<any> {
     const url = `${apiUrl}/exchangeInfo`;
-    let query = this.buildExchangeInfoQuery(params);
+    const query = this.buildExchangeInfoQuery(params);
 
     return this.buildPromise(`${url}?${query}`);
   }
@@ -71,13 +73,19 @@ export default class BinanceClient {
       path: `${apiPath}/account?${query}`,
       method: 'GET',
       headers: {
-        'X-MBX-APIKEY': this.apiKey,
-      },
-    }
+        'X-MBX-APIKEY': this.apiKey
+      }
+    };
     return this.buildPromise(options);
   }
 
-  public doOrder(symbol: string, side: string, type: string, quantity?: number, price?: number): Promise<any> {
+  public doOrder(
+    symbol: string,
+    side: string,
+    type: string,
+    quantity?: number,
+    price?: number
+  ): Promise<any> {
     const unsignedQuery = new URLSearchParams();
     unsignedQuery.append('symbol', symbol);
     unsignedQuery.append('side', side);
@@ -95,9 +103,9 @@ export default class BinanceClient {
       path: `${apiPath}/order?${query}`,
       method: 'POST',
       headers: {
-        'X-MBX-APIKEY': this.apiKey,
-      },
-    }
+        'X-MBX-APIKEY': this.apiKey
+      }
+    };
     return this.buildPromise(options);
   }
 

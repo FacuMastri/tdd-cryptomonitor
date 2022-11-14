@@ -9,15 +9,16 @@ import {
   verifyRulesBody
 } from './controllers';
 import { loginController, verifyJwtController } from './controllers/';
-import BinanceClient, {ExchangeInfoParams} from "./binance/client";
+import BinanceClient, { ExchangeInfoParams } from './binance/client';
+import dotenv from 'dotenv';
 
-require('dotenv').config();
+dotenv.config();
 
 type BuyOrderParams = {
   symbol: string;
   price?: number;
   quantity?: number;
-}
+};
 
 export default class Server {
   private app: Express;
@@ -27,7 +28,10 @@ export default class Server {
   constructor(app: Express, port: number) {
     this.app = app;
     this.port = port;
-    this.client = new BinanceClient(process.env.BINANCE_API_KEY??"", process.env.BINANCE_API_SECRET??"");
+    this.client = new BinanceClient(
+      process.env.BINANCE_API_KEY ?? '',
+      process.env.BINANCE_API_SECRET ?? ''
+    );
   }
 
   public start() {
@@ -87,28 +91,31 @@ export default class Server {
         });
       } else {
         resp.send({
-          error: "Symbol is required"
+          error: 'Symbol is required'
         });
       }
     });
 
-    this.app.get('/binance/sellOrders', (req: Request<BuyOrderParams>, resp) => {
-      const symbol = req.query.symbol;
-      // @ts-ignore
-      const quantity = req.query.quantity as number;
-      // @ts-ignore
-      const price = req.query.price as number;
+    this.app.get(
+      '/binance/sellOrders',
+      (req: Request<BuyOrderParams>, resp) => {
+        const symbol = req.query.symbol;
+        // @ts-ignore
+        const quantity = req.query.quantity as number;
+        // @ts-ignore
+        const price = req.query.price as number;
 
-      if (symbol) {
-        this.client.sell(symbol.toString(), quantity, price).then((data) => {
-          resp.send(data);
-        });
-      } else {
-        resp.send({
-          error: "Symbol is required"
-        });
+        if (symbol) {
+          this.client.sell(symbol.toString(), quantity, price).then((data) => {
+            resp.send(data);
+          });
+        } else {
+          resp.send({
+            error: 'Symbol is required'
+          });
+        }
       }
-    });
+    );
   }
 
   private addHelpers() {
