@@ -14,6 +14,7 @@ import BinanceClient, {
   getExchangeInfoController
 } from './binance/client';
 import dotenv from 'dotenv';
+import { verifyJwtHeaderAdmin } from './controllers/middleware';
 
 dotenv.config();
 
@@ -59,7 +60,9 @@ export default class Server {
       verifyRulesBody,
       addRulesController
     );
+
     this.app.get('/rules', verifyJwtHeader, getRulesController);
+    this.app.post('/rules', verifyJwtHeaderAdmin, addRulesController);
 
     this.app.get(
       '/binance/exchangeInfo',

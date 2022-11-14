@@ -1,5 +1,7 @@
 # Using the 'REST Client' vscode extension
 
+## USERS
+
 ### Getting any route has a default response
 
 GET http://localhost:8080/no/why
@@ -19,6 +21,14 @@ Content-Type: application/json
 GET http://localhost:8080/verify
 jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg
 
+## RULES
+
+### Getting rules
+
+GET http://localhost:8080/rules
+jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg
+
+
 ### Posting rules
 
 POST http://localhost:8080/rules
@@ -33,11 +43,7 @@ Content-Type: application/json
   ]
 }
 
-### Getting rules
-
-GET http://localhost:8080/rules
-jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg
-
+## BINANCE
 
 ### exchangeInfo
 

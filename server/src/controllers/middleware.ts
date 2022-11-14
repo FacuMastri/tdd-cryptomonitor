@@ -15,6 +15,21 @@ export async function verifyJwtHeader(
   }
   next();
 }
+export async function verifyJwtHeaderAdmin(
+  req: Request & { user?: User },
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const jwt = String(req.headers.jwt);
+    const user = await findUserByJwt(jwt);
+    if (!user.admin) return res.status(403).send('Not an admin');
+    req.user = user;
+  } catch {
+    return res.status(401).send('Token error');
+  }
+  next();
+}
 
 export function verifyCredentialsBody(
   req: Request,

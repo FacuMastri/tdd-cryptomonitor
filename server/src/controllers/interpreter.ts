@@ -1,34 +1,28 @@
+import fs from 'fs';
 import { Request, Response } from 'express';
-import { User } from '../users';
-import { getErrorMessage } from './utils';
+import { Context } from '../interpreter/types/context';
 
-export function makeGetRulesController(
-  findUserByJwt: (jwt: string) => Promise<User>
-) {
-  return async (req: Request, res: Response) => {
-    let user;
-    try {
-      user = await findUserByJwt(req.headers.jwt as string);
-    } catch (err) {
-      return res.status(401).send(getErrorMessage(err));
-    }
-    const rules = user.context.rules;
-    res.status(200).send(rules);
+let SystemContext: Context;
+export function loadContext(filePath: string) {
+  const context_str = fs.readFileSync(filePath, 'utf-8');
+  const context_obj = JSON.parse(context_str);
+
+  SystemContext = {
+    rules: [],
+    ...context_obj
   };
 }
 
-export function makeAddRulesController(
-  findUserByJwt: (jwt: string) => Promise<User>
-) {
-  return async (req: Request, res: Response) => {
-    let user;
-    try {
-      user = await findUserByJwt(req.headers.jwt as string);
-    } catch (err) {
-      return res.status(401).send(getErrorMessage(err));
-    }
-    // TODO: esta linea seria responsabilidad de la persistencia, hay que moverlo al UserRepository
-    user.context.rules = req.body;
-    res.status(200).send('Rules added');
-  };
+export function getRulesController(req: Request, res: Response) {
+  const rules = SystemContext.rules;
+  res.status(200).send(rules);
+}
+
+export function addRulesController(req: Request, res: Response) {
+  // TODO: esta linea seria responsabilidad de la persistencia, hay que moverlo al UserRepository
+  if (!SystemContext.rules) SystemContext.rules = [];
+  // TODO: check if rules are valid
+  (SystemContext.rules as any[]).push(req.body);
+
+  res.status(200).send('Rules added');
 }

@@ -7,7 +7,6 @@ export type User = {
   id: number;
   user: string;
   password: string;
-  context: any;
   admin?: boolean;
 };
 

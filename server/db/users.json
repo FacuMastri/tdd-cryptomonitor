@@ -3,37 +3,31 @@
     "id": 1,
     "user": "fdelu",
     "password": "fdelu",
-    "context": {},
     "admin": true
   },
   {
     "id": 2,
     "user": "efoppiano",
-    "password": "efoppiano",
-    "context": {}
+    "password": "efoppiano"
   },
   {
     "id": 3,
     "user": "fmastri",
-    "password": "fmastri",
-    "context": {}
+    "password": "fmastri"
   },
   {
     "id": 4,
     "user": "acivini",
-    "password": "acivini",
-    "context": {}
+    "password": "acivini"
   },
   {
     "id": 5,
     "user": "nzu",
-    "password": "nzu",
-    "context": {}
+    "password": "nzu"
   },
   {
     "id": 6,
     "user": "user",
-    "password": "password",
-    "context": {}
+    "password": "password"
   }
 ]
