@@ -4,7 +4,7 @@ services:
     build:
       context: .
     ports:
-      - '8080:8080'
+      - '8080:8080' # add to .env
     volumes:
       - ./src:/app/src
       - ./tests:/app/tests
@@ -14,7 +14,4 @@ services:
       - ./.prettierrc:/app/.prettierrc
       - ./.prettierignore:/app/.prettierignore
       - ./.eslintrc.js:/app/.eslintrc.js
-    stdin_open: true
-    tty: true
-    container_name: server
     command: npm start
