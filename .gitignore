@@ -1,6 +1,7 @@
 # IDEs
 .vscode
 .idea
+server/.env
 
 # Package lock outside the 'server' folder
 package-lock.json
