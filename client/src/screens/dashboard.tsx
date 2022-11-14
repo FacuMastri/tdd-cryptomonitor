@@ -1,31 +1,59 @@
+import useSWR from "swr";
+
 type Props = {
   jwt: string;
 };
 
+const fetcher = (jwt: string) => (url: string) =>
+  fetch(url, {
+    headers: {
+      jwt: jwt,
+    },
+  }).then((r) => r.json());
+
+type balance = {
+  asset: string;
+  free: any;
+  locked: any;
+};
+
 const Dashboard = ({ jwt }: Props) => {
+  // fetch http://localhost:8080/binance/exchangeInfo
+  const { data, error } = useSWR(
+    "http://localhost:8080/binance/account",
+    fetcher(jwt)
+  );
+
+  const balances: balance[] = data?.balances;
+
   return (
     <section>
       <h1>Dashboard</h1>
 
       <h2>Coins</h2>
 
-      <pre style={{ whiteSpace: "pre-wrap" }}>
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣤⣤⣴⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣄⠀⣠⣴⡿⠋⢉⢙⠟⠛⠉⢿⣀⣠⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⠃⠀⠊⢿⣿⡏⢠⣖⣉⢹⠀⣞⢀⡾⠋⡉⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⢿⠀⠨⠀⢸⣿⣧⣌⢙⣛⠛⠚⡟⣓⠄⠠⣡⠗⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⢷⣤⣠⣼⣿⣿⣿⡾⢟⡉⠀⠋⠛⣦⠞⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⠃⠀⠀⠀⠄⠀⢃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡿⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⣇⠀⠀⠀⠀⠀⠀⣤⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣷⣦⡤⠤⣤⣬⣙⠖⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⡧⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⢀⠙⠛⢿⣿⣿⣿⣿⣴⠑⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⣤⠈⠀⠳⡄⠀⡀⢙⣙⣿⣿⣨⣼⠾⢐⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⡀⡀⡀⠈⠠⢧⡀⠘⢁⠀⢿⣿⡟⡍⠀⢸⢣⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠆⠆⠀⠀⣸⠁⠀⠙⠀⠈⠲⡆⠸⠌⠟⠘⠚⠒⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-      </pre>
+      <table
+        onClick={() => {
+          console.log("balances", data);
+        }}
+      >
+        <thead>
+          <tr>
+            <th>Asset</th>
+            <th>Free</th>
+            <th>Locked</th>
+          </tr>
+        </thead>
+        <tbody>
+          {balances?.map((balance) => (
+            <tr key={balance.asset}>
+              <td>{balance.asset}</td>
+              <td>{balance.free}</td>
+              <td>{balance.locked}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       <h2>Transaction</h2>
       <p>
