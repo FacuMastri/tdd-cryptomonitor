@@ -30,3 +30,23 @@ form {
 form button {
   margin: 1em 0;
 }
+
+nav {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+nav a {
+  padding: 0.5rem 1rem;
+  margin: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #fff5;
+  color: #fff;
+  text-decoration: none;
+}
+nav a:hover {
+  background-color: #666;
+}
