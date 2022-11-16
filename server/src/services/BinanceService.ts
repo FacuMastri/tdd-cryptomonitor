@@ -11,7 +11,7 @@ export type ExchangeInfoParams = {
   symbols?: string;
 };
 
-export class BinanceClient {
+export class BinanceService {
   private readonly apiKey: string;
   private readonly apiSecret: string;
 

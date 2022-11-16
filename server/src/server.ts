@@ -1,22 +1,23 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import dotenv from 'dotenv';
 import {
-  addRulesController,
-  getRulesController,
   verifyCredentialsBody,
   verifyJwtHeader,
+  verifyJwtHeaderAdmin,
   verifyRulesBody
-} from './controllers';
+} from './controllers/middleware';
+import { loginController, verifyJwtController } from './controllers/users';
 import {
   getAccountController,
   getExchangeInfoController
-} from './binance/client';
-import dotenv from 'dotenv';
-import { verifyJwtHeaderAdmin } from './controllers/middleware';
-import { loginController, verifyJwtController } from './controllers/users';
-import { BINANCE_API_KEY, BINANCE_API_SECRET } from './config';
-import BinanceClient from './services/BinanceService';
+} from './controllers/binance';
+import { binanceService } from './services';
+import {
+  addRulesController,
+  getRulesController
+} from './controllers/interpreter';
 
 dotenv.config();
 
@@ -29,12 +30,10 @@ type BuyOrderParams = {
 export default class Server {
   private app: Express;
   private readonly port: number;
-  client: BinanceClient;
 
   constructor(app: Express, port: number) {
     this.app = app;
     this.port = port;
-    this.client = new BinanceClient(BINANCE_API_KEY, BINANCE_API_SECRET);
   }
 
   public start() {
@@ -63,14 +62,10 @@ export default class Server {
     this.app.get(
       '/binance/exchangeInfo',
       verifyJwtHeader,
-      getExchangeInfoController(this.client)
+      getExchangeInfoController
     );
 
-    this.app.get(
-      '/binance/account',
-      verifyJwtHeader,
-      getAccountController(this.client)
-    );
+    this.app.get('/binance/account', verifyJwtHeader, getAccountController);
 
     // These are not meant to be endpoints
     this.app.get('/binance/buyOrders', (req: Request<BuyOrderParams>, resp) => {
@@ -81,7 +76,7 @@ export default class Server {
       const price = req.query.price as number;
 
       if (symbol) {
-        this.client.buy(symbol.toString(), quantity, price).then((data) => {
+        binanceService.buy(symbol.toString(), quantity, price).then((data) => {
           resp.send(data);
         });
       } else {
@@ -101,9 +96,11 @@ export default class Server {
         const price = req.query.price as number;
 
         if (symbol) {
-          this.client.sell(symbol.toString(), quantity, price).then((data) => {
-            resp.send(data);
-          });
+          binanceService
+            .sell(symbol.toString(), quantity, price)
+            .then((data) => {
+              resp.send(data);
+            });
         } else {
           resp.send({
             error: 'Symbol is required'
