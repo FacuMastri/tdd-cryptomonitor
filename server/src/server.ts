@@ -8,13 +8,13 @@ import {
   verifyJwtHeader,
   verifyRulesBody
 } from './controllers';
-import { loginController, verifyJwtController } from './controllers/';
 import BinanceClient, {
   getAccountController,
   getExchangeInfoController
 } from './binance/client';
 import dotenv from 'dotenv';
 import { verifyJwtHeaderAdmin } from './controllers/middleware';
+import { loginController, verifyJwtController } from './controllers/users';
 
 dotenv.config();
 
