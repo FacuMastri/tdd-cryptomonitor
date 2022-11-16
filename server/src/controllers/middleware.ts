@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { findUserByJwt, User } from '../users';
+import { User } from '../users';
+import { userService } from '../services';
 
 export async function verifyJwtHeader(
   req: Request & { user?: User },
@@ -8,8 +9,7 @@ export async function verifyJwtHeader(
 ) {
   try {
     const jwt = String(req.headers.jwt);
-    const user = await findUserByJwt(jwt);
-    req.user = user;
+    req.user = await userService.findUserByJwt(jwt);
   } catch {
     return res.status(401).send('Token error');
   }
@@ -22,7 +22,7 @@ export async function verifyJwtHeaderAdmin(
 ) {
   try {
     const jwt = String(req.headers.jwt);
-    const user = await findUserByJwt(jwt);
+    const user = await userService.findUserByJwt(jwt);
     if (!user.admin) return res.status(403).send('Not an admin');
     req.user = user;
   } catch {

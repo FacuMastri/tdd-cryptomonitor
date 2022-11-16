@@ -15,6 +15,7 @@ import BinanceClient, {
 import dotenv from 'dotenv';
 import { verifyJwtHeaderAdmin } from './controllers/middleware';
 import { loginController, verifyJwtController } from './controllers/users';
+import { BINANCE_API_KEY, BINANCE_API_SECRET } from './config';
 
 dotenv.config();
 
@@ -32,10 +33,7 @@ export default class Server {
   constructor(app: Express, port: number) {
     this.app = app;
     this.port = port;
-    this.client = new BinanceClient(
-      process.env.BINANCE_API_KEY ?? '',
-      process.env.BINANCE_API_SECRET ?? ''
-    );
+    this.client = new BinanceClient(BINANCE_API_KEY, BINANCE_API_SECRET);
   }
 
   public start() {
@@ -49,9 +47,6 @@ export default class Server {
   }
 
   private addControllers() {
-    this.app.get('/', (req: Request, res: Response) => {
-      res.send('Hello World!');
-    });
     this.app.get('/verify', verifyJwtHeader, verifyJwtController);
     this.app.post('/login', verifyCredentialsBody, loginController);
     this.app.post(
