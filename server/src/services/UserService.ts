@@ -1,4 +1,4 @@
-import UserRepository from '../users/UserRepository';
+import UserRepository from '../repositories/UserRepository';
 import {
   InvalidTokenError,
   InvalidUserOrPasswordError,

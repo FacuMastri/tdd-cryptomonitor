@@ -8,7 +8,7 @@ import {
   verifyJwtHeader,
   verifyRulesBody
 } from './controllers';
-import BinanceClient, {
+import {
   getAccountController,
   getExchangeInfoController
 } from './binance/client';
@@ -16,6 +16,7 @@ import dotenv from 'dotenv';
 import { verifyJwtHeaderAdmin } from './controllers/middleware';
 import { loginController, verifyJwtController } from './controllers/users';
 import { BINANCE_API_KEY, BINANCE_API_SECRET } from './config';
+import BinanceClient from './services/BinanceService';
 
 dotenv.config();
 

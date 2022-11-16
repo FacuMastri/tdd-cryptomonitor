@@ -1,5 +1,5 @@
 import UserService from './UserService';
-import InMemoryUserRepository from '../users/InMemoryUserRepository';
+import InMemoryUserRepository from '../repositories/InMemoryUserRepository';
 import { users } from '../users';
 import { JWT_EXPIRATION, JWT_SECRET } from '../config';
 

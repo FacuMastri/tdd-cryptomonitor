@@ -1,4 +1,4 @@
-import { User } from './index';
+import { User } from '../users';
 
 export default interface UserRepository {
   findUserByNameAndPassword(

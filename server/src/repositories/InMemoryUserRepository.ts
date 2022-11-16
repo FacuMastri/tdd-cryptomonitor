@@ -1,4 +1,4 @@
-import { User } from '.';
+import { User } from '../users';
 import UserRepository from './UserRepository';
 
 export default class InMemoryUserRepository implements UserRepository {
