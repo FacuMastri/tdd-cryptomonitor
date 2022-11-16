@@ -18,14 +18,9 @@ import {
   addRulesController,
   getRulesController
 } from './controllers/interpreter';
+import { BuyOrderParams } from './services/BinanceService';
 
 dotenv.config();
-
-type BuyOrderParams = {
-  symbol: string;
-  price?: number;
-  quantity?: number;
-};
 
 export default class Server {
   private app: Express;

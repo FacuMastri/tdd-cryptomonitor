@@ -1,5 +1,5 @@
-import { RequestOptions } from 'https';
 import * as https from 'https';
+import { RequestOptions } from 'https';
 import * as crypto from 'crypto';
 
 const API_HOST = 'testnet.binance.vision';
@@ -11,6 +11,12 @@ export type ExchangeInfoParams = {
   symbols?: string;
 };
 
+export type BuyOrderParams = {
+  symbol: string;
+  price?: number;
+  quantity?: number;
+};
+
 export class BinanceService {
   private readonly apiKey: string;
   private readonly apiSecret: string;
@@ -20,49 +26,12 @@ export class BinanceService {
     this.apiSecret = apiSecret;
   }
 
-  private buildPromise(url: string | RequestOptions): Promise<any> {
-    return new Promise((resolve) => {
-      https.get(url, (resp: any) => {
-        let data = '';
-        resp.on('data', (chunk: any) => {
-          data += chunk;
-        });
-        resp.on('end', () => {
-          resolve(data);
-        });
-      });
-    });
+  public buy(symbol: string, quantity?: number, price?: number): Promise<any> {
+    return this.doOrder(symbol, 'BUY', 'MARKET', quantity, price);
   }
 
-  private buildExchangeInfoQuery(params?: ExchangeInfoParams): string {
-    const query = new URLSearchParams();
-    if (params?.symbol) {
-      query.append('symbol', params.symbol);
-    }
-    if (params?.symbols) {
-      query.append('symbols', params.symbols);
-    }
-    return query.toString();
-  }
-
-  private buildSignedQuery(query?: string): string {
-    const timestamp = Date.now();
-    const queryWithTimestamp = query
-      ? `${query}&timestamp=${timestamp}`
-      : `timestamp=${timestamp}`;
-    const signature = crypto
-      .createHmac('sha256', this.apiSecret)
-      .update(queryWithTimestamp)
-      .digest('hex');
-
-    return `${queryWithTimestamp}&signature=${signature}`;
-  }
-
-  public getExchangeInfo(params?: ExchangeInfoParams): Promise<any> {
-    const url = `${API_URL}/exchangeInfo`;
-    const query = this.buildExchangeInfoQuery(params);
-
-    return this.buildPromise(`${url}?${query}`);
+  public sell(symbol: string, quantity?: number, price?: number): Promise<any> {
+    return this.doOrder(symbol, 'SELL', 'MARKET', quantity, price);
   }
 
   public getAccountInfo(): Promise<any> {
@@ -108,11 +77,48 @@ export class BinanceService {
     return this.buildPromise(options);
   }
 
-  public buy(symbol: string, quantity?: number, price?: number): Promise<any> {
-    return this.doOrder(symbol, 'BUY', 'MARKET', quantity, price);
+  private buildPromise(url: string | RequestOptions): Promise<any> {
+    return new Promise((resolve) => {
+      https.get(url, (resp: any) => {
+        let data = '';
+        resp.on('data', (chunk: any) => {
+          data += chunk;
+        });
+        resp.on('end', () => {
+          resolve(data);
+        });
+      });
+    });
   }
 
-  public sell(symbol: string, quantity?: number, price?: number): Promise<any> {
-    return this.doOrder(symbol, 'SELL', 'MARKET', quantity, price);
+  private buildExchangeInfoQuery(params?: ExchangeInfoParams): string {
+    const query = new URLSearchParams();
+    if (params?.symbol) {
+      query.append('symbol', params.symbol);
+    }
+    if (params?.symbols) {
+      query.append('symbols', params.symbols);
+    }
+    return query.toString();
+  }
+
+  private buildSignedQuery(query?: string): string {
+    const timestamp = Date.now();
+    const queryWithTimestamp = query
+      ? `${query}&timestamp=${timestamp}`
+      : `timestamp=${timestamp}`;
+    const signature = crypto
+      .createHmac('sha256', this.apiSecret)
+      .update(queryWithTimestamp)
+      .digest('hex');
+
+    return `${queryWithTimestamp}&signature=${signature}`;
+  }
+
+  public getExchangeInfo(params?: ExchangeInfoParams): Promise<any> {
+    const url = `${API_URL}/exchangeInfo`;
+    const query = this.buildExchangeInfoQuery(params);
+
+    return this.buildPromise(`${url}?${query}`);
   }
 }

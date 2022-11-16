@@ -7,17 +7,16 @@ export type User = {
   admin?: boolean;
 };
 
-export const users: Record<string, User> = {};
-
-const loadUsers = (filePath: string) => {
+const loadUsers = (filePath: string): Record<string, User> => {
   const users_str = fs.readFileSync(filePath, 'utf-8');
   const users_obj = JSON.parse(users_str);
+  const users: Record<string, User> = {};
 
   users_obj.forEach((user: User) => {
     users[user.id] = user;
   });
-
   console.log('Users loaded', users);
+  return users;
 };
 
 export { loadUsers };

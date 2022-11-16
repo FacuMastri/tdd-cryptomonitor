@@ -1,5 +1,9 @@
 import InMemoryUserRepository from './InMemoryUserRepository';
-import { users } from '../users';
+import InMemoryRuleRepository from './InMemoryRuleRepository';
+import { context_db, users_db } from '../index';
 
 export const userRepository: InMemoryUserRepository =
-  new InMemoryUserRepository(users);
+  new InMemoryUserRepository(users_db);
+
+export const ruleRepository: InMemoryRuleRepository =
+  new InMemoryRuleRepository(context_db);
