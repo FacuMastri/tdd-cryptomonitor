@@ -1,8 +1,8 @@
 import express, { Express } from 'express';
 import { loadUsers } from './users';
 import Server from './server';
-import { loadContext } from './controllers/interpreter';
 import { PORT } from './config';
+import { loadContext } from './context';
 
 loadUsers('db/users.json');
 loadContext('db/context.json');

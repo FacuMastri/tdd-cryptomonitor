@@ -1,17 +1,5 @@
-import fs from 'fs';
 import { Request, Response } from 'express';
-import { Context } from '../interpreter/types/context';
-
-let SystemContext: Context;
-export function loadContext(filePath: string) {
-  const context_str = fs.readFileSync(filePath, 'utf-8');
-  const context_obj = JSON.parse(context_str);
-
-  SystemContext = {
-    rules: [],
-    ...context_obj
-  };
-}
+import { SystemContext } from '../context';
 
 export function getRulesController(req: Request, res: Response) {
   const rules = SystemContext.rules;
