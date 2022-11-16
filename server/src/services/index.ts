@@ -1,6 +1,4 @@
 import UserService from './UserService';
-import InMemoryUserRepository from '../repositories/InMemoryUserRepository';
-import { users } from '../users';
 import {
   BINANCE_API_KEY,
   BINANCE_API_SECRET,
@@ -8,9 +6,10 @@ import {
   JWT_SECRET
 } from '../config';
 import { BinanceService } from './BinanceService';
+import { userRepository } from '../repositories';
 
 export const userService: UserService = new UserService(
-  new InMemoryUserRepository(users),
+  userRepository,
   JWT_SECRET,
   JWT_EXPIRATION
 );
