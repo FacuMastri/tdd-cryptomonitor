@@ -33,7 +33,7 @@ Once inside the container, run:
 ```bash
 $ root@f55080179d84:/app# ls
 Dockerfile  README.md  docker-compose.yml  jest.config.js  node_modules  nodemon.json  package-lock.json  package.json  src  tests  tsconfig.json
-$ root@f55080179d84:/app# npm t 
+$ root@f55080179d84:/app# npm t
 ```
 
 ### Commands
@@ -45,3 +45,5 @@ $ root@f55080179d84:/app# npm t
 - `npm run build` to build for production [TODO]
 - `npm run lint` to run linter
 - `npm run format` to run code formatter
+
+- `npm run schemas` to update JSON schemas
