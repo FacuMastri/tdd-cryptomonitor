@@ -39,11 +39,11 @@ describe('evalRule', () => {
       actions: [action]
     };
 
-    const context = { a: 0 };
+    const context = { variables: {a: 0} };
 
     evalRule(rule, context);
 
-    expect(context.a).toBe(123);
+    expect(context.variables.a).toBe(123);
   });
   test('evalRule does not execute action if condition is false', () => {
     const condition: BooleanType = {
@@ -66,11 +66,11 @@ describe('evalRule', () => {
       actions: [action]
     };
 
-    const context = { a: 0 };
+    const context = { variables: {a: 0} };
 
     evalRule(rule, context);
 
-    expect(context.a).toBe(0);
+    expect(context.variables.a).toBe(0);
   });
 
   test('evalRule executes two actions with condition being true', () => {

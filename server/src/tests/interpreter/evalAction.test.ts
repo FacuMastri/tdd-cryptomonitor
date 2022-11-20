@@ -21,11 +21,11 @@ describe('evalAction', () => {
       }
     };
 
-    const context = { a: 0 };
+    const context = { variables: {a: 0} };
 
     evalAction(action, context);
 
-    expect(context?.a).toBe(123);
+    expect(context?.variables?.a).toBe(123);
   });
 
   test('evalAction sets variable value even if variable is not defined', () => {
@@ -38,9 +38,9 @@ describe('evalAction', () => {
       }
     };
 
-    const context = evalAction(action, { a: 0 });
+    const context = evalAction(action, { variables: {a: 0} });
 
-    expect(context?.b).toBe(123);
+    expect(context?.variables?.b).toBe(123);
   });
 
   test('cant set reserved variable', () => {

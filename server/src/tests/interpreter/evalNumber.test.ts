@@ -691,7 +691,7 @@ describe('evalNumber', () => {
       ]
     };
 
-    expect(evalNumber(call, { var1: 5, var2: 8, var3: 3 })).toBe(98);
+    expect(evalNumber(call, { variables: {var1: 5, var2: 8, var3: 3} })).toBe(98);
   });
 
   test('evalNumber throws error for / call with a divisor that evaluates to 0', () => {

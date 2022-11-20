@@ -8,6 +8,7 @@ import {
 import { BinanceService } from './BinanceService';
 import { ruleRepository, userRepository } from '../repositories';
 import InterpreterService from './InterpreterService';
+import MonitorService from "./MonitorService";
 
 export const userService: UserService = new UserService(
   userRepository,
@@ -21,5 +22,7 @@ export const binanceService: BinanceService = new BinanceService(
 );
 
 export const interpreterService: InterpreterService = new InterpreterService(
-  ruleRepository
+
 );
+
+export const monitorService: MonitorService = new MonitorService();

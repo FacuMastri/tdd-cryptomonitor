@@ -1,12 +1,11 @@
 import { Context } from '../interpreter/types/context';
 import fs from 'fs';
 
-export function loadContext(filePath: string) {
-  const context_str = fs.readFileSync(filePath, 'utf-8');
-  const context_obj = JSON.parse(context_str);
+export function loadContext(filePath: string): Context {
+  const contextStr = fs.readFileSync(filePath, 'utf-8');
+  const contextObj = JSON.parse(contextStr);
   const systemContext: Context = {
-    rules: [],
-    ...context_obj
+    ...contextObj
   };
   console.log('Context loaded', systemContext);
   return systemContext;

@@ -76,6 +76,7 @@ import {
 } from './types/action';
 import { Rule, Rules } from './types/rule';
 import { Context } from './types/context';
+import {binanceService} from "../services";
 
 const CONTEXT_RESERVED = ['wallets', 'data'];
 
@@ -115,7 +116,7 @@ export function evalNumberVar(
   number: ValueVariable,
   context?: Context
 ): number {
-  const value = context && context[number.name];
+  const value = context && context.variables && context.variables[number.name];
   if (value === undefined)
     throw new Error(
       'Variable not found: ' + number.name + ' in context ' + context
@@ -139,6 +140,7 @@ export function evalNumber(number: NumberType, context?: Context): number {
   }
 }
 
+// For testing purposes only
 export function loadDatum(
   symbol: string,
   datum: ContextDatum,
@@ -287,8 +289,8 @@ function evalVariable(
   variable: ValueVariable,
   context: Context = {}
 ): ValueOutput {
-  if (variable.name in context) {
-    return context[variable.name] as ValueOutput;
+  if (context.variables && variable.name in context.variables) {
+    return context.variables[variable.name] as ValueOutput;
   } else {
     throw new Error('Undefined variable: ' + variable.name);
   }
@@ -320,7 +322,8 @@ function evalSetVariable(action: ActionSetVariable, context: Context): Context {
   if (CONTEXT_RESERVED.includes(action.name))
     throw new Error('Reserved variable name: ' + action.name);
 
-  context[action.name] = evalValue(action.value, context);
+  context.variables = context.variables || {};
+  context.variables[action.name] = evalValue(action.value, context);
   return context;
 }
 
@@ -329,6 +332,11 @@ function evalBuyMarket(action: ActionBuyMarket, context: Context): Context {
   if (typeof amount !== 'number') throw new Error('Amount must be a number');
   if (amount < 0) throw new Error('Cannot buy negative amount');
 
+  // TODO: Mock this
+  binanceService.buy(action.symbol, amount);
+  return context;
+
+  /*
   if (!context.wallets) context.wallets = [];
   const wallets = context.wallets as ValueWallet[];
 
@@ -343,6 +351,7 @@ function evalBuyMarket(action: ActionBuyMarket, context: Context): Context {
     wallet.amount += amount;
   }
   return context;
+   */
 }
 
 function evalSellMarket(action: ActionSellMarket, context: Context): Context {

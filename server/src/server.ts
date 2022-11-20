@@ -1,7 +1,6 @@
 import express, { Express, Request } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
 import {
   verifyCredentialsBody,
   verifyJwtHeader,
@@ -19,8 +18,8 @@ import {
   getRulesController
 } from './controllers/interpreter';
 import { BuyOrderParams } from './services/BinanceService';
-
-dotenv.config();
+import MonitorService from './services/MonitorService';
+import {addPoliticController, getPoliticsController} from "./controllers/monitor";
 
 export default class Server {
   private app: Express;
@@ -53,14 +52,12 @@ export default class Server {
 
     this.app.get('/rules', verifyJwtHeader, getRulesController);
     this.app.post('/rules', verifyJwtHeaderAdmin, addRulesController);
+    this.app.post('/politics', verifyJwtHeaderAdmin, addPoliticController);
+    this.app.get('/politics', getPoliticsController);
 
-    this.app.get(
-      '/binance/exchangeInfo',
-      verifyJwtHeader,
-      getExchangeInfoController
-    );
+    this.app.get('/binance/exchangeInfo', getExchangeInfoController);
 
-    this.app.get('/binance/account', verifyJwtHeader, getAccountController);
+    this.app.get('/binance/account', getAccountController);
 
     // These are not meant to be endpoints
     this.app.get('/binance/buyOrders', (req: Request<BuyOrderParams>, resp) => {

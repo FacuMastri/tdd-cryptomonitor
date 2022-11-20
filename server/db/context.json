@@ -1,3 +1,6 @@
 {
-  "rules": []
+  "variables": {
+    "test": 123
+  },
+  "data": []
 }
