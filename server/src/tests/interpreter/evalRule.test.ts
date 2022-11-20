@@ -39,7 +39,7 @@ describe('evalRule', () => {
       actions: [action]
     };
 
-    const context = { variables: {a: 0} };
+    const context = { variables: { a: 0 } };
 
     evalRule(rule, context);
 
@@ -66,7 +66,7 @@ describe('evalRule', () => {
       actions: [action]
     };
 
-    const context = { variables: {a: 0} };
+    const context = { variables: { a: 0 } };
 
     evalRule(rule, context);
 

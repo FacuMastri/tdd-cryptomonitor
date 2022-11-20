@@ -8,7 +8,7 @@ import {
 import { BinanceService } from './BinanceService';
 import { ruleRepository, userRepository } from '../repositories';
 import InterpreterService from './InterpreterService';
-import MonitorService from "./MonitorService";
+import MonitorService from './MonitorService';
 
 export const userService: UserService = new UserService(
   userRepository,
@@ -21,8 +21,6 @@ export const binanceService: BinanceService = new BinanceService(
   BINANCE_API_SECRET
 );
 
-export const interpreterService: InterpreterService = new InterpreterService(
-
-);
+export const interpreterService: InterpreterService = new InterpreterService();
 
 export const monitorService: MonitorService = new MonitorService();

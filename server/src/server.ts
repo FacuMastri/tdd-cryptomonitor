@@ -19,7 +19,10 @@ import {
 } from './controllers/interpreter';
 import { BuyOrderParams } from './services/BinanceService';
 import MonitorService from './services/MonitorService';
-import {addPoliticController, getPoliticsController} from "./controllers/monitor";
+import {
+  addPoliticController,
+  getPoliticsController
+} from './controllers/monitor';
 
 export default class Server {
   private app: Express;

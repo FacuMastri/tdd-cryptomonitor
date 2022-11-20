@@ -1,32 +1,39 @@
-[{
-  "name": "Escape",
-  "condition": {
-    "type": "CALL",
-    "name": "<",
-    "arguments": [{
+[
+  {
+    "name": "Escape",
+    "condition": {
       "type": "CALL",
-      "name": "LAST",
-      "arguments": {
-        "type": "DATA",
-        "symbol": "BTC/USDT",
-        "since": 3600,
-        "until": 0,
-        "default": {
+      "name": "<",
+      "arguments": [
+        {
+          "type": "CALL",
+          "name": "LAST",
+          "arguments": {
+            "type": "DATA",
+            "symbol": "BTC/USDT",
+            "since": 3600,
+            "until": 0,
+            "default": {
+              "type": "VARIABLE",
+              "name": "LIMIT_VALUE_BTC/USDT"
+            }
+          }
+        },
+        {
           "type": "VARIABLE",
           "name": "LIMIT_VALUE_BTC/USDT"
         }
+      ]
+    },
+    "action": [
+      {
+        "type": "SELL_MARKET",
+        "symbol": "BTC/USDT",
+        "amount": {
+          "type": "WALLET",
+          "symbol": "BTC"
+        }
       }
-    },{
-      "type": "VARIABLE",
-      "name": "LIMIT_VALUE_BTC/USDT"
-    }]
-  },
-  "action": [{
-    "type": "SELL_MARKET",
-    "symbol": "BTC/USDT",
-    "amount": {
-      "type": "WALLET",
-      "symbol": "BTC"
-    }
-  }]
-}]
+    ]
+  }
+]

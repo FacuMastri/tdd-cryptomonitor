@@ -1,16 +1,16 @@
 import { binanceService, interpreterService } from './index';
 import { MIN_SYMBOL_VARIATION_PERC } from '../config';
 import { evalRule } from '../interpreter/interpreter';
-import {Context} from "../interpreter/types/context";
-import {ValueOutput} from "../interpreter/types/value";
-import {ContextDatum} from "../interpreter/types/number";
+import { Context } from '../interpreter/types/context';
+import { ValueOutput } from '../interpreter/types/value';
+import { ContextDatum } from '../interpreter/types/number';
 
 const WebSocket = require('ws');
 
 const BINANCE_WS = `wss://stream.binance.com:9443/ws/`;
 
 export type Symbol = string;
-export type SymbolMarketStatus = "ALZA" | "BAJA" | "ESTABLE";
+export type SymbolMarketStatus = 'ALZA' | 'BAJA' | 'ESTABLE';
 export type SymbolMarketStatusDict = { [key: Symbol]: SymbolMarketStatus };
 
 // If a symbol increases its value by more than variationPerc in the specified hours,
@@ -21,13 +21,13 @@ export type SymbolMarketStatusDict = { [key: Symbol]: SymbolMarketStatus };
 export type SymbolChangePolitic = {
   variationPerc: number;
   intervalInHours: number;
-}
+};
 
 export default class MonitorService {
   private history: { [key: Symbol]: ContextDatum[] };
   private variables: { [name: Symbol]: ValueOutput };
   private status: SymbolMarketStatusDict;
-  private statusChangePolitics: { [key: Symbol]: SymbolChangePolitic }
+  private statusChangePolitics: { [key: Symbol]: SymbolChangePolitic };
 
   private socket: any | undefined;
 
@@ -39,7 +39,11 @@ export default class MonitorService {
     this.setUpWebsocket();
   }
 
-  public addPolitic(symbol: Symbol, variationPerc: number, intervalInHours: number) {
+  public addPolitic(
+    symbol: Symbol,
+    variationPerc: number,
+    intervalInHours: number
+  ) {
     this.statusChangePolitics[symbol] = {
       variationPerc,
       intervalInHours
@@ -140,7 +144,10 @@ export default class MonitorService {
     }
     const last_entry = symbolHistory[symbolHistory.length - 1];
     const min_entry = symbolHistory.reduce((min, entry) => {
-      if (entry.timestamp > last_entry.timestamp - intervalInHours * 3600 * 1000) {
+      if (
+        entry.timestamp >
+        last_entry.timestamp - intervalInHours * 3600 * 1000
+      ) {
         return entry.value < min.value ? entry : min;
       }
       return min;
@@ -153,11 +160,11 @@ export default class MonitorService {
     Object.entries(this.statusChangePolitics).forEach(([symbol, politic]) => {
       const variation = this.getVariationOf(symbol, politic.intervalInHours);
       if (variation > politic.variationPerc) {
-        this.status[symbol] = "ALZA";
+        this.status[symbol] = 'ALZA';
       } else if (variation < -politic.variationPerc) {
-        this.status[symbol] = "BAJA";
+        this.status[symbol] = 'BAJA';
       } else {
-        this.status[symbol] = "ESTABLE";
+        this.status[symbol] = 'ESTABLE';
       }
     });
   }
@@ -171,10 +178,9 @@ export default class MonitorService {
     const context: Context = {
       data: this.history,
       variables: {}
-    }
+    };
     Object.entries(this.variables).forEach(([variableName, variableValue]) => {
-      if (context.variables)
-        context.variables[variableName] = variableValue;
+      if (context.variables) context.variables[variableName] = variableValue;
     });
     return context;
   }
@@ -184,11 +190,13 @@ export default class MonitorService {
       this.history = context.data;
     }
     if (context.variables) {
-      Object.entries(context.variables).forEach(([variableName, variableValue]) => {
-        if (variableName !== 'data') {
-          this.variables[variableName] = variableValue;
+      Object.entries(context.variables).forEach(
+        ([variableName, variableValue]) => {
+          if (variableName !== 'data') {
+            this.variables[variableName] = variableValue;
+          }
         }
-      });
+      );
     }
   }
 }

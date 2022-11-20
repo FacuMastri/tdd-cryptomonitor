@@ -76,7 +76,7 @@ import {
 } from './types/action';
 import { Rule, Rules } from './types/rule';
 import { Context } from './types/context';
-import {binanceService} from "../services";
+import { binanceService } from '../services';
 
 const CONTEXT_RESERVED = ['wallets', 'data'];
 
@@ -359,6 +359,11 @@ function evalSellMarket(action: ActionSellMarket, context: Context): Context {
   if (typeof amount !== 'number') throw new Error('Amount must be a number');
   if (amount < 0) throw new Error('Cannot sell negative amount');
 
+  // TODO: Mock this
+  binanceService.sell(action.symbol, amount);
+  return context;
+
+  /*
   const wallets = context.wallets as unknown as ValueWallet[];
 
   const wallet = wallets.find((wallet) => wallet.symbol === action.symbol);
@@ -369,6 +374,7 @@ function evalSellMarket(action: ActionSellMarket, context: Context): Context {
   wallet.amount -= amount;
 
   return context;
+   */
 }
 
 export function evalRule(rule: Rule, context: Context): Context {

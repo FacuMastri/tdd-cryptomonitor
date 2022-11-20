@@ -21,7 +21,7 @@ describe('evalAction', () => {
       }
     };
 
-    const context = { variables: {a: 0} };
+    const context = { variables: { a: 0 } };
 
     evalAction(action, context);
 
@@ -38,7 +38,7 @@ describe('evalAction', () => {
       }
     };
 
-    const context = evalAction(action, { variables: {a: 0} });
+    const context = evalAction(action, { variables: { a: 0 } });
 
     expect(context?.variables?.b).toBe(123);
   });
