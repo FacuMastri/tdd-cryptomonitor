@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -9,6 +9,8 @@ import Routing from "./routing";
 import { BrowserRouter, Link } from "react-router-dom";
 import { Avatar } from "@mui/material";
 import BasicMenu from "./util/menu";
+
+const JWT_STORAGE_KEY = "jwt";
 
 const darkTheme = createTheme({
   palette: {
@@ -45,7 +47,8 @@ function Nav({ admin, user, logout }: NavProps) {
   );
 }
 
-type UserInfo = { admin?: boolean; user?: string };
+type UserInfo = { admin?: boolean; user?: string; exp?: number };
+
 const tokenInfo = (jwt: string): UserInfo => {
   if (!jwt) return {};
   try {
@@ -62,6 +65,14 @@ function App() {
     setJwt("");
   };
 
+  useEffect(() => {
+    const jwt = localStorage.getItem(JWT_STORAGE_KEY);
+    // "exp" está en segundos, Date.now() en milisegundos
+    if (jwt && tokenInfo(jwt).exp! > Date.now() / 1000) {
+      setJwt(jwt);
+    }
+  });
+
   return (
     <ThemeProvider theme={darkTheme}>
       <BrowserRouter>
@@ -70,7 +81,12 @@ function App() {
           {jwt ? (
             <Routing jwt={jwt} admin={admin} />
           ) : (
-            <Login setJwt={setJwt} />
+            <Login
+              setJwt={(jwt) => {
+                localStorage.setItem(JWT_STORAGE_KEY, jwt);
+                setJwt(jwt);
+              }}
+            />
           )}
         </div>
       </BrowserRouter>
