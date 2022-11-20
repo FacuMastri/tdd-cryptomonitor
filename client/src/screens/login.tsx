@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { loginAPI, checkOk, intoText } from "../util/requests";
 import { toast } from "react-toastify";
+import { Button, TextField, Typography, InputLabel } from "@mui/material";
+import "../styles/login.css";
 
 type Props = {
   setJwt: (jwt: string) => void;
 };
+
+const validateJwt = (jwt: string) => {};
 
 const Login = ({ setJwt }: Props) => {
   const [processing, setProcessing] = useState(false);
@@ -41,24 +45,24 @@ const Login = ({ setJwt }: Props) => {
 
   return (
     <section>
-      <h1>Login</h1>
+      <Typography variant="h3">Login</Typography>
 
-      <div>
+      <div className="loginContainer">
         <form onSubmit={onSubmit}>
-          <label htmlFor="user">User</label>
-          <input name="user" id="user" disabled={processing} />
+          <InputLabel htmlFor="user">User</InputLabel>
+          <TextField name="user" id="user" disabled={processing} />
 
-          <label htmlFor="password">Password</label>
-          <input
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <TextField
             type="password"
             name="password"
             id="password"
             disabled={processing}
           />
 
-          <button type="submit" disabled={processing}>
+          <Button type="submit" disabled={processing} variant="contained">
             Login
-          </button>
+          </Button>
         </form>
       </div>
     </section>
