@@ -1,5 +1,5 @@
 import TextField from '@mui/material/TextField';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from '@mui/material/Button';
 import { rulesAPI, checkOk, intoJson } from "../util/requests";
 import { toast } from "react-toastify";
@@ -10,28 +10,60 @@ type Props = {
   jwt: string;
 };
 
+type RulesType = {
+  requiredVariables: Array<String>;
+  rules: Array<String>;
+}
+
 const Rules = ({ jwt }: Props) => {
 
   const [rules, setRules] = useState("");
-  const curr_rules = fetch(rulesAPI, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "jwt": jwt,
-    },
-  })
-    .then(checkOk("couldnt get current rules"))
-    .then(intoJson)
-    .catch((error) => {
-      console.log(error.message ?? error);
-      toast.error(error.message ?? "Error");
+  const [curr_rules, setCurrRules] = useState({
+      requiredVariables: [],
+      rules: [],
     });
+  // let curr_rules: RulesType = {
+  //   requiredVariables: [],
+  //   rules: [],
+  // };
+  let isLoaded: boolean = false;
 
-  const sendRules = () => {
-    console.log(rules);
-    console.log(curr_rules);
-    //TODO post rules
-  }
+  useEffect(() => {
+    // fetch data
+    const dataFetch = async () => {
+      const data = await (
+        await   fetch(rulesAPI, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "jwt": jwt,
+          },
+        })
+          .then(checkOk("couldnt get current rules"))
+          .then(intoJson)
+          .catch((error) => {
+            console.log(error.message ?? error);
+            toast.error(error.message ?? "Error");
+          }).then((rules) => {
+            if (typeof rules[0].requiredVariables === 'string' || rules[0].requiredVariables instanceof String) {
+              rules[0].requiredVariables = [rules[0].requiredVariables];
+            }
+            // curr_rules = rules[0];
+            setCurrRules(rules[0]);
+            isLoaded = true;
+          }));
+    };
+
+
+    dataFetch();
+  }, []);
+
+    const sendRules = () => {
+      console.log(rules);
+      console.log(curr_rules?.requiredVariables);
+      //TODO post rules
+    };
+
   return (
     <section>
       <h1>Rules</h1>
@@ -43,8 +75,9 @@ const Rules = ({ jwt }: Props) => {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <Chip label="BTC/USD" variant="outlined" />
-        <Chip label="ETH/USD" variant="outlined" />
+        {curr_rules.requiredVariables ? curr_rules.requiredVariables.map((algo, idx) => {
+          return <Chip key={idx} label={algo} variant="outlined" />;
+        }) : null}
       </Stack>
 
       <h2>Rules</h2>
