@@ -1,19 +1,19 @@
 import RuleRepository from './RuleRepository';
-import { Rule } from '../interpreter/types/rule';
+import { Rules } from '../interpreter/types/rule';
 
 export default class InMemoryRuleRepository implements RuleRepository {
-  private rules: Rule[];
+  private rules: Rules[];
 
-  constructor(rules?: Rule[]) {
+  constructor(rules?: Rules[]) {
     this.rules = rules || [];
   }
 
-  public async addRule(rule: Rule): Promise<Rule> {
+  public async addRules(rule: Rules): Promise<Rules> {
     this.rules.push(rule);
     return rule;
   }
 
-  public async getAllRules(): Promise<Rule[]> {
+  public async getAllRules(): Promise<Rules[]> {
     return this.rules;
   }
 }
