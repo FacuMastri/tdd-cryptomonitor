@@ -1,0 +1,21 @@
+.options {
+  border: 1px solid #fff;
+  padding: 10px 20px;
+  align-self: center;
+  margin: auto;
+  align-self: center;
+  width: min-content;
+  margin-top: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.formInput {
+  margin: 20px !important;
+  margin-inline: 10px;
+  width: 300px;
+}
