@@ -1,6 +1,6 @@
 import { binanceService, interpreterService } from './index';
 import { MIN_SYMBOL_VARIATION_PERC } from '../config';
-import { evalRule } from '../interpreter/interpreter';
+import {evalRule, evalRules} from '../interpreter/interpreter';
 import { Context } from '../interpreter/types/context';
 import { ValueOutput } from '../interpreter/types/value';
 import { ContextDatum } from '../interpreter/types/number';
