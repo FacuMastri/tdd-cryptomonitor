@@ -1,7 +1,7 @@
-import { Rule } from '../interpreter/types/rule';
+import {Rules} from '../interpreter/types/rule';
 
 export default interface RuleRepository {
-  addRule(rule: Rule): Promise<Rule>;
+  addRules(rules: Rules): Promise<Rules>;
 
-  getAllRules(): Promise<Rule[]>;
+  getAllRules(): Promise<Rules[]>;
 }

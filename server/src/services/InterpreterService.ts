@@ -1,5 +1,5 @@
 import RuleRepository from '../repositories/RuleRepository';
-import { Rule } from '../interpreter/types/rule';
+import {Rule, Rules} from '../interpreter/types/rule';
 import {
   SymbolMarketStatus,
   SymbolMarketStatusDict,
@@ -21,8 +21,8 @@ export default class InterpreterService {
     this.ruleRepositories = ruleRepositories || {};
   }
 
-  public async getRulesFor(status: SymbolMarketStatusDict): Promise<Rule[]> {
-    const rules: Rule[] = [];
+  public async getRulesFor(status: SymbolMarketStatusDict): Promise<Rules[]> {
+    const rules: Rules[] = [];
     for (const symbol in status) {
       if (
         this.ruleRepositories[symbol] &&
@@ -37,12 +37,12 @@ export default class InterpreterService {
     return rules;
   }
 
-  public async addRule(
-    rule: Rule,
+  public async addRules(
+    rules: Rules,
     validFor: Symbol,
     validIn: SymbolMarketStatus
-  ): Promise<Rule> {
-    return this.ruleRepositories[validFor][validIn].addRule(rule);
+  ): Promise<Rules> {
+    return this.ruleRepositories[validFor][validIn].addRules(rules);
   }
 
   public async getAllRules(): Promise<RuleRepositories> {

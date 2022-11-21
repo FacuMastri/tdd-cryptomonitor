@@ -1,6 +1,6 @@
 import { binanceService, interpreterService } from './index';
 import { MIN_SYMBOL_VARIATION_PERC } from '../config';
-import { evalRule } from '../interpreter/interpreter';
+import {evalRule, evalRules} from '../interpreter/interpreter';
 import { Context } from '../interpreter/types/context';
 import { ValueOutput } from '../interpreter/types/value';
 import { ContextDatum } from '../interpreter/types/number';
@@ -120,8 +120,8 @@ export default class MonitorService {
         });
         this.updateStatus();
         const rules = await interpreterService.getRulesFor(this.status);
-        rules.forEach((rule) => {
-          const newContext = evalRule(rule, this.getContext());
+        rules.forEach((rules) => {
+          const newContext = evalRules(rules, this.getContext());
           this.setContext(newContext);
         });
       }
