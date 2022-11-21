@@ -1,5 +1,5 @@
 import RuleRepository from './RuleRepository';
-import {Rule, Rules} from '../interpreter/types/rule';
+import { Rules } from '../interpreter/types/rule';
 
 export default class InMemoryRuleRepository implements RuleRepository {
   private rules: Rules[];
@@ -8,9 +8,9 @@ export default class InMemoryRuleRepository implements RuleRepository {
     this.rules = rules || [];
   }
 
-  public async addRules(rules: Rules): Promise<Rules> {
-    this.rules.push(rules);
-    return rules;
+  public async addRules(rule: Rules): Promise<Rules> {
+    this.rules.push(rule);
+    return rule;
   }
 
   public async getAllRules(): Promise<Rules[]> {

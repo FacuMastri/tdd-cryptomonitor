@@ -1,10 +1,7 @@
 import RuleRepository from '../repositories/RuleRepository';
-import {Rule, Rules} from '../interpreter/types/rule';
-import {
-  SymbolMarketStatus,
-  SymbolMarketStatusDict,
-  Symbol
-} from './MonitorService';
+import { Rules } from '../interpreter/types/rule';
+import { SymbolMarketStatus, SymbolMarketStatusDict, Symbol } from './types';
+import InMemoryRuleRepository from '../repositories/InMemoryRuleRepository';
 
 export type RulesForSymbol = {
   ALZA: RuleRepository;
@@ -37,12 +34,24 @@ export default class InterpreterService {
     return rules;
   }
 
+  private newRulesForSymbol(): RulesForSymbol {
+    return {
+      ALZA: new InMemoryRuleRepository(),
+      BAJA: new InMemoryRuleRepository(),
+      ESTABLE: new InMemoryRuleRepository()
+    };
+  }
+
   public async addRules(
     rules: Rules,
     validFor: Symbol,
     validIn: SymbolMarketStatus
   ): Promise<Rules> {
-    return this.ruleRepositories[validFor][validIn].addRules(rules);
+    const rulesForSymbol = this.ruleRepositories[validFor] || {};
+    const rulesForStatus = rulesForSymbol[validIn] || this.newRulesForSymbol();
+    const ret = rulesForStatus.addRules(rules);
+    this.ruleRepositories[validFor] = rulesForSymbol;
+    return ret;
   }
 
   public async getAllRules(): Promise<RuleRepositories> {
