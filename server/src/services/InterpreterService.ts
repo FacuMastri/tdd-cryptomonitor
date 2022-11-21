@@ -47,11 +47,14 @@ export default class InterpreterService {
     validFor: Symbol,
     validIn: SymbolMarketStatus
   ): Promise<Rules> {
-    const rulesForSymbol = this.ruleRepositories[validFor] || {};
-    const rulesForStatus = rulesForSymbol[validIn] || this.newRulesForSymbol();
-    const ret = rulesForStatus.addRules(rules);
+    const rulesForSymbol =
+      this.ruleRepositories[validFor] || this.newRulesForSymbol();
+
+    rulesForSymbol[validIn].addRules(rules);
+
     this.ruleRepositories[validFor] = rulesForSymbol;
-    return ret;
+
+    return rules;
   }
 
   public async getAllRules(): Promise<RuleRepositories> {

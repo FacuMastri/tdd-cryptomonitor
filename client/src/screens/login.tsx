@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { loginAPI, checkOk, intoText } from "../util/requests";
 import { toast } from "react-toastify";
 import { Button, TextField, Typography, InputLabel } from "@mui/material";

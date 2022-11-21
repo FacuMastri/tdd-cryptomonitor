@@ -1,9 +1,6 @@
-import { useState, useEffect } from "react";
-import { rulesAPI, checkOk, intoJson } from "../util/requests";
-import { toast } from "react-toastify";
+import { useState, useEffect, useMemo } from "react";
 import {
-  Stack,
-  Chip,
+  Autocomplete,
   TextField,
   Button,
   Select,
@@ -11,56 +8,109 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import "../styles/rules.css";
+import { Editor } from "../util/editor";
 import { capitalize } from "../util/text";
-
-const MARKET_STATUSES = ["ALZA", "BAJA", "ESTABLE"] as const;
-type MarketStatus = typeof MARKET_STATUSES[number];
+import {
+  fetchRules,
+  fetchSymbols,
+  postRules,
+  MarketStatus,
+  MARKET_STATUSES,
+} from "../util/fetch";
+import { toast } from "react-toastify";
 
 type Props = {
   jwt: string;
 };
 
-type RulesType = {
-  requiredVariables: Array<String>;
-  rules: Array<String>;
-};
+type Rules = Record<string, Record<MarketStatus, any>>; // Symbol -> MarketStatus -> Rules
 
-const fetchRules = async (jwt: string): Promise<any> => {
-  return await await fetch(rulesAPI, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      jwt: jwt,
-    },
-  })
-    .then(checkOk("Couldnt get current rules"))
-    .then(intoJson)
-    .catch((error) => {
-      console.log(error.message ?? error);
-      toast.error(error.message ?? "Error");
-    });
+const INDENT_SIZE = 4;
+
+const BASE_RULES = JSON.stringify(
+  {
+    requiredVariables: [],
+    rules: [],
+  },
+  null,
+  INDENT_SIZE
+);
+
+const getExistingRuleSymbols = (
+  rules: Rules,
+  marketStatus: MarketStatus
+): string[] => {
+  return Object.keys(rules).filter((symbol) => {
+    const rule = rules[symbol]?.[marketStatus]?.rules;
+    return rule && rule.length > 0;
+  });
 };
 
 const Rules = ({ jwt }: Props) => {
   const [marketStatus, setMarketStatus] = useState<MarketStatus>(
     MARKET_STATUSES[0]
   );
-  const [symbol, setSymbol] = useState("");
-  const [rules, setRules] = useState([]);
-  const [requiredVariables, setRequiredVariables] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [symbol, setSymbol] = useState<string | null>(null);
+
+  const [rules, setRules] = useState<Rules>({} as Rules);
+  const [allSymbols, setAllSymbols] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [text, setText] = useState(BASE_RULES);
+  const [showOnlyExisting, setShowOnlyExisting] = useState(false);
+
+  const existingRuleSymbols = useMemo(() => {
+    return getExistingRuleSymbols(rules, marketStatus);
+  }, [rules, marketStatus]);
 
   useEffect(() => {
-    fetchRules(jwt).then((rules) => {
-      setRequiredVariables(rules.requiredVariables);
-      setRules(rules.rules);
-    });
+    setSymbol(null);
+  }, [marketStatus]);
+
+  useEffect(() => {
+    Promise.all([
+      fetchRules(jwt).then((rules) => {
+        setRules(rules);
+      }),
+      fetchSymbols(jwt).then((symbols) => {
+        setAllSymbols(symbols);
+      }),
+    ]).then(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (!symbol) return;
+    const rule = rules[symbol]?.[marketStatus];
+    if (rule) setText(JSON.stringify(rule, null, INDENT_SIZE));
+    else setText(BASE_RULES);
+  }, [JSON.stringify(rules), marketStatus, symbol]);
+
   const sendRules = () => {
-    //TODO post rules
+    if (!symbol) return;
+    setLoading(true);
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch (error) {
+      toast.error("Invalid JSON");
+      setLoading(false);
+      return;
+    }
+    const payload = {
+      rules: parsed,
+      validFor: symbol,
+      validIn: marketStatus,
+    };
+    postRules(jwt, payload).then(() => {
+      setLoading(false);
+      fetchRules(jwt).then((rules) => {
+        setRules(rules);
+      });
+    });
   };
 
   return (
@@ -84,71 +134,49 @@ const Rules = ({ jwt }: Props) => {
             </Select>
           </FormControl>
           <FormControl className="formInput">
-            <TextField
-              label="Symbol"
+            <Autocomplete
               value={symbol}
-              onChange={(e) => setSymbol(e.target.value)}
+              onChange={(_, value: any) => setSymbol(value)}
+              renderInput={(params) => (
+                <TextField {...params} label="Symbol" variant="standard" />
+              )}
+              options={showOnlyExisting ? existingRuleSymbols : allSymbols}
             />
           </FormControl>
         </div>
+        <FormControlLabel
+          label="Show only existing rules"
+          control={
+            <Checkbox
+              checked={showOnlyExisting}
+              onChange={(event) => setShowOnlyExisting(event.target.checked)}
+              size="small"
+            />
+          }
+          disabled={
+            loading || !(!symbol || existingRuleSymbols.includes(symbol))
+          }
+        />
       </div>
 
-      <h2>Required Variables</h2>
+      <Typography variant="h4">Edit Rules</Typography>
+      <div className="editor">
+        <Editor
+          value={symbol ? text : " "}
+          baseValue={BASE_RULES}
+          indent={INDENT_SIZE}
+          onChange={setText}
+          disabled={loading || !symbol}
+        />
+      </div>
 
-      <Stack
-        direction="row"
-        spacing={1}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {curr_rules?.requiredVariables
-          ? curr_rules.requiredVariables.map((algo, idx) => {
-              return <Chip key={idx} label={algo} variant="outlined" />;
-            })
-          : null}
-      </Stack>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Rule</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Rule 1</td>
-            <td>Value 1</td>
-          </tr>
-          <tr>
-            <td>Rule 2</td>
-            <td>Value 2</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h2>Add Rule</h2>
-      <TextField
-        id="rules-field"
-        label="Add Rules"
-        multiline
-        rows={4}
-        style={{ width: "100%" }}
-        onChange={(e) => {
-          setRules(e.target.value);
-        }}
-      />
       <Button
         variant="contained"
         onClick={sendRules}
-        style={{ float: "right", marginTop: "10px" }}
+        disabled={loading || !symbol}
       >
         Set Rules
       </Button>
-      <footer>{jwt}</footer>
     </section>
   );
 };

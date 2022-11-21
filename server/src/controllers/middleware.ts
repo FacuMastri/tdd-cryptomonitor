@@ -5,6 +5,7 @@ import Ajv from 'ajv';
 import RulesSchema from '../schemas/Rules.json';
 import { isMarketStatus, symbolMarketStatuses } from '../services/types';
 import { Rules } from '../interpreter/types/rule';
+import { monitorService } from '../services';
 
 const ajv = new Ajv();
 const validateRules = ajv.compile<Rules>(RulesSchema);
@@ -52,16 +53,18 @@ export function verifyCredentialsBody(
   next();
 }
 
-export function verifyRulesBody(
+export async function verifyRulesBody(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   let { validFor, validIn, rules } = req.body;
+  const symbols = await monitorService.getValidSymbols();
 
-  // TODO: check that validFor is a valid Symbol
-  if (!validFor) {
-    return res.status(406).send('Missing validFor symbol');
+  if (!symbols.includes(validFor)) {
+    return res
+      .status(406)
+      .send('validFor must be one of ' + symbols.join(', '));
   }
 
   if (!isMarketStatus(validIn)) {
@@ -82,8 +85,6 @@ export function verifyRulesBody(
     res.status(406).send(`Invalid rules: ${errorMsg}`);
     return;
   }
-  res.status(200).send('passed checks');
-  return;
 
   next();
 }

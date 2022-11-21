@@ -9,3 +9,7 @@ export const addPoliticController = async (req: Request, res: Response) => {
 export const getPoliticsController = async (req: Request, res: Response) => {
   res.status(200).send(monitorService.getPolitics());
 };
+
+export const getSymbolsController = async (req: Request, res: Response) => {
+  res.status(200).send(await monitorService.getValidSymbols());
+};
