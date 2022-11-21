@@ -1,17 +1,14 @@
 import { binanceService, interpreterService } from './index';
 import { MIN_SYMBOL_VARIATION_PERC } from '../config';
-import { evalRule } from '../interpreter/interpreter';
+import {evalRule, evalRules} from '../interpreter/interpreter';
 import { Context } from '../interpreter/types/context';
 import { ValueOutput } from '../interpreter/types/value';
 import { ContextDatum } from '../interpreter/types/number';
+import { SymbolMarketStatusDict, Symbol } from './types';
 
 const WebSocket = require('ws');
 
 const BINANCE_WS = `wss://stream.binance.com:9443/ws/`;
-
-export type Symbol = string;
-export type SymbolMarketStatus = 'ALZA' | 'BAJA' | 'ESTABLE';
-export type SymbolMarketStatusDict = { [key: Symbol]: SymbolMarketStatus };
 
 // If a symbol increases its value by more than variationPerc in the specified hours,
 // the Status of the symbol will be ALZA.
@@ -119,10 +116,12 @@ export default class MonitorService {
           timestamp: Date.now()
         });
         this.updateStatus();
-        const rules = await interpreterService.getRulesFor(this.status);
-        rules.forEach((rule) => {
-          const newContext = evalRule(rule, this.getContext());
-          this.setContext(newContext);
+        const rulesStatus = await interpreterService.getRulesFor(this.status);
+        rulesStatus.forEach((rules) => {
+          rules.rules.forEach((r) => {
+            const newContext = evalRule(r, this.getContext());
+            this.setContext(newContext);
+          });
         });
       }
     } else {

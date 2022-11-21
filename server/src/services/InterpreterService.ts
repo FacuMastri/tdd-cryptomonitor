@@ -1,10 +1,7 @@
 import RuleRepository from '../repositories/RuleRepository';
-import { Rule } from '../interpreter/types/rule';
-import {
-  SymbolMarketStatus,
-  SymbolMarketStatusDict,
-  Symbol
-} from './MonitorService';
+import { Rules } from '../interpreter/types/rule';
+import { SymbolMarketStatus, SymbolMarketStatusDict, Symbol } from './types';
+import InMemoryRuleRepository from '../repositories/InMemoryRuleRepository';
 
 export type RulesForSymbol = {
   ALZA: RuleRepository;
@@ -21,8 +18,8 @@ export default class InterpreterService {
     this.ruleRepositories = ruleRepositories || {};
   }
 
-  public async getRulesFor(status: SymbolMarketStatusDict): Promise<Rule[]> {
-    const rules: Rule[] = [];
+  public async getRulesFor(status: SymbolMarketStatusDict): Promise<Rules[]> {
+    const rules: Rules[] = [];
     for (const symbol in status) {
       if (
         this.ruleRepositories[symbol] &&
@@ -37,24 +34,27 @@ export default class InterpreterService {
     return rules;
   }
 
-  public async addRule(
-    rule: Rule,
-    validFor: Symbol,
-    validIn: SymbolMarketStatus
-  ): Promise<Rule> {
-    return this.ruleRepositories[validFor][validIn].addRule(rule);
+  private newRulesForSymbol(): RulesForSymbol {
+    return {
+      ALZA: new InMemoryRuleRepository(),
+      BAJA: new InMemoryRuleRepository(),
+      ESTABLE: new InMemoryRuleRepository()
+    };
   }
 
-  public async getAllRules(): Promise<Rule[]> {
-    const rules: Rule[] = [];
-    for (const symbol in this.ruleRepositories) {
-      for (const status in this.ruleRepositories[symbol]) {
-        const symbolRules = await this.ruleRepositories[symbol][
-          status as SymbolMarketStatus
-        ].getAllRules();
-        rules.push(...symbolRules);
-      }
-    }
-    return rules;
+  public async addRules(
+    rules: Rules,
+    validFor: Symbol,
+    validIn: SymbolMarketStatus
+  ): Promise<Rules> {
+    const rulesForSymbol = this.ruleRepositories[validFor] || {};
+    const rulesForStatus = rulesForSymbol[validIn] || this.newRulesForSymbol();
+    const ret = rulesForStatus.addRules(rules);
+    this.ruleRepositories[validFor] = rulesForSymbol;
+    return ret;
+  }
+
+  public async getAllRules(): Promise<RuleRepositories> {
+    return this.ruleRepositories;
   }
 }
