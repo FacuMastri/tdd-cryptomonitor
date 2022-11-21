@@ -56,7 +56,7 @@ export default class Server {
     this.app.get('/rules', verifyJwtHeader, getRulesController);
     this.app.post('/rules', verifyJwtHeaderAdmin, addRulesController);
     this.app.post('/politics', verifyJwtHeaderAdmin, addPoliticController);
-    this.app.get('/politics', getPoliticsController);
+    this.app.get('/politics', verifyJwtHeader, getPoliticsController);
 
     this.app.get('/binance/exchangeInfo', getExchangeInfoController);
 

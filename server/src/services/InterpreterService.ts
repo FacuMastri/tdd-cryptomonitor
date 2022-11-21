@@ -45,16 +45,7 @@ export default class InterpreterService {
     return this.ruleRepositories[validFor][validIn].addRule(rule);
   }
 
-  public async getAllRules(): Promise<Rule[]> {
-    const rules: Rule[] = [];
-    for (const symbol in this.ruleRepositories) {
-      for (const status in this.ruleRepositories[symbol]) {
-        const symbolRules = await this.ruleRepositories[symbol][
-          status as SymbolMarketStatus
-        ].getAllRules();
-        rules.push(...symbolRules);
-      }
-    }
-    return rules;
+  public async getAllRules(): Promise<RuleRepositories> {
+    return this.ruleRepositories;
   }
 }
