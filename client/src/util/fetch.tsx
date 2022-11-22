@@ -23,25 +23,6 @@ export const fetchSymbols = async (jwt: string): Promise<any> => {
   return await fetchData(jwt, symbolsAPI, "Could not fetch symbols");
 };
 
-export const fetchData = (
-  jwt: string,
-  url: string,
-  checkMsg: string
-): Promise<any> => {
-  return fetch(url, {
-    method: "GET",
-    headers: {
-      jwt: jwt,
-    },
-  })
-    .then(checkOk(checkMsg))
-    .then(intoJson)
-    .catch((error) => {
-      console.log(error.message ?? error);
-      toast.error(error.message ?? "Error");
-    });
-};
-
 export const fetcher =
   (jwt: string, checkMsg = "error") =>
   (url: string) =>
@@ -56,6 +37,33 @@ export const fetcher =
         console.log(error.message ?? error);
         toast.error(error.message ?? "Error");
       });
+
+export const postData =
+  (url: string, jwt: string, checkMsg = "error") =>
+  async (data: any) => {
+    return await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        jwt: jwt,
+      },
+      body: JSON.stringify(data),
+    })
+      .then(checkOk(checkMsg))
+      .then(intoJson)
+      .catch((error) => {
+        console.log(error.message ?? error);
+        toast.error(error.message ?? "Error");
+      });
+  };
+
+export const fetchData = (
+  jwt: string,
+  url: string,
+  checkMsg: string
+): Promise<any> => {
+  return fetcher(jwt, checkMsg)(url);
+};
 
 export const postRules = async (
   jwt: string,

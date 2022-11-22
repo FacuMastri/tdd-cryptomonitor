@@ -25,11 +25,7 @@ const Dashboard = ({ jwt }: Props) => {
 
       <h2>Coins</h2>
 
-      <table
-        onClick={() => {
-          console.log("balances", data);
-        }}
-      >
+      <table>
         <thead>
           <tr>
             <th>Asset</th>
