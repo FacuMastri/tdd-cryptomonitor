@@ -2,6 +2,7 @@ import { useState } from "react";
 import { loginAPI, checkOk, intoText } from "../util/requests";
 import { toast } from "react-toastify";
 import { Button, TextField, Typography, InputLabel } from "@mui/material";
+import { GoogleLogin } from "@react-oauth/google";
 import "../styles/login.css";
 
 type Props = {
@@ -63,6 +64,15 @@ const Login = ({ setJwt }: Props) => {
           <Button type="submit" disabled={processing} variant="contained">
             Login
           </Button>
+
+          <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              console.log(credentialResponse);
+            }}
+            onError={() => {
+              console.log("Login Failed");
+            }}
+          />
         </form>
       </div>
     </section>

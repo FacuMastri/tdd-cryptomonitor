@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import jwt_decode from "jwt-decode";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import Login from "./screens/login";
 import Routing from "./routing";
@@ -75,24 +76,26 @@ function App() {
   });
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <BrowserRouter>
-        <div>
-          <Nav admin={admin} user={user} logout={logout} />
-          {jwt ? (
-            <Routing jwt={jwt} admin={admin} />
-          ) : (
-            <Login
-              setJwt={(jwt) => {
-                localStorage.setItem(JWT_STORAGE_KEY, jwt);
-                setJwt(jwt);
-              }}
-            />
-          )}
-        </div>
-      </BrowserRouter>
-      <ToastContainer />
-    </ThemeProvider>
+    <GoogleOAuthProvider clientId="283435392885-4q2ph3d1v2nuf98str251pvd1vg5elmq.apps.googleusercontent.com">
+      <ThemeProvider theme={darkTheme}>
+        <BrowserRouter>
+          <div>
+            <Nav admin={admin} user={user} logout={logout} />
+            {jwt ? (
+              <Routing jwt={jwt} admin={admin} />
+            ) : (
+              <Login
+                setJwt={(jwt) => {
+                  localStorage.setItem(JWT_STORAGE_KEY, jwt);
+                  setJwt(jwt);
+                }}
+              />
+            )}
+          </div>
+        </BrowserRouter>
+        <ToastContainer />
+      </ThemeProvider>
+    </GoogleOAuthProvider>
   );
 }
 
