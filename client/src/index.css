@@ -73,6 +73,18 @@ table tr:hover {
   color: #fff;
 }
 
+.loginContainer form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid;
+  padding: 1em 10%;
+}
+
+.loginContainer form button {
+  margin: 1em 0;
+}
+
 #setVarForm {
   padding: 0px 10% 2em 10%;
 }
