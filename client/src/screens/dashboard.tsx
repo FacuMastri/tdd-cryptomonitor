@@ -1,15 +1,9 @@
 import useSWR from "swr";
+import { fetcher } from "../util/fetch";
 
 type Props = {
   jwt: string;
 };
-
-const fetcher = (jwt: string) => (url: string) =>
-  fetch(url, {
-    headers: {
-      jwt: jwt,
-    },
-  }).then((r) => r.json());
 
 type balance = {
   asset: string;
@@ -18,7 +12,6 @@ type balance = {
 };
 
 const Dashboard = ({ jwt }: Props) => {
-  // fetch http://localhost:8080/binance/exchangeInfo
   const { data, error } = useSWR(
     "http://localhost:8080/binance/account",
     fetcher(jwt)

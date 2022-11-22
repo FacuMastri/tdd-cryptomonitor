@@ -42,6 +42,21 @@ export const fetchData = (
     });
 };
 
+export const fetcher =
+  (jwt: string, checkMsg = "error") =>
+  (url: string) =>
+    fetch(url, {
+      headers: {
+        jwt: jwt,
+      },
+    })
+      .then(checkOk(checkMsg))
+      .then(intoJson)
+      .catch((error) => {
+        console.log(error.message ?? error);
+        toast.error(error.message ?? "Error");
+      });
+
 export const postRules = async (
   jwt: string,
   rules: PostRules
