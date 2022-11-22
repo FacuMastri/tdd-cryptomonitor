@@ -16,3 +16,21 @@ export const addRulesController = async (req: Request, res: Response) => {
   );
   res.status(200).send(ruleResult);
 };
+
+export const getVarsController = async (req: Request, res: Response) => {
+  res.status(200).send(await interpreterService.getAllVars());
+};
+
+export const setVarController = async (req: Request, res: Response) => {
+  const { name, value } = req.body;
+
+  if (!name || !value) {
+    res
+      .status(400)
+      .send(`Missing ${!name ? 'name,' : ''} ${!value ? 'value' : ''}`);
+    return;
+  }
+
+  const result = await interpreterService.setVar(name, value);
+  res.status(200).send(result);
+};

@@ -43,6 +43,24 @@ Content-Type: application/json
   ]
 }
 
+## VARIABLES
+
+### Getting variables
+
+GET http://localhost:8080/vars
+jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg
+
+### Setting variables
+
+POST http://localhost:8080/vars
+jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6ImZkZWx1IiwiaWF0IjoxNjY3NjY1OTUwLCJleHAiOjE2NzAyNTc5NTB9.r3Sh7quSYS6cO3BjQ1ZDRYlxWhAXw4UmwljffSBlVPg
+Content-Type: application/json
+
+{
+  "name": "var",
+  "value": 100
+}
+
 ### Binance
 
 ### exchangeInfo

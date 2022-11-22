@@ -15,10 +15,11 @@ import {
 import { binanceService } from './services';
 import {
   addRulesController,
-  getRulesController
+  getRulesController,
+  getVarsController,
+  setVarController
 } from './controllers/interpreter';
 import { BuyOrderParams } from './services/BinanceService';
-import MonitorService from './services/MonitorService';
 import {
   addPoliticController,
   getPoliticsController,
@@ -54,8 +55,12 @@ export default class Server {
       addRulesController
     );
 
+    this.app.get('/vars', verifyJwtHeader, getVarsController);
+    this.app.post('/vars', verifyJwtHeaderAdmin, setVarController);
+
     this.app.get('/rules', verifyJwtHeader, getRulesController);
     this.app.post('/rules', verifyJwtHeaderAdmin, addRulesController);
+
     this.app.post('/politics', verifyJwtHeaderAdmin, addPoliticController);
     this.app.get('/politics', verifyJwtHeader, getPoliticsController);
     this.app.get('/symbols', verifyJwtHeader, getSymbolsController);

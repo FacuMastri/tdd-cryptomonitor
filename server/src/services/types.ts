@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+// FIXME: Don't use the name Symbol
 export type Symbol = string;
 
 export const symbolMarketStatuses = ['ALZA', 'BAJA', 'ESTABLE'] as const;
