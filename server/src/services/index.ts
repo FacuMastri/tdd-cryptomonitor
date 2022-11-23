@@ -10,6 +10,8 @@ import { userRepository } from '../repositories';
 import InterpreterService from './InterpreterService';
 import MonitorService from './MonitorService';
 
+const test_mode = process.env.NODE_ENV === 'test';
+
 export const userService: UserService = new UserService(
   userRepository,
   JWT_SECRET,
@@ -23,4 +25,4 @@ export const binanceService: BinanceService = new BinanceService(
 
 export const interpreterService: InterpreterService = new InterpreterService();
 
-export const monitorService: MonitorService = new MonitorService();
+export const monitorService: MonitorService = new MonitorService(!test_mode);

@@ -32,14 +32,14 @@ export default class MonitorService {
 
   private socket: any | undefined;
 
-  constructor() {
+  constructor(startSocket = true) {
     this.history = {};
     this.variables = {};
     this.status = {};
     this.statusChangePolitics = this.getDefaultPolitics();
     // Does not work if I change the anonymous function to a
     // method call, I don't know why
-    this.setUpWebsocket().then(() => this.setDefaultPolitics());
+    startSocket && this.setUpWebsocket().then(() => this.setDefaultPolitics());
   }
 
   private async setDefaultPolitics() {

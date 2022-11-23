@@ -182,9 +182,10 @@ describe('evalValue', () => {
       name: 'zero'
     };
 
-    const context: Context = { zero: 0, wallets: [], data: {} };
+    const context: Context = { wallets: [], data: {}, variables: { zero: 0 } };
 
-    expect(evalValue(variable, context)).toBe(0);
+    const output = evalValue(variable, context);
+    expect(output).toBe(0);
   });
 
   test('evalValue throws error for VARIABLE value with undefined variable', () => {

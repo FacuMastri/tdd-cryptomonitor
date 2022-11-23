@@ -103,12 +103,12 @@ describe('evalRule', () => {
       actions: [action_a, action_b]
     };
 
-    const context: Context = { a: 0 };
+    const context: Context = { variables: { a: 0 } };
 
     evalRule(rule, context);
 
-    expect(context.a).toBe(101);
-    expect(context.b).toBe(102);
+    expect(context.variables.a).toBe(101);
+    expect(context.variables.b).toBe(102);
   });
 
   test('evalRules throws error if required variables are not set', () => {
