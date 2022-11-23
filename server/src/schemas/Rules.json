@@ -1,656 +1,520 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "definitions": {
-        "Action": {
-            "anyOf": [
-                {
-                    "$ref": "#/definitions/ActionBuyMarket"
-                },
-                {
-                    "$ref": "#/definitions/ActionSellMarket"
-                },
-                {
-                    "$ref": "#/definitions/ActionSetVariable"
-                }
-            ]
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "Action": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/ActionBuyMarket"
         },
-        "ActionBuyMarket": {
-            "properties": {
-                "amount": {
-                    "$ref": "#/definitions/NumberType"
-                },
-                "symbol": {
-                    "type": "string"
-                },
-                "type": {
-                    "enum": [
-                        "BUY_MARKET"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "amount",
-                "symbol",
-                "type"
-            ],
-            "type": "object"
+        {
+          "$ref": "#/definitions/ActionSellMarket"
         },
-        "ActionSellMarket": {
-            "properties": {
-                "amount": {
-                    "$ref": "#/definitions/NumberType"
-                },
-                "symbol": {
-                    "type": "string"
-                },
-                "type": {
-                    "enum": [
-                        "SELL_MARKET"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "amount",
-                "symbol",
-                "type"
-            ],
-            "type": "object"
-        },
-        "ActionSetVariable": {
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "enum": [
-                        "SET_VARIABLE"
-                    ],
-                    "type": "string"
-                },
-                "value": {
-                    "$ref": "#/definitions/Value"
-                }
-            },
-            "required": [
-                "name",
-                "type",
-                "value"
-            ],
-            "type": "object"
-        },
-        "BooleanCallCompBooleans": {
-            "properties": {
-                "arguments": {
-                    "items": {
-                        "$ref": "#/definitions/BooleanType"
-                    },
-                    "type": "array"
-                },
-                "name": {
-                    "$ref": "#/definitions/OpCompManyBooleans"
-                },
-                "type": {
-                    "enum": [
-                        "CALL"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "arguments",
-                "name",
-                "type"
-            ],
-            "type": "object"
-        },
-        "BooleanCallCompNumbers": {
-            "properties": {
-                "arguments": {
-                    "items": {
-                        "$ref": "#/definitions/NumberType"
-                    },
-                    "type": "array"
-                },
-                "name": {
-                    "$ref": "#/definitions/OpCompManyNumbers"
-                },
-                "type": {
-                    "enum": [
-                        "CALL"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "arguments",
-                "name",
-                "type"
-            ],
-            "type": "object"
-        },
-        "BooleanCallCompValues": {
-            "properties": {
-                "arguments": {
-                    "items": {
-                        "$ref": "#/definitions/Value"
-                    },
-                    "type": "array"
-                },
-                "name": {
-                    "$ref": "#/definitions/OpCompManyValues"
-                },
-                "type": {
-                    "enum": [
-                        "CALL"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "arguments",
-                "name",
-                "type"
-            ],
-            "type": "object"
-        },
-        "BooleanCallUnary": {
-            "properties": {
-                "arguments": {
-                    "items": [
-                        {
-                            "$ref": "#/definitions/BooleanType"
-                        }
-                    ],
-                    "maxItems": 1,
-                    "minItems": 1,
-                    "type": "array"
-                },
-                "name": {
-                    "enum": [
-                        "NOT"
-                    ],
-                    "type": "string"
-                },
-                "type": {
-                    "enum": [
-                        "CALL"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "arguments",
-                "name",
-                "type"
-            ],
-            "type": "object"
-        },
-        "BooleanConstant": {
-            "properties": {
-                "type": {
-                    "enum": [
-                        "CONSTANT"
-                    ],
-                    "type": "string"
-                },
-                "value": {
-                    "type": "boolean"
-                }
-            },
-            "required": [
-                "type",
-                "value"
-            ],
-            "type": "object"
-        },
-        "BooleanType": {
-            "anyOf": [
-                {
-                    "$ref": "#/definitions/BooleanCallCompNumbers"
-                },
-                {
-                    "$ref": "#/definitions/BooleanCallCompValues"
-                },
-                {
-                    "$ref": "#/definitions/BooleanCallUnary"
-                },
-                {
-                    "$ref": "#/definitions/BooleanCallCompBooleans"
-                },
-                {
-                    "$ref": "#/definitions/BooleanConstant"
-                }
-            ]
-        },
-        "NumberCallBinary": {
-            "properties": {
-                "arguments": {
-                    "items": [
-                        {
-                            "$ref": "#/definitions/NumberType"
-                        },
-                        {
-                            "$ref": "#/definitions/NumberType"
-                        }
-                    ],
-                    "maxItems": 2,
-                    "minItems": 2,
-                    "type": "array"
-                },
-                "name": {
-                    "$ref": "#/definitions/OpBinaryNumber"
-                },
-                "type": {
-                    "enum": [
-                        "CALL"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "arguments",
-                "name",
-                "type"
-            ],
-            "type": "object"
-        },
-        "NumberCallMany": {
-            "properties": {
-                "arguments": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "$ref": "#/definitions/NumberType"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "$ref": "#/definitions/NumberData"
-                        }
-                    ]
-                },
-                "name": {
-                    "$ref": "#/definitions/OpManyNumbers"
-                },
-                "type": {
-                    "enum": [
-                        "CALL"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "arguments",
-                "name",
-                "type"
-            ],
-            "type": "object"
-        },
-        "NumberCallUnary": {
-            "properties": {
-                "arguments": {
-                    "items": [
-                        {
-                            "$ref": "#/definitions/NumberType"
-                        }
-                    ],
-                    "maxItems": 1,
-                    "minItems": 1,
-                    "type": "array"
-                },
-                "name": {
-                    "$ref": "#/definitions/OpNumber"
-                },
-                "type": {
-                    "enum": [
-                        "CALL"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "arguments",
-                "name",
-                "type"
-            ],
-            "type": "object"
-        },
-        "NumberConstant": {
-            "properties": {
-                "type": {
-                    "enum": [
-                        "CONSTANT"
-                    ],
-                    "type": "string"
-                },
-                "value": {
-                    "type": "number"
-                }
-            },
-            "required": [
-                "type",
-                "value"
-            ],
-            "type": "object"
-        },
-        "NumberData": {
-            "properties": {
-                "default": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/NumberCallBinary"
-                        },
-                        {
-                            "$ref": "#/definitions/NumberCallMany"
-                        },
-                        {
-                            "$ref": "#/definitions/NumberCallUnary"
-                        },
-                        {
-                            "$ref": "#/definitions/NumberConstant"
-                        },
-                        {
-                            "$ref": "#/definitions/WalletDef"
-                        },
-                        {
-                            "$ref": "#/definitions/NumberVariable"
-                        },
-                        {
-                            "items": {
-                                "$ref": "#/definitions/NumberType"
-                            },
-                            "type": "array"
-                        }
-                    ]
-                },
-                "since": {
-                    "type": "number"
-                },
-                "symbol": {
-                    "type": "string"
-                },
-                "type": {
-                    "enum": [
-                        "DATA"
-                    ],
-                    "type": "string"
-                },
-                "until": {
-                    "type": "number"
-                }
-            },
-            "required": [
-                "since",
-                "symbol",
-                "type",
-                "until"
-            ],
-            "type": "object"
-        },
-        "NumberType": {
-            "anyOf": [
-                {
-                    "$ref": "#/definitions/NumberCallBinary"
-                },
-                {
-                    "$ref": "#/definitions/NumberCallMany"
-                },
-                {
-                    "$ref": "#/definitions/NumberCallUnary"
-                },
-                {
-                    "$ref": "#/definitions/NumberConstant"
-                },
-                {
-                    "$ref": "#/definitions/WalletDef"
-                },
-                {
-                    "$ref": "#/definitions/NumberVariable"
-                }
-            ]
-        },
-        "NumberVariable": {
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "enum": [
-                        "VARIABLE"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "type"
-            ],
-            "type": "object"
-        },
-        "OpBinaryNumber": {
-            "enum": [
-                "-",
-                "/"
-            ],
-            "type": "string"
-        },
-        "OpCompManyBooleans": {
-            "enum": [
-                "AND",
-                "OR"
-            ],
-            "type": "string"
-        },
-        "OpCompManyNumbers": {
-            "enum": [
-                "<",
-                "<=",
-                ">",
-                ">="
-            ],
-            "type": "string"
-        },
-        "OpCompManyValues": {
-            "enum": [
-                "==",
-                "DISTINCT"
-            ],
-            "type": "string"
-        },
-        "OpManyNumbers": {
-            "enum": [
-                "*",
-                "+",
-                "AVERAGE",
-                "FIRST",
-                "LAST",
-                "MAX",
-                "MIN",
-                "STDDEV"
-            ],
-            "type": "string"
-        },
-        "OpNumber": {
-            "enum": [
-                "*",
-                "+",
-                "-",
-                "/",
-                "AVERAGE",
-                "FIRST",
-                "LAST",
-                "MAX",
-                "MIN",
-                "NEGATE",
-                "STDDEV"
-            ],
-            "type": "string"
-        },
-        "Rule": {
-            "properties": {
-                "actions": {
-                    "items": {
-                        "$ref": "#/definitions/Action"
-                    },
-                    "type": "array"
-                },
-                "condition": {
-                    "$ref": "#/definitions/BooleanType"
-                },
-                "name": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "actions",
-                "condition",
-                "name"
-            ],
-            "type": "object"
-        },
-        "Value": {
-            "anyOf": [
-                {
-                    "$ref": "#/definitions/NumberCallBinary"
-                },
-                {
-                    "$ref": "#/definitions/NumberCallMany"
-                },
-                {
-                    "$ref": "#/definitions/NumberCallUnary"
-                },
-                {
-                    "$ref": "#/definitions/BooleanCallCompNumbers"
-                },
-                {
-                    "$ref": "#/definitions/BooleanCallCompValues"
-                },
-                {
-                    "$ref": "#/definitions/BooleanCallUnary"
-                },
-                {
-                    "$ref": "#/definitions/BooleanCallCompBooleans"
-                },
-                {
-                    "$ref": "#/definitions/NumberConstant"
-                },
-                {
-                    "$ref": "#/definitions/WalletDef"
-                },
-                {
-                    "$ref": "#/definitions/NumberVariable"
-                },
-                {
-                    "$ref": "#/definitions/BooleanConstant"
-                },
-                {
-                    "$ref": "#/definitions/ValueConstant"
-                },
-                {
-                    "$ref": "#/definitions/ValueVariable"
-                },
-                {
-                    "$ref": "#/definitions/ValueWallet"
-                }
-            ]
-        },
-        "ValueConstant": {
-            "properties": {
-                "type": {
-                    "enum": [
-                        "CONSTANT"
-                    ],
-                    "type": "string"
-                },
-                "value": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type",
-                "value"
-            ],
-            "type": "object"
-        },
-        "ValueVariable": {
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "enum": [
-                        "VARIABLE"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "type"
-            ],
-            "type": "object"
-        },
-        "ValueWallet": {
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "symbol": {
-                    "type": "string"
-                },
-                "type": {
-                    "enum": [
-                        "WALLET"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "amount",
-                "symbol",
-                "type"
-            ],
-            "type": "object"
-        },
-        "WalletDef": {
-            "properties": {
-                "symbol": {
-                    "type": "string"
-                },
-                "type": {
-                    "enum": [
-                        "WALLET"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "symbol",
-                "type"
-            ],
-            "type": "object"
+        {
+          "$ref": "#/definitions/ActionSetVariable"
         }
+      ]
     },
-    "properties": {
-        "requiredVariables": {
-            "items": {
-                "type": "string"
-            },
-            "type": "array"
+    "ActionBuyMarket": {
+      "properties": {
+        "amount": {
+          "$ref": "#/definitions/NumberType"
         },
-        "rules": {
-            "items": {
-                "$ref": "#/definitions/Rule"
-            },
-            "type": "array"
+        "symbol": {
+          "type": "string"
+        },
+        "type": {
+          "enum": ["BUY_MARKET"],
+          "type": "string"
         }
+      },
+      "required": ["amount", "symbol", "type"],
+      "type": "object"
     },
-    "required": [
-        "requiredVariables",
-        "rules"
-    ],
-    "type": "object"
+    "ActionSellMarket": {
+      "properties": {
+        "amount": {
+          "$ref": "#/definitions/NumberType"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "type": {
+          "enum": ["SELL_MARKET"],
+          "type": "string"
+        }
+      },
+      "required": ["amount", "symbol", "type"],
+      "type": "object"
+    },
+    "ActionSetVariable": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "enum": ["SET_VARIABLE"],
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/definitions/Value"
+        }
+      },
+      "required": ["name", "type", "value"],
+      "type": "object"
+    },
+    "BooleanCallCompBooleans": {
+      "properties": {
+        "arguments": {
+          "items": {
+            "$ref": "#/definitions/BooleanType"
+          },
+          "type": "array"
+        },
+        "name": {
+          "$ref": "#/definitions/OpCompManyBooleans"
+        },
+        "type": {
+          "enum": ["CALL"],
+          "type": "string"
+        }
+      },
+      "required": ["arguments", "name", "type"],
+      "type": "object"
+    },
+    "BooleanCallCompNumbers": {
+      "properties": {
+        "arguments": {
+          "items": {
+            "$ref": "#/definitions/NumberType"
+          },
+          "type": "array"
+        },
+        "name": {
+          "$ref": "#/definitions/OpCompManyNumbers"
+        },
+        "type": {
+          "enum": ["CALL"],
+          "type": "string"
+        }
+      },
+      "required": ["arguments", "name", "type"],
+      "type": "object"
+    },
+    "BooleanCallCompValues": {
+      "properties": {
+        "arguments": {
+          "items": {
+            "$ref": "#/definitions/Value"
+          },
+          "type": "array"
+        },
+        "name": {
+          "$ref": "#/definitions/OpCompManyValues"
+        },
+        "type": {
+          "enum": ["CALL"],
+          "type": "string"
+        }
+      },
+      "required": ["arguments", "name", "type"],
+      "type": "object"
+    },
+    "BooleanCallUnary": {
+      "properties": {
+        "arguments": {
+          "items": [
+            {
+              "$ref": "#/definitions/BooleanType"
+            }
+          ],
+          "maxItems": 1,
+          "minItems": 1,
+          "type": "array"
+        },
+        "name": {
+          "enum": ["NOT"],
+          "type": "string"
+        },
+        "type": {
+          "enum": ["CALL"],
+          "type": "string"
+        }
+      },
+      "required": ["arguments", "name", "type"],
+      "type": "object"
+    },
+    "BooleanConstant": {
+      "properties": {
+        "type": {
+          "enum": ["CONSTANT"],
+          "type": "string"
+        },
+        "value": {
+          "type": "boolean"
+        }
+      },
+      "required": ["type", "value"],
+      "type": "object"
+    },
+    "BooleanType": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/BooleanCallCompNumbers"
+        },
+        {
+          "$ref": "#/definitions/BooleanCallCompValues"
+        },
+        {
+          "$ref": "#/definitions/BooleanCallUnary"
+        },
+        {
+          "$ref": "#/definitions/BooleanCallCompBooleans"
+        },
+        {
+          "$ref": "#/definitions/BooleanConstant"
+        }
+      ]
+    },
+    "NumberCallBinary": {
+      "properties": {
+        "arguments": {
+          "items": [
+            {
+              "$ref": "#/definitions/NumberType"
+            },
+            {
+              "$ref": "#/definitions/NumberType"
+            }
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "name": {
+          "$ref": "#/definitions/OpBinaryNumber"
+        },
+        "type": {
+          "enum": ["CALL"],
+          "type": "string"
+        }
+      },
+      "required": ["arguments", "name", "type"],
+      "type": "object"
+    },
+    "NumberCallMany": {
+      "properties": {
+        "arguments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/definitions/NumberType"
+              },
+              "type": "array"
+            },
+            {
+              "$ref": "#/definitions/NumberData"
+            }
+          ]
+        },
+        "name": {
+          "$ref": "#/definitions/OpManyNumbers"
+        },
+        "type": {
+          "enum": ["CALL"],
+          "type": "string"
+        }
+      },
+      "required": ["arguments", "name", "type"],
+      "type": "object"
+    },
+    "NumberCallUnary": {
+      "properties": {
+        "arguments": {
+          "items": [
+            {
+              "$ref": "#/definitions/NumberType"
+            }
+          ],
+          "maxItems": 1,
+          "minItems": 1,
+          "type": "array"
+        },
+        "name": {
+          "$ref": "#/definitions/OpNumber"
+        },
+        "type": {
+          "enum": ["CALL"],
+          "type": "string"
+        }
+      },
+      "required": ["arguments", "name", "type"],
+      "type": "object"
+    },
+    "NumberConstant": {
+      "properties": {
+        "type": {
+          "enum": ["CONSTANT"],
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        }
+      },
+      "required": ["type", "value"],
+      "type": "object"
+    },
+    "NumberData": {
+      "properties": {
+        "default": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/NumberCallBinary"
+            },
+            {
+              "$ref": "#/definitions/NumberCallMany"
+            },
+            {
+              "$ref": "#/definitions/NumberCallUnary"
+            },
+            {
+              "$ref": "#/definitions/NumberConstant"
+            },
+            {
+              "$ref": "#/definitions/WalletDef"
+            },
+            {
+              "$ref": "#/definitions/NumberVariable"
+            },
+            {
+              "items": {
+                "$ref": "#/definitions/NumberType"
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "since": {
+          "type": "number"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "type": {
+          "enum": ["DATA"],
+          "type": "string"
+        },
+        "until": {
+          "type": "number"
+        }
+      },
+      "required": ["since", "symbol", "type", "until"],
+      "type": "object"
+    },
+    "NumberType": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/NumberCallBinary"
+        },
+        {
+          "$ref": "#/definitions/NumberCallMany"
+        },
+        {
+          "$ref": "#/definitions/NumberCallUnary"
+        },
+        {
+          "$ref": "#/definitions/NumberConstant"
+        },
+        {
+          "$ref": "#/definitions/WalletDef"
+        },
+        {
+          "$ref": "#/definitions/NumberVariable"
+        }
+      ]
+    },
+    "NumberVariable": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "enum": ["VARIABLE"],
+          "type": "string"
+        }
+      },
+      "required": ["name", "type"],
+      "type": "object"
+    },
+    "OpBinaryNumber": {
+      "enum": ["-", "/"],
+      "type": "string"
+    },
+    "OpCompManyBooleans": {
+      "enum": ["AND", "OR"],
+      "type": "string"
+    },
+    "OpCompManyNumbers": {
+      "enum": ["<", "<=", ">", ">="],
+      "type": "string"
+    },
+    "OpCompManyValues": {
+      "enum": ["==", "DISTINCT"],
+      "type": "string"
+    },
+    "OpManyNumbers": {
+      "enum": ["*", "+", "AVERAGE", "FIRST", "LAST", "MAX", "MIN", "STDDEV"],
+      "type": "string"
+    },
+    "OpNumber": {
+      "enum": [
+        "*",
+        "+",
+        "-",
+        "/",
+        "AVERAGE",
+        "FIRST",
+        "LAST",
+        "MAX",
+        "MIN",
+        "NEGATE",
+        "STDDEV"
+      ],
+      "type": "string"
+    },
+    "Rule": {
+      "properties": {
+        "actions": {
+          "items": {
+            "$ref": "#/definitions/Action"
+          },
+          "type": "array"
+        },
+        "condition": {
+          "$ref": "#/definitions/BooleanType"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["actions", "condition", "name"],
+      "type": "object"
+    },
+    "Value": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/NumberCallBinary"
+        },
+        {
+          "$ref": "#/definitions/NumberCallMany"
+        },
+        {
+          "$ref": "#/definitions/NumberCallUnary"
+        },
+        {
+          "$ref": "#/definitions/BooleanCallCompNumbers"
+        },
+        {
+          "$ref": "#/definitions/BooleanCallCompValues"
+        },
+        {
+          "$ref": "#/definitions/BooleanCallUnary"
+        },
+        {
+          "$ref": "#/definitions/BooleanCallCompBooleans"
+        },
+        {
+          "$ref": "#/definitions/NumberConstant"
+        },
+        {
+          "$ref": "#/definitions/WalletDef"
+        },
+        {
+          "$ref": "#/definitions/NumberVariable"
+        },
+        {
+          "$ref": "#/definitions/BooleanConstant"
+        },
+        {
+          "$ref": "#/definitions/ValueConstant"
+        },
+        {
+          "$ref": "#/definitions/ValueVariable"
+        },
+        {
+          "$ref": "#/definitions/ValueWallet"
+        }
+      ]
+    },
+    "ValueConstant": {
+      "properties": {
+        "type": {
+          "enum": ["CONSTANT"],
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "value"],
+      "type": "object"
+    },
+    "ValueVariable": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "enum": ["VARIABLE"],
+          "type": "string"
+        }
+      },
+      "required": ["name", "type"],
+      "type": "object"
+    },
+    "ValueWallet": {
+      "properties": {
+        "amount": {
+          "type": "number"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "type": {
+          "enum": ["WALLET"],
+          "type": "string"
+        }
+      },
+      "required": ["amount", "symbol", "type"],
+      "type": "object"
+    },
+    "WalletDef": {
+      "properties": {
+        "symbol": {
+          "type": "string"
+        },
+        "type": {
+          "enum": ["WALLET"],
+          "type": "string"
+        }
+      },
+      "required": ["symbol", "type"],
+      "type": "object"
+    }
+  },
+  "properties": {
+    "requiredVariables": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/definitions/Rule"
+      },
+      "type": "array"
+    }
+  },
+  "required": ["requiredVariables", "rules"],
+  "type": "object"
 }
-

@@ -1,12 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { binanceService, interpreterService } from './index';
-import { MIN_SYMBOL_VARIATION_PERC } from '../config';
+import {
+  DEFAULT_INTERVAL_IN_HOURS,
+  DEFAULT_VARIATION_PERC,
+  MIN_SYMBOL_VARIATION_PERC
+} from '../config';
 import { evalRule } from '../interpreter/interpreter';
 import { Context } from '../interpreter/types/context';
 import { ValueOutput } from '../interpreter/types/value';
 import { ContextDatum } from '../interpreter/types/number';
 import { SymbolMarketStatusDict, Symbol } from './types';
-import WebSocket from 'ws';
+const { WebSocket } = require('ws');
 
 const BINANCE_WS = `wss://stream.binance.com:9443/ws/`;
 
@@ -33,7 +37,21 @@ export default class MonitorService {
     this.variables = {};
     this.status = {};
     this.statusChangePolitics = this.getDefaultPolitics();
-    this.setUpWebsocket();
+    // Does not work if I change the anonymous function to a
+    // method call, I don't know why
+    this.setUpWebsocket().then(() => this.setDefaultPolitics());
+  }
+
+  private async setDefaultPolitics() {
+    const symbols = await this.getValidSymbols();
+    console.log('Setting default politics for symbols', symbols);
+    symbols.forEach((symbol) => {
+      this.addPolitic(
+        symbol,
+        DEFAULT_VARIATION_PERC,
+        DEFAULT_INTERVAL_IN_HOURS
+      );
+    });
   }
 
   public addPolitic(

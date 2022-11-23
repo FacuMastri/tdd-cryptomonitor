@@ -36,8 +36,8 @@ export default class InterpreterService {
       ) {
         const symbolRules = await this.ruleRepositories[symbol][
           status[symbol]
-        ].getAllRules();
-        rules.push(...symbolRules);
+        ].getRules();
+        if (symbolRules) rules.push(symbolRules);
       }
     }
     return rules;
@@ -51,7 +51,7 @@ export default class InterpreterService {
     };
   }
 
-  public async addRules(
+  public async setRules(
     rules: Rules,
     validFor: Symbol,
     validIn: SymbolMarketStatus
@@ -59,7 +59,7 @@ export default class InterpreterService {
     const rulesForSymbol =
       this.ruleRepositories[validFor] || this.newRulesForSymbol();
 
-    rulesForSymbol[validIn].addRules(rules);
+    await rulesForSymbol[validIn].setRules(rules);
 
     this.ruleRepositories[validFor] = rulesForSymbol;
 
