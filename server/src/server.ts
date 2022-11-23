@@ -23,6 +23,7 @@ import { BuyOrderParams } from './services/BinanceService';
 import {
   addPoliticController,
   getPoliticsController,
+  getPricesController,
   getSymbolsController
 } from './controllers/monitor';
 
@@ -63,10 +64,11 @@ export default class Server {
 
     this.app.post('/politics', verifyJwtHeaderAdmin, addPoliticController);
     this.app.get('/politics', verifyJwtHeader, getPoliticsController);
+
     this.app.get('/symbols', verifyJwtHeader, getSymbolsController);
+    this.app.get('/prices', verifyJwtHeader, getPricesController);
 
     this.app.get('/binance/exchangeInfo', getExchangeInfoController);
-
     this.app.get('/binance/account', getAccountController);
 
     // These are not meant to be endpoints

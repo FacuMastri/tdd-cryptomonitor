@@ -14,3 +14,7 @@ export const getPoliticsController = async (req: Request, res: Response) => {
 export const getSymbolsController = async (req: Request, res: Response) => {
   res.status(200).send(await monitorService.getValidSymbols());
 };
+
+export const getPricesController = async (req: Request, res: Response) => {
+  res.status(200).send(await monitorService.getHistory());
+};

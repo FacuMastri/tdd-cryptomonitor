@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { binanceService, interpreterService } from './index';
 import {
   DEFAULT_INTERVAL_IN_HOURS,
@@ -9,9 +10,7 @@ import { Context } from '../interpreter/types/context';
 import { ValueOutput } from '../interpreter/types/value';
 import { ContextDatum } from '../interpreter/types/number';
 import { SymbolMarketStatusDict, Symbol } from './types';
-import { BinanceService } from './BinanceService';
-
-const WebSocket = require('ws');
+import WebSocket from 'ws';
 
 const BINANCE_WS = `wss://stream.binance.com:9443/ws/`;
 
@@ -129,7 +128,7 @@ export default class MonitorService {
     if (symbolHistory.length > 0) {
       const last_entry = symbolHistory[symbolHistory.length - 1];
       if (this.isRelevantVariation(last_entry.value, price)) {
-        console.log('Relevant variation for symbol', symbol);
+        console.log('Relevant variation for symbol', symbol, price);
         symbolHistory.push({
           value: price,
           timestamp: Date.now()
@@ -216,5 +215,9 @@ export default class MonitorService {
         }
       );
     }
+  }
+
+  public getHistory(): { [key: Symbol]: ContextDatum[] } {
+    return this.history;
   }
 }
