@@ -1,33 +1,13 @@
 [
   {
     "id": 1,
-    "user": "fdelu",
+    "user": "nzulaica@fi.uba.ar",
     "password": "fdelu",
     "admin": true
   },
   {
     "id": 2,
-    "user": "efoppiano",
+    "user": "fdeluca@fi.uba.ar",
     "password": "efoppiano"
-  },
-  {
-    "id": 3,
-    "user": "fmastri",
-    "password": "fmastri"
-  },
-  {
-    "id": 4,
-    "user": "acivini",
-    "password": "acivini"
-  },
-  {
-    "id": 5,
-    "user": "nzu",
-    "password": "nzu"
-  },
-  {
-    "id": 6,
-    "user": "user",
-    "password": "password"
   }
 ]

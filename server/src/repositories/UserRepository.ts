@@ -5,5 +5,6 @@ export default interface UserRepository {
     user: string,
     password: string
   ): Promise<User | undefined>;
+  findUserByName(user: string): Promise<User | undefined>;
   findUserById(id: number): Promise<User>;
 }

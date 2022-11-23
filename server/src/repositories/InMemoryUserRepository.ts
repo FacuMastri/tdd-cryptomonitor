@@ -12,6 +12,14 @@ export default class InMemoryUserRepository implements UserRepository {
     return Promise.resolve(this.users[id]);
   }
 
+  public findUserByName(user: string): Promise<User | undefined> {
+    const user_obj = Object.values(this.users).find(
+      (user_obj) => user_obj.user === user
+    );
+
+    return Promise.resolve(user_obj);
+  }
+
   public findUserByNameAndPassword(
     user: string,
     password: string

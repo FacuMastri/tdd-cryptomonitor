@@ -2,7 +2,7 @@ import { useState } from "react";
 import { loginAPI, checkOk, intoText } from "../util/requests";
 import { toast } from "react-toastify";
 import { Button, TextField, Typography, InputLabel } from "@mui/material";
-import { GoogleLogin } from "@react-oauth/google";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import "../styles/login.css";
 import { postData } from "../util/fetch";
 
@@ -31,6 +31,13 @@ const Login = ({ setJwt }: Props) => {
     setJwt(jwt);
   };
 
+  const onGoogleLogin = async (credentialResponse: CredentialResponse) => {
+    setProcessing(true);
+    const { credential, clientId } = credentialResponse;
+    let jwt = await postLogin({ google: credential, clientId });
+    setJwt(jwt);
+  };
+
   return (
     <section>
       <Typography variant="h3">Login</Typography>
@@ -54,12 +61,8 @@ const Login = ({ setJwt }: Props) => {
 
           {!processing && (
             <GoogleLogin
-              onSuccess={(credentialResponse) => {
-                console.log(credentialResponse);
-              }}
-              onError={() => {
-                console.log("Login Failed");
-              }}
+              onSuccess={onGoogleLogin}
+              onError={() => toast("Login Failed")}
             />
           )}
         </form>

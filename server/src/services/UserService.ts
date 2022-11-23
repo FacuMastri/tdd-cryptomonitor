@@ -40,6 +40,21 @@ export default class UserService {
     );
   }
 
+  public async createFederatedJwt(user: string, other = {}): Promise<string> {
+    const user_obj = await this.userRepository.findUserByName(user);
+
+    if (!user_obj) {
+      throw new InvalidUserOrPasswordError('Invalid user or password');
+    }
+    return sign(
+      { id: user_obj.id, user: user_obj.user, admin: user_obj.admin, ...other },
+      this.secret,
+      {
+        expiresIn: this.expiration
+      }
+    );
+  }
+
   public async findUserByJwt(jwt: string): Promise<User> {
     let userId: number;
     try {
