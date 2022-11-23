@@ -5,12 +5,12 @@ import {
   DEFAULT_VARIATION_PERC,
   MIN_SYMBOL_VARIATION_PERC
 } from '../config';
-import { evalRule, evalRules } from '../interpreter/interpreter';
+import { evalRule } from '../interpreter/interpreter';
 import { Context } from '../interpreter/types/context';
 import { ValueOutput } from '../interpreter/types/value';
 import { ContextDatum } from '../interpreter/types/number';
 import { SymbolMarketStatusDict, Symbol } from './types';
-import WebSocket from 'ws';
+const { WebSocket } = require('ws');
 
 const BINANCE_WS = `wss://stream.binance.com:9443/ws/`;
 
