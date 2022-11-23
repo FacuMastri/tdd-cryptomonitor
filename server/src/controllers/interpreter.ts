@@ -9,7 +9,7 @@ export const getRulesController = async (req: Request, res: Response) => {
 export const addRulesController = async (req: Request, res: Response) => {
   const { validFor, validIn, rules } = req.body;
 
-  const ruleResult: Rules = await interpreterService.addRules(
+  const ruleResult: Rules = await interpreterService.setRules(
     rules,
     validFor,
     validIn
