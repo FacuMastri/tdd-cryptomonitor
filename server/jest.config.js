@@ -4,8 +4,8 @@ module.exports = {
   testEnvironment: 'node',
   collectCoverageFrom: [
     'src/**/*.ts',
-    'src/index.ts',
-    'src/server.ts',
+    '!src/index.ts',
+    '!src/server.ts',
     '!**/node_modules/**',
     '!**/services/**',
     '!**/controllers/**'
