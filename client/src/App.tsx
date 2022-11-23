@@ -3,7 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import jwt_decode from "jwt-decode";
-import { GoogleOAuthProvider } from "@react-oauth/google";
+import { googleLogout, GoogleOAuthProvider } from "@react-oauth/google";
 
 import Login from "./screens/login";
 import Routing from "./routing";
@@ -50,7 +50,12 @@ function Nav({ admin, user, logout }: NavProps) {
   );
 }
 
-type UserInfo = { admin?: boolean; user?: string; exp?: number };
+type UserInfo = {
+  admin?: boolean;
+  user?: string;
+  exp?: number;
+  provider?: string;
+};
 
 const tokenInfo = (jwt: string): UserInfo => {
   if (!jwt) return {};
@@ -63,8 +68,10 @@ const tokenInfo = (jwt: string): UserInfo => {
 
 function App() {
   const [jwt, setJwt] = useState<string>("");
-  const { user, admin } = tokenInfo(jwt);
+  const { user, admin, provider } = tokenInfo(jwt);
   const logout = () => {
+    if (provider == "google") googleLogout();
+    localStorage.removeItem(JWT_STORAGE_KEY);
     setJwt("");
   };
 

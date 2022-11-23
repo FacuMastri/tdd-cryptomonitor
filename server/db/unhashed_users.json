@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "user": "nzulaica@fi.uba.ar",
+    "password": "nzu",
+    "admin": true
+  },
+  {
+    "id": 2,
+    "user": "fdeluca@fi.uba.ar",
+    "password": "fdelu"
+  },
+  {
+    "id": 3,
+    "user": "fmastricchio@fi.uba.ar",
+    "password": "fmastri"
+  },
+  {
+    "id": 4,
+    "user": "acivini@fi.uba.ar",
+    "password": "acivini"
+  },
+  {
+    "id": 5,
+    "user": "efoppiano@fi.uba.ar",
+    "password": "efoppiano"
+  }
+]

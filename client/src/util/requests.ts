@@ -3,6 +3,7 @@ export const loginAPI = `${baseUrl}/login`;
 export const rulesAPI = `${baseUrl}/rules`;
 export const symbolsAPI = `${baseUrl}/symbols`;
 export const politicsAPI = `${baseUrl}/politics`;
+export const varsAPI = `${baseUrl}/vars`;
 
 export const checkOk = (errorMsg: string) => (res: Response) => {
   if (res.status >= 300) {
@@ -16,3 +17,9 @@ export const checkOk = (errorMsg: string) => (res: Response) => {
 export const intoText = (res: Response) => res.text();
 
 export const intoJson = (res: Response) => res.json();
+
+export const intoRes = (res: Response) =>
+  res
+    .clone()
+    .json()
+    .catch(() => res.text());

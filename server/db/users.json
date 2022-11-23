@@ -1,33 +1,43 @@
 [
   {
     "id": 1,
-    "user": "fdelu",
-    "password": "fdelu",
-    "admin": true
+    "user": "nzulaica@fi.uba.ar",
+    "admin": true,
+    "cypher": {
+      "iv": "af49e68a713b4499d4cdeb1badb513a5",
+      "encryptedData": "a436e9c369710fc93b7e31313d3716fd"
+    }
   },
   {
     "id": 2,
-    "user": "efoppiano",
-    "password": "efoppiano"
+    "user": "fdeluca@fi.uba.ar",
+    "cypher": {
+      "iv": "af49e68a713b4499d4cdeb1badb513a5",
+      "encryptedData": "e769b84b890169165c14f781b004656b"
+    }
   },
   {
     "id": 3,
-    "user": "fmastri",
-    "password": "fmastri"
+    "user": "fmastricchio@fi.uba.ar",
+    "cypher": {
+      "iv": "af49e68a713b4499d4cdeb1badb513a5",
+      "encryptedData": "6a2039b27dfcc205809ae3b3cc627f48"
+    }
   },
   {
     "id": 4,
-    "user": "acivini",
-    "password": "acivini"
+    "user": "acivini@fi.uba.ar",
+    "cypher": {
+      "iv": "af49e68a713b4499d4cdeb1badb513a5",
+      "encryptedData": "fff53069ff28c4563c00053b6f22b808"
+    }
   },
   {
     "id": 5,
-    "user": "nzu",
-    "password": "nzu"
-  },
-  {
-    "id": 6,
-    "user": "user",
-    "password": "password"
+    "user": "efoppiano@fi.uba.ar",
+    "cypher": {
+      "iv": "af49e68a713b4499d4cdeb1badb513a5",
+      "encryptedData": "0f641d1c793f0b0f3b773e39c2b308ef"
+    }
   }
 ]

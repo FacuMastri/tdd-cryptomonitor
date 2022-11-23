@@ -44,12 +44,10 @@ export function verifyCredentialsBody(
   res: Response,
   next: NextFunction
 ) {
-  if (!req.body.user) {
-    return res.status(401).send('No user provided');
-  }
-  if (!req.body.password) {
-    return res.status(401).send('No password provided');
-  }
+  if (req.body.google) return next();
+  if (!req.body.user) return res.status(401).send('No user provided');
+  if (!req.body.password) return res.status(401).send('No password provided');
+
   next();
 }
 
@@ -58,7 +56,7 @@ export async function verifyRulesBody(
   res: Response,
   next: NextFunction
 ) {
-  let { validFor, validIn, rules } = req.body;
+  const { validFor, validIn, rules } = req.body;
   const symbols = await monitorService.getValidSymbols();
 
   if (!symbols.includes(validFor)) {
