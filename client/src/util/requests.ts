@@ -1,6 +1,8 @@
-export const loginAPI = "http://localhost:8080/login";
-export const rulesAPI = "http://localhost:8080/rules";
-export const symbolsAPI = "http://localhost:8080/symbols";
+export const baseUrl = "http://localhost:8080";
+export const loginAPI = `${baseUrl}/login`;
+export const rulesAPI = `${baseUrl}/rules`;
+export const symbolsAPI = `${baseUrl}/symbols`;
+export const politicsAPI = `${baseUrl}/politics`;
 
 export const checkOk = (errorMsg: string) => (res: Response) => {
   if (res.status >= 300) {

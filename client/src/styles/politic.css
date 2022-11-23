@@ -1,0 +1,48 @@
+.field {
+  margin: 10px 10px 30px !important;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  display: none;
+}
+
+.politicsContainer {
+  /* grid with responsive amount of columns */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 1rem;
+}
+
+.poltiticFieldsContainer {
+  /* horizontal */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.politic {
+  margin: 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 10px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 10px 0 30px;
+}
+
+.search {
+  flex: 1;
+  margin: 0 10px !important;
+}
+
+.saveButton {
+  margin: 0 10px !important;
+  min-width: 100px !important;
+}
