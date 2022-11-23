@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 import { fetcher } from "../util/fetch";
-import { accountAPI, pricesAPI, symbolsAPI } from "../util/requests";
+import { accountAPI, pricesAPI } from "../util/requests";
+import { Sparklines, SparklinesBars } from "react-sparklines";
 
 type Props = {
   jwt: string;
@@ -30,7 +31,7 @@ const parsePrices = (prices?: RawPrices, symbols?: string[]) => {
     // make object with prices { sym2: prices[symbol] }
     const parsedSymbolPrices = symbolPrices.reduce((acc, key) => {
       const sym2 = key.replace(symbol, "");
-      acc[sym2] = prices[key];
+      acc[sym2] = prices[key].reverse();
       return acc;
     }, {} as RawPrices);
 
@@ -52,10 +53,22 @@ const Dashboard = ({ jwt }: Props) => {
   );
 
   const getPrice = (asset: string) => {
-    if (!prices) return "-";
-    if (asset === symbol) return 1;
-    const price = prices?.[symbol]?.[asset]?.[0]?.value;
-    return price ?? "-";
+    if (asset === symbol) return <td>1</td>;
+    const history = prices?.[symbol]?.[asset];
+    const price = history?.[0]?.value;
+    if (!price) return <td>-</td>;
+    const values = history.slice(0, 20).map((h) => Number(h.value) ?? 0);
+    // return cell with graph background
+    return (
+      <td className="spark-td">
+        <span className="price">{Number(price).toPrecision(7)}</span>
+        <div className="history">
+          <Sparklines data={values} width={200} height={40} margin={0}>
+            <SparklinesBars style={{ fill: "#2ca225" }} />
+          </Sparklines>
+        </div>
+      </td>
+    );
   };
 
   return (
@@ -92,7 +105,7 @@ const Dashboard = ({ jwt }: Props) => {
               <td>{balance.asset}</td>
               <td>{balance.free}</td>
               <td>{balance.locked}</td>
-              <td>{getPrice(balance.asset)}</td>
+              {getPrice(balance.asset)}
             </tr>
           ))}
         </tbody>
