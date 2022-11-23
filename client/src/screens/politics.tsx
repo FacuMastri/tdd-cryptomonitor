@@ -1,5 +1,12 @@
-import { Autocomplete, Button, FormControl, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import {
+  Autocomplete,
+  Button,
+  FormControl,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
 import useSWR, { useSWRConfig } from "swr";
 import { fetcher, postData } from "../util/fetch";
 import { Politic } from "../util/politics";
@@ -35,9 +42,14 @@ const Politics = ({ jwt }: Props) => {
     setLoading(true);
     Promise.all(getDiff(local, data).map(postVar)).then(() => {
       console.debug("Done updating");
+      toast.success("Politics saved");
       mutate(politicsAPI);
     });
   };
+
+  const keysToShow = useMemo(() => {
+    return Object.keys(local).filter((key) => shouldShowSymbol(key, search));
+  }, [Object.keys(local), search]);
 
   return (
     <section>
@@ -65,9 +77,8 @@ const Politics = ({ jwt }: Props) => {
         </Button>
       </div>
       <div className="politicsContainer">
-        {Object.keys(local)
-          .filter((key) => shouldShowSymbol(key, search))
-          .map((key) => (
+        {keysToShow.length > 0 ? (
+          keysToShow.map((key) => (
             <Politic
               symbol={key}
               values={local[key]}
@@ -80,7 +91,10 @@ const Politics = ({ jwt }: Props) => {
               key={key}
               disabled={loading}
             />
-          ))}
+          ))
+        ) : (
+          <Typography>No results</Typography>
+        )}
       </div>
     </section>
   );
