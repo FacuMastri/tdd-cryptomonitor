@@ -1,0 +1,19 @@
+.loginContainer {
+    margin-inline: auto;
+    margin-top: 50px;
+    width: 30%;
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+}

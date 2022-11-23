@@ -1,15 +1,22 @@
 import { useState } from "react";
 import { loginAPI, checkOk, intoText } from "../util/requests";
 import { toast } from "react-toastify";
+import { Button, TextField, Typography, InputLabel } from "@mui/material";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import "../styles/login.css";
+import { postData } from "../util/fetch";
 
 type Props = {
   setJwt: (jwt: string) => void;
 };
 
+const validateJwt = (jwt: string) => {};
+
 const Login = ({ setJwt }: Props) => {
   const [processing, setProcessing] = useState(false);
+  const postLogin = postData(loginAPI, undefined, "Error logging in");
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setProcessing(true);
@@ -19,46 +26,47 @@ const Login = ({ setJwt }: Props) => {
     const user = formData.get("user");
     const password = formData.get("password");
 
-    fetch(loginAPI, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ user, password }),
-    })
-      .then(checkOk("Invalid username or password"))
-      .then(intoText)
-      .then((jwt) => {
-        if (!jwt) throw new Error("Failed to login unexpectedly");
-        setJwt(jwt);
-      })
-      .catch((error) => {
-        console.log(error.message ?? error);
-        toast.error(error.message ?? "Error");
-        setProcessing(false);
-      });
+    let jwt = await postLogin({ user, password });
+    if (jwt) setJwt(jwt);
+    else setProcessing(false);
+  };
+
+  const onGoogleLogin = async (credentialResponse: CredentialResponse) => {
+    setProcessing(true);
+    const { credential, clientId } = credentialResponse;
+    let jwt = await postLogin({ google: credential, clientId });
+    setJwt(jwt);
+    if (jwt) setJwt(jwt);
+    else setProcessing(false);
   };
 
   return (
     <section>
-      <h1>Login</h1>
+      <Typography variant="h3">Login</Typography>
 
-      <div>
+      <div className="loginContainer">
         <form onSubmit={onSubmit}>
-          <label htmlFor="user">User</label>
-          <input name="user" id="user" disabled={processing} />
+          <InputLabel htmlFor="user">User</InputLabel>
+          <TextField name="user" id="user" disabled={processing} />
 
-          <label htmlFor="password">Password</label>
-          <input
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <TextField
             type="password"
             name="password"
             id="password"
             disabled={processing}
           />
 
-          <button type="submit" disabled={processing}>
+          <Button type="submit" disabled={processing} variant="contained">
             Login
-          </button>
+          </Button>
+
+          {!processing && (
+            <GoogleLogin
+              onSuccess={onGoogleLogin}
+              onError={() => toast("Login Failed")}
+            />
+          )}
         </form>
       </div>
     </section>

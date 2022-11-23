@@ -6,7 +6,7 @@ import {
   JWT_SECRET
 } from '../config';
 import { BinanceService } from './BinanceService';
-import { ruleRepository, userRepository } from '../repositories';
+import { userRepository } from '../repositories';
 import InterpreterService from './InterpreterService';
 import MonitorService from './MonitorService';
 

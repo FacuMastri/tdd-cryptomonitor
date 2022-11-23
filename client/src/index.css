@@ -19,18 +19,6 @@ body {
   text-align: center;
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border: 1px solid;
-  padding: 1em 10%;
-}
-
-form button {
-  margin: 1em 0;
-}
-
 nav {
   display: flex;
   align-content: center;
@@ -83,4 +71,72 @@ table tr:nth-child(odd) {
 table tr:hover {
   background-color: #666;
   color: #fff;
+}
+
+.loginContainer form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid;
+  padding: 1em 10%;
+}
+
+.loginContainer form button {
+  margin: 1em 0;
+}
+
+#setVarForm {
+  padding: 0px 10% 2em 10%;
+}
+#setVarForm form {
+  display: flex;
+  flex-direction: row;
+  /*border: 1px solid;*/
+  border-radius: 5px;
+}
+#setVarForm form > * {
+  width: calc(100% / 3 - 0.8rem);
+  height: 2rem;
+  font-size: 1.3rem;
+  border-radius: 5px;
+}
+#setVarForm form > input {
+  background-color: #666;
+  color: #fff;
+  appearance: none;
+  border: none;
+  outline: none;
+  padding: 0 0.5rem;
+}
+#setVarForm form > input::placeholder {
+  color: #ddd;
+}
+#setVarForm form > button {
+  background-color: #333;
+  color: #fff;
+  appearance: none;
+  outline: none;
+  border: none;
+  padding: 0 0.5rem;
+}
+#setVarForm form > button:hover {
+  background-color: #999;
+}
+
+td.string {
+  quotes: "“" "”" "‘" "’";
+}
+td.string::before {
+  content: open-quote;
+}
+td.string::after {
+  content: close-quote;
+}
+td.number {
+  font-style: italic;
+  font-family: monospace;
+}
+td.boolean {
+  font-weight: bold;
+  font-family: monospace;
 }

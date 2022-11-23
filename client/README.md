@@ -9,7 +9,7 @@
 ### Commands
 
 - `npm install` or `npm i` to install dependencies
-- `npm start` to start in development mode
+- `npm run dev` to start in development mode
 - `npm test` or `npm t` to run tests
 
 - `npm run build` to build for production [TODO]

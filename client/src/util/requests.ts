@@ -1,15 +1,25 @@
-export const loginAPI = "http://localhost:8080/login";
-export const rulesAPI = "http://localhost:8080/rules";
+export const baseUrl = "http://localhost:8080";
+export const loginAPI = `${baseUrl}/login`;
+export const rulesAPI = `${baseUrl}/rules`;
+export const symbolsAPI = `${baseUrl}/symbols`;
+export const politicsAPI = `${baseUrl}/politics`;
+export const varsAPI = `${baseUrl}/vars`;
 
 export const checkOk = (errorMsg: string) => (res: Response) => {
   if (res.status >= 300) {
-    console.log("checkOk", errorMsg, res.status, res.statusText);
+    console.debug("checkOk", errorMsg, res.status, res.statusText);
     throw new Error(errorMsg ?? res.statusText);
   }
-  console.log("checkOk", res);
+  console.debug("checkOk", res);
   return res;
 };
 
 export const intoText = (res: Response) => res.text();
 
 export const intoJson = (res: Response) => res.json();
+
+export const intoRes = (res: Response) =>
+  res
+    .clone()
+    .json()
+    .catch(() => res.text());
