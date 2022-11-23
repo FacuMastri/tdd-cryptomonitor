@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { rulesAPI, checkOk, intoJson, symbolsAPI } from "./requests";
+import { rulesAPI, checkOk, intoRes, intoJson, symbolsAPI } from "./requests";
 
 export type PostRules = {
   rules: RulesType;
@@ -39,23 +39,22 @@ export const fetcher =
       });
 
 export const postData =
-  (url: string, jwt: string, checkMsg = "error") =>
-  async (data: any) => {
-    return await fetch(url, {
+  (url: string, jwt?: string, checkMsg = "error") =>
+  async (data: any) =>
+    fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        jwt: jwt,
+        ...(jwt && { jwt }),
       },
       body: JSON.stringify(data),
     })
       .then(checkOk(checkMsg))
-      .then(intoJson)
+      .then(intoRes)
       .catch((error) => {
         console.log(error.message ?? error);
         toast.error(error.message ?? "Error");
       });
-  };
 
 export const fetchData = (
   jwt: string,

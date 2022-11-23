@@ -1,6 +1,7 @@
 export const loginAPI = "http://localhost:8080/login";
 export const rulesAPI = "http://localhost:8080/rules";
 export const symbolsAPI = "http://localhost:8080/symbols";
+export const varsAPI = "http://localhost:8080/vars";
 
 export const checkOk = (errorMsg: string) => (res: Response) => {
   if (res.status >= 300) {
@@ -14,3 +15,9 @@ export const checkOk = (errorMsg: string) => (res: Response) => {
 export const intoText = (res: Response) => res.text();
 
 export const intoJson = (res: Response) => res.json();
+
+export const intoRes = (res: Response) =>
+  res
+    .clone()
+    .json()
+    .catch(() => res.text());

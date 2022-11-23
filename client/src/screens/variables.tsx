@@ -1,5 +1,6 @@
 import useSWR, { useSWRConfig } from "swr";
 import { fetcher, postData } from "../util/fetch";
+import { varsAPI } from "../util/requests";
 
 type Props = {
   jwt: string;
@@ -11,10 +12,9 @@ type Value = {
 };
 
 const Variables = ({ jwt }: Props) => {
-  const endpoint = "http://localhost:8080/vars";
-  const { data, error } = useSWR(endpoint, fetcher(jwt));
+  const { data, error } = useSWR(varsAPI, fetcher(jwt));
   const { mutate } = useSWRConfig();
-  const postVar = postData(endpoint, jwt);
+  const postVar = postData(varsAPI, jwt);
 
   let vars: Record<string, Value> = data?.vars;
 
@@ -25,7 +25,7 @@ const Variables = ({ jwt }: Props) => {
     const data = Object.fromEntries(formData);
 
     postVar(data).then((res) => {
-      mutate(endpoint);
+      mutate(varsAPI);
     });
   };
 

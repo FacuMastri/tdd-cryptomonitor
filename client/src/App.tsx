@@ -64,6 +64,7 @@ function App() {
   const [jwt, setJwt] = useState<string>("");
   const { user, admin } = tokenInfo(jwt);
   const logout = () => {
+    localStorage.removeItem(JWT_STORAGE_KEY);
     setJwt("");
   };
 
