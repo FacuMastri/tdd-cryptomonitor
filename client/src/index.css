@@ -64,6 +64,15 @@ table th {
   color: #fff;
 }
 
+table th select {
+  border: none;
+  outline: none;
+  background-color: #0000;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
 table tr:nth-child(odd) {
   background-color: #fff1;
 }

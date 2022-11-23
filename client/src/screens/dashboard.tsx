@@ -1,5 +1,7 @@
+import { useMemo, useState } from "react";
 import useSWR from "swr";
 import { fetcher } from "../util/fetch";
+import { accountAPI, pricesAPI, symbolsAPI } from "../util/requests";
 
 type Props = {
   jwt: string;
@@ -11,13 +13,50 @@ type balance = {
   locked: any;
 };
 
+type RawPrices = Record<string, { value: number }[]>;
+type Prices = Record<string, RawPrices>;
+
+const parsePrices = (prices?: RawPrices, symbols?: string[]) => {
+  if (!prices || !symbols) return;
+
+  const parsedPrices: Prices = {};
+
+  symbols.forEach((symbol) => {
+    // find all prices for the symbol, prices are formated sym1sym2
+    const symbolPrices = Object.keys(prices).filter((key) =>
+      key.startsWith(symbol)
+    );
+
+    // make object with prices { sym2: prices[symbol] }
+    const parsedSymbolPrices = symbolPrices.reduce((acc, key) => {
+      const sym2 = key.replace(symbol, "");
+      acc[sym2] = prices[key];
+      return acc;
+    }, {} as RawPrices);
+
+    parsedPrices[symbol] = parsedSymbolPrices;
+  });
+
+  return parsedPrices;
+};
+
 const Dashboard = ({ jwt }: Props) => {
-  const { data, error } = useSWR(
-    "http://localhost:8080/binance/account",
-    fetcher(jwt)
+  const { data: account } = useSWR(accountAPI, fetcher(jwt));
+  const { data: raw_prices } = useSWR(pricesAPI, fetcher(jwt));
+  const balances: balance[] = account?.balances;
+  const symbols = balances?.map((b) => b.asset);
+  const [symbol, setSymbol] = useState(symbols && symbols[0]);
+  const prices = useMemo(
+    () => parsePrices(raw_prices, symbols),
+    [raw_prices, symbols]
   );
 
-  const balances: balance[] = data?.balances;
+  const getPrice = (asset: string) => {
+    if (!prices) return "-";
+    if (asset === symbol) return 1;
+    const price = prices?.[symbol]?.[asset]?.[0]?.value;
+    return price ?? "-";
+  };
 
   return (
     <section>
@@ -31,6 +70,20 @@ const Dashboard = ({ jwt }: Props) => {
             <th>Asset</th>
             <th>Free</th>
             <th>Locked</th>
+            <th>
+              <select
+                value={symbol}
+                onChange={(e) => setSymbol(e.target.value)}
+              >
+                {symbols
+                  ? symbols.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))
+                  : "Price"}
+              </select>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -39,6 +92,7 @@ const Dashboard = ({ jwt }: Props) => {
               <td>{balance.asset}</td>
               <td>{balance.free}</td>
               <td>{balance.locked}</td>
+              <td>{getPrice(balance.asset)}</td>
             </tr>
           ))}
         </tbody>
