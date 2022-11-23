@@ -7,4 +7,3 @@ export default interface RuleRepository {
   // Return the value of Rules that the repository holds
   getRules(): Promise<Rules | undefined>;
 }
-

@@ -1,11 +1,15 @@
 import { binanceService, interpreterService } from './index';
-import {DEFAULT_INTERVAL_IN_HOURS, DEFAULT_VARIATION_PERC, MIN_SYMBOL_VARIATION_PERC} from '../config';
+import {
+  DEFAULT_INTERVAL_IN_HOURS,
+  DEFAULT_VARIATION_PERC,
+  MIN_SYMBOL_VARIATION_PERC
+} from '../config';
 import { evalRule, evalRules } from '../interpreter/interpreter';
 import { Context } from '../interpreter/types/context';
 import { ValueOutput } from '../interpreter/types/value';
 import { ContextDatum } from '../interpreter/types/number';
 import { SymbolMarketStatusDict, Symbol } from './types';
-import {BinanceService} from "./BinanceService";
+import { BinanceService } from './BinanceService';
 
 const WebSocket = require('ws');
 
@@ -43,7 +47,11 @@ export default class MonitorService {
     const symbols = await this.getValidSymbols();
     console.log('Setting default politics for symbols', symbols);
     symbols.forEach((symbol) => {
-      this.addPolitic(symbol, DEFAULT_VARIATION_PERC, DEFAULT_INTERVAL_IN_HOURS);
+      this.addPolitic(
+        symbol,
+        DEFAULT_VARIATION_PERC,
+        DEFAULT_INTERVAL_IN_HOURS
+      );
     });
   }
 
