@@ -168,7 +168,7 @@ td.boolean {
 }
 
 .spark-td > .history {
-  opacity: 0.3;
+  opacity: 0.2;
 }
 
 .spark-td:hover > .price {

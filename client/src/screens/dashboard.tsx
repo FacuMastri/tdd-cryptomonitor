@@ -61,7 +61,7 @@ const Dashboard = ({ jwt }: Props) => {
     // return cell with graph background
     return (
       <td className="spark-td">
-        <span className="price">{Number(price).toPrecision(7)}</span>
+        <span className="price">{Number(price).toExponential(5)}</span>
         <div className="history">
           <Sparklines data={values} width={200} height={40} margin={0}>
             <SparklinesBars style={{ fill: "#2ca225" }} />
