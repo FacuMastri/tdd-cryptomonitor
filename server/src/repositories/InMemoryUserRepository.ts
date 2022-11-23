@@ -1,3 +1,4 @@
+import { encrypt } from '../services/encryption';
 import { User } from '../users';
 import UserRepository from './UserRepository';
 
@@ -24,8 +25,12 @@ export default class InMemoryUserRepository implements UserRepository {
     user: string,
     password: string
   ): Promise<User | undefined> {
+    const cypher = encrypt(password);
     const user_obj = Object.values(this.users).find(
-      (usr: User) => usr.user === user && usr.password === password
+      (usr: User) =>
+        usr.user === user &&
+        usr.cypher.iv === cypher.iv &&
+        usr.cypher.encryptedData === cypher.encryptedData
     );
 
     return Promise.resolve(user_obj);

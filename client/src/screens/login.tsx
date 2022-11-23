@@ -14,7 +14,7 @@ const validateJwt = (jwt: string) => {};
 
 const Login = ({ setJwt }: Props) => {
   const [processing, setProcessing] = useState(false);
-  const postLogin = postData(loginAPI);
+  const postLogin = postData(loginAPI, undefined, "Error logging in");
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -27,8 +27,8 @@ const Login = ({ setJwt }: Props) => {
     const password = formData.get("password");
 
     let jwt = await postLogin({ user, password });
-
-    setJwt(jwt);
+    if (jwt) setJwt(jwt);
+    else setProcessing(false);
   };
 
   const onGoogleLogin = async (credentialResponse: CredentialResponse) => {
@@ -36,6 +36,8 @@ const Login = ({ setJwt }: Props) => {
     const { credential, clientId } = credentialResponse;
     let jwt = await postLogin({ google: credential, clientId });
     setJwt(jwt);
+    if (jwt) setJwt(jwt);
+    else setProcessing(false);
   };
 
   return (
