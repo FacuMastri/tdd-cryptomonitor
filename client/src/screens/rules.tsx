@@ -45,8 +45,7 @@ const getExistingRuleSymbols = (
   marketStatus: MarketStatus
 ): string[] => {
   return Object.keys(rules).filter((symbol) => {
-    const rule = rules[symbol]?.[marketStatus]?.rules;
-    return rule && rule.length > 0;
+    return Boolean(rules[symbol]?.[marketStatus]?.rules);
   });
 };
 
@@ -159,7 +158,9 @@ const Rules = ({ jwt }: Props) => {
         />
       </div>
 
-      <Typography variant="h4">Edit Rules</Typography>
+      <Typography variant="h4">
+        {existingRuleSymbols.includes(symbol) ? "Edit" : "Add new"} Rules
+      </Typography>
       <div className="editor">
         <Editor
           value={symbol ? text : " "}
