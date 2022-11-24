@@ -5,8 +5,8 @@ import { accountAPI, pricesAPI, transactionsAPI } from "../util/requests";
 // import MarketStatusChip from "../util/statusChip";
 import { Sparklines, SparklinesBars } from "react-sparklines";
 import "../styles/dashboard.css";
-import { Button } from "@mui/material";
-
+import { Autocomplete, Button, FormControl } from "@mui/material";
+import dayjs, { ManipulateType } from "dayjs";
 type Props = {
   jwt: string;
 };
@@ -25,7 +25,7 @@ type TransactionRecord = {
   timestamp: number;
 };
 
-type RawPrices = Record<string, { value: string }[]>;
+type RawPrices = Record<string, { value: string, timestamp: number }[]>;
 type Prices = Record<string, RawPrices>;
 
 const parseTimeStampToDate = (timestamp: number) => {
@@ -63,6 +63,25 @@ const parsePrices = (prices?: RawPrices, symbols?: string[]) => {
   return parsedPrices;
 };
 
+type TimeInterval = {
+  amount: number,
+  unit: ManipulateType
+}
+
+const timeSteps: TimeInterval[] = [{
+  amount: 60, 
+  unit: 'minute'},
+  { amount: 8, 
+    unit: 'hour'},
+  { amount: 1, 
+    unit: 'day'},
+  { amount: 15, 
+    unit: 'day'}]; 
+
+const timeIntervalToString = (time: TimeInterval) => {
+  return time.amount.toString() + " " + time.unit + "s";
+}
+
 const Dashboard = ({ jwt }: Props) => {
   const { data: account } = useSWR(accountAPI, fetcher(jwt));
   const { data: raw_prices } = useSWR(pricesAPI, fetcher(jwt));
@@ -70,6 +89,7 @@ const Dashboard = ({ jwt }: Props) => {
   const balances: balance[] = account?.balances;
   const symbols = balances?.map((b) => b.asset);
   const [symbol, setSymbol] = useState(symbols && symbols[0]);
+  const [timeStep, setTimeStep] = useState(0);
   const prices = useMemo(
     () => parsePrices(raw_prices, symbols),
     [raw_prices, symbols]
@@ -93,6 +113,22 @@ const Dashboard = ({ jwt }: Props) => {
       </td>
     );
   };
+
+  const getAvg = (asset: string) => {
+    if (asset === symbol) return <td>1</td>;
+    const history = prices?.[symbol]?.[asset];
+    const price = history?.[0]?.value;
+    if (!price) return <td>-</td>;
+    const values = history.filter((value) => value.timestamp > timeToTimestamp()).map((h) => Number(h.value) ?? 0);
+    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+    return <td>{avg.toExponential(5)}</td>;
+  };
+
+  const timeToTimestamp = (): number => {
+    const time = timeSteps[timeStep];
+    return dayjs().subtract(time.amount, time.unit).unix();
+  };
+  
 
   return (
     <section>
@@ -120,6 +156,20 @@ const Dashboard = ({ jwt }: Props) => {
                   : "Price"}
               </select>
             </th>
+            <th>
+            <select
+              value={timeStep}
+              onChange={(e) => setTimeStep(Number(e.target.value))}
+            >
+              {timeSteps
+                ? timeSteps.map((s, i) => (
+                    <option key={i} value={i}>
+                      {timeIntervalToString(s)}
+                    </option>
+                  ))
+                : "Historic Avg."}
+            </select>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -129,6 +179,7 @@ const Dashboard = ({ jwt }: Props) => {
               <td>{balance.free}</td>
               <td>{balance.locked}</td>
               {getPrice(balance.asset)}
+              {getAvg(balance.asset)}
             </tr>
           ))}
         </tbody>
@@ -155,6 +206,28 @@ const Dashboard = ({ jwt }: Props) => {
           ))}
         </tbody>
       </table>
+
+      <h2>History</h2>
+      {/* <FormControl className="formInput">
+        <Autocomplete
+          value={selection.symbol}
+          onChange={(_, value: any) =>
+            setSelection((s) => ({ ...s, symbol: value }))
+          }
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Rule's symbol"
+              variant="standard"
+            />
+          )}
+          options={
+            (showOnlyExisting
+              ? existingRuleSymbols
+              : allSymbols?.map((s: Symbol) => s.symbol)) || []
+          }
+        />
+      </FormControl> */}
     </section>
   );
 };
