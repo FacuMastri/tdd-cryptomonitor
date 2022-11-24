@@ -1,21 +1,20 @@
 import { Request, Response } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import { userService } from '../services';
-import { getErrorMessage } from './utils';
-const clientId =
-  '283435392885-4q2ph3d1v2nuf98str251pvd1vg5elmq.apps.googleusercontent.com';
-const client = new OAuth2Client(clientId);
+import { getErrorMessage, sendResponse } from './utils';
+import { CLIENT_ID } from '../config';
+
+const client = new OAuth2Client(CLIENT_ID);
 
 export const googleLoginController = async (req: Request, res: Response) => {
   const { google } = req.body;
   const ticket = await client.verifyIdToken({
     idToken: google,
-    audience: clientId
+    audience: CLIENT_ID
   });
   const payload = ticket.getPayload();
 
-  if (payload == undefined) return res.status(4003).send('Invalid');
-
+  if (payload == undefined) return sendResponse(res, 403, 'Invalid');
   const { email, name } = payload;
 
   try {
@@ -23,8 +22,8 @@ export const googleLoginController = async (req: Request, res: Response) => {
       email || name || 'invalid',
       { provider: 'google' }
     );
-    res.status(200).send(jwt);
+    sendResponse(res, 200, jwt);
   } catch (err) {
-    res.status(401).send(getErrorMessage(err));
+    sendResponse(res, 401, getErrorMessage(err));
   }
 };

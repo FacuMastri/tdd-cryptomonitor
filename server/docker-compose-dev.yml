@@ -1,0 +1,19 @@
+version: '3.7' # For more information about the version, see https://docs.docker.com/compose/compose-file/compose-versioning/
+services:
+  crypto-monitor-server:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./nodemon.json:/app/nodemon.json
+      - ./jest.config.js:/app/jest.config.js
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./.prettierrc:/app/.prettierrc
+      - ./.prettierignore:/app/.prettierignore
+      - ./.eslintrc.js:/app/.eslintrc.js
+      - ./db:/app/db
+    command: npm start

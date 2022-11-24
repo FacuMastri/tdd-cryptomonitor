@@ -24,7 +24,7 @@ import { BuyOrderParams } from './services/BinanceService';
 import {
   addPoliticController,
   getPoliticsController,
-  getPricesController,
+  getPricesHistoryController,
   getSymbolsController
 } from './controllers/monitor';
 
@@ -50,6 +50,11 @@ export default class Server {
   private addControllers() {
     this.app.get('/verify', verifyJwtHeader, verifyJwtController);
     this.app.post('/login', verifyCredentialsBody, loginController);
+
+    this.app.get('/vars', verifyJwtHeader, getVarsController);
+    this.app.post('/vars', verifyJwtHeaderAdmin, setVarController);
+
+    this.app.get('/rules', verifyJwtHeader, getRulesController);
     this.app.post(
       '/rules',
       verifyJwtHeader,
@@ -57,18 +62,12 @@ export default class Server {
       addRulesController
     );
 
-    this.app.get('/vars', verifyJwtHeader, getVarsController);
-    this.app.post('/vars', verifyJwtHeaderAdmin, setVarController);
-
-    this.app.get('/rules', verifyJwtHeader, getRulesController);
-    this.app.post('/rules', verifyJwtHeaderAdmin, addRulesController);
-
     this.app.post('/politics', verifyJwtHeaderAdmin, addPoliticController);
     this.app.get('/politics', verifyJwtHeader, getPoliticsController);
     this.app.get('/transactions', verifyJwtHeader, getTransactionsController);
 
     this.app.get('/symbols', verifyJwtHeader, getSymbolsController);
-    this.app.get('/prices', verifyJwtHeader, getPricesController);
+    this.app.get('/prices', verifyJwtHeader, getPricesHistoryController);
 
     this.app.get('/binance/exchangeInfo', getExchangeInfoController);
     this.app.get('/binance/account', getAccountController);
