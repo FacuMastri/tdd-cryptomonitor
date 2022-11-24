@@ -6,18 +6,18 @@
 
 - [Node.js](https://nodejs.org/en/)
 
-### Run with Docker
+### Run with Docker for development
 
 First time:
 
 ```bash
-docker-compose up --build
+docker-compose -f docker-compose-dev.yml up --build
 ```
 
 Subsequent times:
 
 ```bash
-docker-compose up
+docker-compose -f docker-compose-dev.yml up
 ```
 
 ### Running test within Docker
@@ -35,6 +35,16 @@ $ root@f55080179d84:/app# ls
 Dockerfile-dev  README.md  docker-compose-dev.yml  jest.config.js  node_modules  nodemon.json  package-lock.json  package.json  src  tests  tsconfig.json
 $ root@f55080179d84:/app# npm t
 ```
+
+### Run with Docker for demo
+
+First, make sure the .env file is configured correctly as per the [instructions](#Environment-variables).
+
+Then:
+
+    docker-compose up --build
+
+Will build the image for both server and client.
 
 ### Commands
 
