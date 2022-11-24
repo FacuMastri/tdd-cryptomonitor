@@ -9,27 +9,27 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import useSWR, { useSWRConfig } from "swr";
 import { fetcher, postData } from "../util/fetch";
-import { Politic } from "../util/politics";
-import { politicsAPI } from "../util/requests";
+import { Policy } from "../util/policy";
+import { policiesAPI } from "../util/requests";
 
 type Props = {
   jwt: string;
 };
 
-type PoliticsType = {
-  [politic: string]: {
+type PoliciesType = {
+  [policy: string]: {
     variationPerc: number;
     intervalInHours: number;
   };
 };
 
-const Politics = ({ jwt }: Props) => {
-  const { data, error } = useSWR(politicsAPI, fetcher(jwt));
-  const [local, setLocal] = useState<PoliticsType>({});
+const Policies = ({ jwt }: Props) => {
+  const { data, error } = useSWR(policiesAPI, fetcher(jwt));
+  const [local, setLocal] = useState<PoliciesType>({});
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const { mutate } = useSWRConfig();
-  const postVar = postData(politicsAPI, jwt);
+  const postVar = postData(policiesAPI, jwt);
 
   useEffect(() => {
     if (data && (loading || !local)) {
@@ -42,8 +42,8 @@ const Politics = ({ jwt }: Props) => {
     setLoading(true);
     Promise.all(getDiff(local, data).map(postVar)).then(() => {
       console.debug("Done updating");
-      toast.success("Politics saved");
-      mutate(politicsAPI);
+      toast.success("Policies saved");
+      mutate(policiesAPI);
     });
   };
 
@@ -53,7 +53,7 @@ const Politics = ({ jwt }: Props) => {
 
   return (
     <section>
-      <h1>Politics settings</h1>
+      <h1>Policies settings</h1>
 
       <div className="header">
         <FormControl className="search">
@@ -76,10 +76,10 @@ const Politics = ({ jwt }: Props) => {
           Save
         </Button>
       </div>
-      <div className="politicsContainer">
+      <div className="policiesContainer">
         {keysToShow.length > 0 ? (
           keysToShow.map((key) => (
-            <Politic
+            <Policy
               symbol={key}
               values={local[key]}
               onChange={(values) => {
@@ -100,7 +100,7 @@ const Politics = ({ jwt }: Props) => {
   );
 };
 
-export default Politics;
+export default Policies;
 
 type PostDataType = {
   symbol: string;
@@ -114,7 +114,7 @@ const shouldShowSymbol = (symbol: string, search: string) => {
     .includes(search?.trim().toLocaleUpperCase());
 };
 
-const getDiff = (local: PoliticsType, data: PoliticsType): PostDataType[] => {
+const getDiff = (local: PoliciessType, data: PoliciessType): PostDataType[] => {
   return Object.keys(local)
     .filter((key) => {
       if (JSON.stringify(local[key]) !== JSON.stringify(data[key])) {
