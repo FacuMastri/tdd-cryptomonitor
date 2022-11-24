@@ -181,7 +181,7 @@ export default class MonitorService {
         console.log('\x1b[32m%s\x1b[0m', 'Rules evaluated successfully ');
       } catch (error) {
         // @ts-ignore
-        const err = e?.message ?? 'Error at evalRules';
+        const err = error?.message ?? 'Error at evalRules';
         console.log('\x1b[31m%s\x1b[0m', err);
       }
       if (ruleNames.length > 0) console.log(ruleNames);
