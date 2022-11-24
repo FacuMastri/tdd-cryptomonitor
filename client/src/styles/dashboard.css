@@ -1,0 +1,8 @@
+.transactionContainer {
+    /* center this div */
+    margin: 0 auto;
+    /* set the width */
+    width: 50%;
+    /* set the height */
+    height: 100%;
+}

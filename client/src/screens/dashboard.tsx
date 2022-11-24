@@ -1,8 +1,15 @@
 import { useMemo, useState } from "react";
 import useSWR from "swr";
-import { fetcher } from "../util/fetch";
+import { fetcher, MarketStatus } from "../util/fetch";
 import { accountAPI, pricesAPI } from "../util/requests";
+import MarketStatusChip from "../util/statusChip";
 import { Sparklines, SparklinesBars } from "react-sparklines";
+import { Accordion } from "@mui/material";
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import "../styles/dashboard.css";
 
 type Props = {
   jwt: string;
@@ -14,8 +21,39 @@ type balance = {
   locked: any;
 };
 
+type TransactionRecord = {
+  symbol: string;
+  type: 'BUY' | 'SELL';
+  symbolStatus: MarketStatus;
+  quantity: number;
+  timestamp: number;
+};
+
 type RawPrices = Record<string, { value: number }[]>;
 type Prices = Record<string, RawPrices>;
+
+const transactions: TransactionRecord[] = [{
+  symbol: "BNBETH",
+  type: "BUY",
+  symbolStatus: "ALZA",
+  quantity: 5,
+  timestamp: 1669261319047
+},
+{  symbol: "BNBETH",
+type: "BUY",
+symbolStatus: "BAJA",
+quantity: 5,
+timestamp: 1669261319047},
+{  symbol: "BNBETH",
+type: "BUY",
+symbolStatus: "ESTABLE",
+quantity: 5,
+timestamp: 1669261319047}
+];
+
+const parseTimeStampToDate = (timestamp: number) => {
+    return new Intl.DateTimeFormat('es-AR', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
+}
 
 const parsePrices = (prices?: RawPrices, symbols?: string[]) => {
   if (!prices || !symbols) return;
@@ -112,20 +150,28 @@ const Dashboard = ({ jwt }: Props) => {
       </table>
 
       <h2>Transaction</h2>
-      <p>
-        The year is 2036, you enter your local 7/11 to buy yourself a g fuel
-        before your shift in the local crypto mine. The android working the
-        counter says they only accept doge coin. You pull out your phone, draw a
-        stick man in less than five seconds on a yellow back ground and then
-        sell it as an NFT. From the sell you make 6 doge coin, about 5 million
-        dollars in old world money. You go to buy the drink only to find out
-        that from the time you closed your phone to the time you talked to the
-        cashier the coins had dropped in value to only 3 dollars per coin and
-        you now owe at least 10 doge coin to the robot for the gamer fuel. You
-        leave the store, frustrated, and drive off in your Tesla
-      </p>
-
-      <footer>{jwt}</footer>
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Type</th>
+              <th>Quantity</th>
+              <th>Timestamp</th>
+              <th>Symbol Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {transactions?.map((transaction) => (
+              <tr key={transaction.timestamp}>
+                <td>{transaction.symbol}</td>
+                <td>{transaction.type}</td>
+                <td>{transaction.quantity}</td>
+                <td>{parseTimeStampToDate(transaction.timestamp)}</td>
+                <td><MarketStatusChip status={transaction.symbolStatus}/></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
     </section>
   );
 };

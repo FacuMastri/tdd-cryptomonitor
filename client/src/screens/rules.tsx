@@ -27,6 +27,11 @@ type Props = {
   jwt: string;
 };
 
+type Symbol = {
+  symbol: string;
+  marketStatus: MarketStatus;
+}
+
 type Rules = Record<string, Record<MarketStatus, any>>; // Symbol -> MarketStatus -> Rules
 
 const INDENT_SIZE = 4;
@@ -56,7 +61,7 @@ const Rules = ({ jwt }: Props) => {
   const [symbol, setSymbol] = useState<string | null>(null);
 
   const [rules, setRules] = useState<Rules>({} as Rules);
-  const [allSymbols, setAllSymbols] = useState([]);
+  const [allSymbols, setAllSymbols] = useState<Symbol[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState(BASE_RULES);
@@ -139,7 +144,7 @@ const Rules = ({ jwt }: Props) => {
               renderInput={(params) => (
                 <TextField {...params} label="Symbol" variant="standard" />
               )}
-              options={showOnlyExisting ? existingRuleSymbols : allSymbols}
+              options={showOnlyExisting ? existingRuleSymbols : allSymbols?.map((s)=> s.symbol)}
             />
           </FormControl>
         </div>
@@ -159,7 +164,7 @@ const Rules = ({ jwt }: Props) => {
       </div>
 
       <Typography variant="h4">
-        {existingRuleSymbols.includes(symbol) ? "Edit" : "Add new"} Rules
+        {symbol && existingRuleSymbols.includes(symbol) ? "Edit" : "Add new"} Rules
       </Typography>
       <div className="editor">
         <Editor
