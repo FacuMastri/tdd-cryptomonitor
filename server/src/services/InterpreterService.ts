@@ -6,6 +6,8 @@ import InMemoryRuleRepository from '../repositories/InMemoryRuleRepository';
 import VariableRepository from '../repositories/VariableRepository';
 import InMemoryVariableRepository from '../repositories/InMemoryVariableRepository';
 import { ValueOutput } from '../interpreter/types/value';
+import {Context} from "../interpreter/types/context";
+import {interpreterService} from "./index";
 
 export type RulesForSymbol = {
   ALZA: RuleRepository;
@@ -43,6 +45,19 @@ export default class InterpreterService {
     return rules;
   }
 
+  public async getContextFor(rules: Rules): Promise<Context> {
+    const allVariables = await this.getAllVars();
+    const context: Context = {
+      variables: {}
+    };
+    Object.entries(allVariables).forEach(([key, value]) => {
+      if (rules.requiredVariables.includes(key)) {
+        if (context.variables) context.variables[key] = value;
+      }
+    });
+    return context;
+  }
+
   private newRulesForSymbol(): RulesForSymbol {
     return {
       ALZA: new InMemoryRuleRepository(),
@@ -56,6 +71,9 @@ export default class InterpreterService {
     validFor: Symbol,
     validIn: SymbolMarketStatus
   ): Promise<Rules> {
+    console.log('Setting rules for', validFor, validIn);
+    console.log('Rules:', rules);
+
     const rulesForSymbol =
       this.ruleRepositories[validFor] || this.newRulesForSymbol();
 
@@ -87,6 +105,13 @@ export default class InterpreterService {
     name: string,
     value: string
   ): Promise<ValueOutput | undefined> {
-    return this.varRepository.setVar(name, this.parseValue(value));
+    return this.setVarParsed(name, this.parseValue(value));
+  }
+
+  public async setVarParsed(
+    name: string,
+    value: ValueOutput
+  ): Promise<ValueOutput | undefined> {
+    return this.varRepository.setVar(name, value);
   }
 }

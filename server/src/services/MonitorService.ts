@@ -151,11 +151,7 @@ export default class MonitorService {
           timestamp: Date.now()
         });
         this.updateStatus();
-        const rulesStatus = await interpreterService.getRulesFor(this.status);
-        for (const rules of rulesStatus) {
-          const context = await MonitorService.getContextFor(rules);
-          evalRules(rules, context);
-        }
+        await this.evalRulesAndUpdateContext();
       }
     } else {
       symbolHistory.push({
@@ -166,17 +162,17 @@ export default class MonitorService {
     }
   }
 
-  private static async getContextFor(rules: Rules): Promise<Context> {
-    const allVariables = await interpreterService.getAllVars();
-    const context: Context = {
-      variables: {}
-    };
-    Object.entries(allVariables).forEach(([key, value]) => {
-      if (rules.requiredVariables.includes(key)) {
-        if (context.variables) context.variables[key] = value;
+  private async evalRulesAndUpdateContext() {
+    const rulesStatus = await interpreterService.getRulesFor(this.status);
+    for (const rules of rulesStatus) {
+      const context = await interpreterService.getContextFor(rules);
+      const new_context =  evalRules(rules, context);
+      if (new_context.variables) {
+        for await (const [key, value] of Object.entries(new_context.variables)) {
+          await interpreterService.setVarParsed(key, value);
+        }
       }
-    });
-    return context;
+    }
   }
 
   // Returns the variation of the symbol in the last intervalInHours

@@ -39,6 +39,8 @@ export class BinanceService {
   }
 
   public buy(symbol: string, quantity: number): Promise<any> {
+    const symbol_without_slash = symbol.replace("/", "");
+    console.log("symbol_without_slash", symbol_without_slash);
     this.transactionsHistory.push({
       symbol,
       type: 'BUY',
@@ -47,10 +49,11 @@ export class BinanceService {
       timestamp: Date.now()
     });
 
-    return this.doOrder(symbol, 'BUY', 'MARKET', quantity);
+    return this.doOrder(symbol_without_slash, 'BUY', 'MARKET', quantity);
   }
 
   public sell(symbol: string, quantity: number): Promise<any> {
+    const symbol_without_slash = symbol.replace("/", "");
     this.transactionsHistory.push({
       symbol,
       type: 'SELL',
@@ -59,7 +62,7 @@ export class BinanceService {
       timestamp: Date.now()
     });
 
-    return this.doOrder(symbol, 'SELL', 'MARKET', quantity);
+    return this.doOrder(symbol_without_slash, 'SELL', 'MARKET', quantity);
   }
 
   public getTransactionsHistory(): TransactionRecord[] {

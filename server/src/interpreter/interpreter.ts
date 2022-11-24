@@ -322,6 +322,7 @@ function evalSetVariable(action: ActionSetVariable, context: Context): Context {
   if (CONTEXT_RESERVED.includes(action.name))
     throw new Error('Reserved variable name: ' + action.name);
 
+  console.log("Setting variable '" + action.name + "' to " + action.value);
   context.variables = context.variables || {};
   context.variables[action.name] = evalValue(action.value, context);
   return context;
@@ -363,6 +364,9 @@ export function evalRules(rules: Rules, context: Context): Context {
     if (!context.variables || !(name in context.variables))
       throw new Error('Required variable not set: ' + name);
 
-  rules.rules.forEach((rule) => evalRule(rule, context));
+  rules.rules.forEach((rule) => {
+    console.log('Evaluating rule: ' + rule.name);
+    evalRule(rule, context)
+  });
   return context;
 }
