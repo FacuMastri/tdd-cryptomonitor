@@ -1,34 +1,75 @@
 # Crypto Monitor Server
 
-## Development
+## Diseño
 
-### Requirements
+El servidor está hecho en Node.js con Express. El código se organiza, principalmente, en 4 carpetas:
+
+- `controllers`: Contiene los controladores de las rutas.
+- `interpreter`: Contiene el intérprete de las reglas.
+- `repositories`: Contiene los repositorios de los datos (usuarios, reglas, variables).
+  Se definieron interfaces que permiten cambiar la implementación de los repositorios sin afectar el resto del código.
+  En este caso, se implementaron en memoria.
+- `services`: Contiene los servicios de la aplicación, tales como:
+  - Autenticación, con JWT (`UserService`).
+  - Comunicación con la API de Binance (`BinanceService`).
+  - Comunicación con el websocket de Binance y ejecución de las reglas (`MonitorService`).
+  - Organización de reglas de acuerdo a los símbolos y estados (`InterpreterService`).
+
+## Documentación de la API
+
+La API se documentó con `openapi`, en el archivo [openapi.json](src/openapi.json).
+Además, ésta es servida utilizando Swagger UI en la ruta `/api-docs`.
+
+## Decisiones de diseño
+
+- El cálculo de la variación de un símbolo, para determinar si se encuentra en ALZA, BAJA o ESTABLE, es el siguiente:
+
+  - Se obtienen todos los precios válidos en el intervalo definido por el usuario.
+  - Se calcula el máximo (**M**) y el mínimo (**m**) de estos precios.
+  - Se calcula la variación como **(M - m) / m**.
+  - Si la variación es mayor a **variationPerc** (definido en las política para ese símbolo),
+    se considera que el símbolo está en ALZA.
+  - Si la variación es menor a **-variationPerc**, se considera que el símbolo está en BAJA.
+  - De lo contrario, se considera que el símbolo está ESTABLE.
+    Pueden encontrarse ejemplos de funcionamiento en `test/services/monitor.tests.ts`.
+
+- La evaluación de reglas solo se realiza cuando ocurren los siguientes eventos:
+  - Ocurre una variación significativa en el precio de algún símbolo. Esto se determina a partir de un valor
+    definido en el archivo de configuración.
+  - La cartera se encuentra operable. Esto se determina a partir de un `opCriteria`, definido con un símbolo y un valor,
+    que pueden configurarse por el usuario.
+    Si el valor del símbolo es mayor al valor del `opCriteria`, la cartera se considera operable.
+    De lo contrario, se considera no operable.
+
+## Desarrollo
+
+### Requerimientos
 
 - [Node.js](https://nodejs.org/en/)
 
-### Run with Docker for development
+### Correr con Docker para desarrollo
 
-First time:
+Primera vez:
 
 ```bash
 docker-compose -f docker-compose-dev.yml up --build
 ```
 
-Subsequent times:
+Veces posteriores:
 
 ```bash
 docker-compose -f docker-compose-dev.yml up
 ```
 
-### Running test within Docker
+### Correr tests con Docker
 
-Once the container is up and running, run the following commands:
+Una vez que el container está en funcionamiento, ejecutar los siguientes comandos:
 
 ```bash
 docker exec -it server bash
 ```
 
-Once inside the container, run:
+Una vez dentro del contenedor, ejecutar:
 
 ```bash
 $ root@f55080179d84:/app# ls
@@ -36,24 +77,27 @@ Dockerfile-dev  README.md  docker-compose-dev.yml  jest.config.js  node_modules 
 $ root@f55080179d84:/app# npm t
 ```
 
-### Commands
+### Comandos
 
-- `npm install` or `npm i` to install dependencies
-- `npm start` to start in development mode
-- `npm test` or `npm t` to run tests
+- `npm install` o `npm i` para instalar las dependencias
+- `npm start` para iniciar en modo desarrollo
+- `npm test` o `npm t` para correr los tests
 
-- `npm run build` to build for production [TODO]
-- `npm run lint` to run linter
-- `npm run format` to run code formatter
+- `npm run lint` para correr el linter
+- `npm run format` para correr el formateador de código
 
-- `npm run schemas` to update JSON schemas
+- `npm run schemas` para actualizar los esquemas JSON
 
-### Environment variables
+### Variables de entorno requeridas
 
-The following env vars should be set on a `.env` file at the root of this directory:
+- `PORT`: Puerto en el que correr el servidor.
 
-- `PORT`: Port to run the server on.
-- `BINANCE_API_KEY`: Binance API key. It could be obtained from [here](https://www.binance.com/en/my/settings/api-management)
-- `BINANCE_API_SECRET`: Binance API secret. It could be obtained from [here](https://www.binance.com/en/my/settings/api-management)
-- `JWT_SECRET`: Secret to sign JWT tokens. If not set, 'mysecret' will be set as default.
-- `JWT_EXPIRATION`: Expiration time for JWT tokens. If not set, it will default to 30d. Available formats could be found [here](ea5c52512b5d)
+### Variables de entorno
+
+Las siguientes variables de entorno deben ser configuradas en el archivo `.env` en
+la raíz de ésta carpeta:
+
+- `BINANCE_API_KEY`: API key de Binance. Puede ser obtenida de [aquí](https://www.binance.com/en/my/settings/api-management)
+- `BINANCE_API_SECRET`: API secret de Binance. Puede ser obtenido de [aquí](https://www.binance.com/en/my/settings/api-management)
+- `JWT_SECRET` [optional]: Secret para firmar los tokens JWT. Si no se encuentra seteado, se usará 'mysecret' por default.
+- `JWT_EXPIRATION` [optional]: Tiempo de expiración de los tokens JWT. Si no está seteado, se usará 30d por default. Los formatos aceptados pueden ser encontrados [aquí](ea5c52512b5d)
