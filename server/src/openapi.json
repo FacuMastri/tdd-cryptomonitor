@@ -648,11 +648,9 @@
       "BooleanCallUnary": {
         "properties": {
           "arguments": {
-            "items": [
-              {
-                "$ref": "#/components/schemas/BooleanType"
-              }
-            ],
+            "items": {
+              "$ref": "#/components/schemas/BooleanType"
+            },
             "maxItems": 1,
             "minItems": 1,
             "type": "array"
@@ -704,14 +702,9 @@
       "NumberCallBinary": {
         "properties": {
           "arguments": {
-            "items": [
-              {
-                "$ref": "#/components/schemas/NumberType"
-              },
-              {
-                "$ref": "#/components/schemas/NumberType"
-              }
-            ],
+            "items": {
+              "$ref": "#/components/schemas/NumberType"
+            },
             "maxItems": 2,
             "minItems": 2,
             "type": "array"
@@ -756,11 +749,9 @@
       "NumberCallUnary": {
         "properties": {
           "arguments": {
-            "items": [
-              {
-                "$ref": "#/components/schemas/NumberType"
-              }
-            ],
+            "items": {
+              "$ref": "#/components/schemas/NumberType"
+            },
             "maxItems": 1,
             "minItems": 1,
             "type": "array"
