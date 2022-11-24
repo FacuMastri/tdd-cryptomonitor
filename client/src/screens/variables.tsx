@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import { fetcher, postData } from "../util/fetch";
 import { varsAPI } from "../util/requests";
@@ -12,11 +13,9 @@ type Value = {
 };
 
 const Variables = ({ jwt }: Props) => {
-  const { data, error } = useSWR(varsAPI, fetcher(jwt));
+  const { data: vars, error } = useSWR(varsAPI, fetcher(jwt));
   const { mutate } = useSWRConfig();
   const postVar = postData(varsAPI, jwt);
-
-  let vars: Record<string, Value> = data?.vars;
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -57,9 +56,7 @@ const Variables = ({ jwt }: Props) => {
             Object.keys(vars).map((key) => (
               <tr key={key}>
                 <td>{key}</td>
-                <td className={typeof vars[key].value}>
-                  {String(vars[key].value)}
-                </td>
+                <td className={typeof vars[key]}>{String(vars[key])}</td>
               </tr>
             ))}
         </tbody>

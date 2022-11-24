@@ -33,5 +33,5 @@ export const setVarController = async (req: Request, res: Response) => {
   }
 
   const result = await interpreterService.setVar(name, value);
-  sendResponse(res, 200, result);
+  sendResponse(res, 200, { [name]: result });
 };

@@ -10,5 +10,6 @@ export function sendResponse(
   statusCode: number,
   resBody?: unknown
 ) {
+  console.log('Response:', statusCode, resBody);
   res.status(statusCode).send(resBody);
 }
