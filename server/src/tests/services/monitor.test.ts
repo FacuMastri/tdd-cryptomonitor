@@ -1,4 +1,3 @@
-import MonitorService from '../../services/MonitorService';
 import { calculateVariation } from '../../services/helper';
 import { ContextDatum } from '../../interpreter/types/number';
 

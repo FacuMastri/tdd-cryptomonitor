@@ -71,17 +71,6 @@ Dockerfile-dev  README.md  docker-compose-dev.yml  jest.config.js  node_modules 
 $ root@f55080179d84:/app# npm t
 ```
 
-### Corrida de Docker para la demo
-
-Primero, asegurarse de que el archivo `.env` esté configurado correctamente
-según las [instrucciones](#Environment-variables).
-
-Luego:
-
-    docker-compose up --build
-
-Buildeará las imágenes para el servidor y para el cliente.
-
 ### Comandos
 
 - `npm install` o `npm i` para instalar las dependencias
@@ -93,13 +82,14 @@ Buildeará las imágenes para el servidor y para el cliente.
 
 - `npm run schemas` para actualizar los esquemas JSON
 
+### Variables de entorno requeridas
+- `PORT`: Puerto en el que correr el servidor.
+
 ### Variables de entorno
 
 Las siguientes variables de entorno deben ser configuradas en el archivo `.env` en
 la raíz de ésta carpeta:
 
-- `PORT`: Puerto en el que correr el servidor.
-- `WEB_PORT`: Puerto en el que correr el ciente.
 - `BINANCE_API_KEY`: API key de Binance. Puede ser obtenida de [aquí](https://www.binance.com/en/my/settings/api-management)
 - `BINANCE_API_SECRET`: API secret de Binance. Puede ser obtenido de [aquí](https://www.binance.com/en/my/settings/api-management)
 - `JWT_SECRET` [optional]: Secret para firmar los tokens JWT. Si no se encuentra seteado, se usará 'mysecret' por default.

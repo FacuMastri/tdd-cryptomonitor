@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { cypher, decrypt } from '../services/encryption';
+import { cypher } from '../services/encryption';
 
 export type User = {
   id: number;

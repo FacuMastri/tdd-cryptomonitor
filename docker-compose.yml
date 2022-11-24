@@ -1,16 +1,18 @@
-version: '3.7' # For more information about the version, see https://docs.docker.com/compose/compose-file/compose-versioning/
+version: "3.7" # For more information about the version, see https://docs.docker.com/compose/compose-file/compose-versioning/
 services:
   crypto-monitor-server:
     build:
-      context: .
+      context: ./server
       dockerfile: Dockerfile
     ports:
       - ${PORT}:${PORT}
     env_file:
-      - .env
+      - ./server/.env
+    environment:
+      - PORT=${PORT}
   crypto-monitor-client:
     build:
-      context: ../client
+      context: ./client
       dockerfile: Dockerfile
     ports:
       - ${WEB_PORT}:${WEB_PORT}
