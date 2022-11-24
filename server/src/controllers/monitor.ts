@@ -1,20 +1,24 @@
 import { Request, Response } from 'express';
 import { monitorService } from '../services';
+import { sendResponse } from './utils';
 
 export const addPoliticController = async (req: Request, res: Response) => {
   const { symbol, variationPerc, intervalInHours } = req.body;
   await monitorService.addPolitic(symbol, variationPerc, intervalInHours);
-  res.status(200).send(monitorService.getPolitics());
+  sendResponse(res, 200, monitorService.getPolitics());
 };
 
 export const getPoliticsController = async (req: Request, res: Response) => {
-  res.status(200).send(monitorService.getPolitics());
+  sendResponse(res, 200, monitorService.getPolitics());
 };
 
 export const getSymbolsController = async (req: Request, res: Response) => {
-  res.status(200).send(await monitorService.getValidSymbols());
+  sendResponse(res, 200, await monitorService.getValidSymbols());
 };
 
-export const getPricesController = async (req: Request, res: Response) => {
-  res.status(200).send(await monitorService.getHistory());
+export const getPricesHistoryController = async (
+  req: Request,
+  res: Response
+) => {
+  sendResponse(res, 200, monitorService.getHistory());
 };

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getErrorMessage } from './utils';
+import { getErrorMessage, sendResponse } from './utils';
 import { userService } from '../services';
 import { googleLoginController } from './google';
 
@@ -9,17 +9,17 @@ export const loginController = async (req: Request, res: Response) => {
 
   try {
     const jwt = await userService.createUserJwt(user, password);
-    res.status(200).send(jwt);
+    sendResponse(res, 200, jwt);
   } catch (err) {
-    res.status(401).send(getErrorMessage(err));
+    sendResponse(res, 401, getErrorMessage(err));
   }
 };
 
 export const verifyJwtController = async (req: Request, res: Response) => {
   try {
     const { id } = await userService.findUserByJwt(req.headers.jwt as string);
-    res.status(200).send(String(id));
+    sendResponse(res, 200, String(id));
   } catch (err) {
-    res.status(401).send(getErrorMessage(err));
+    sendResponse(res, 401, getErrorMessage(err));
   }
 };

@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { interpreterService } from '../services';
 import { Rules } from '../interpreter/types/rule';
+import { sendResponse } from './utils';
 
 export const getRulesController = async (req: Request, res: Response) => {
-  res.status(200).send(await interpreterService.getAllRules());
+  sendResponse(res, 200, interpreterService.getAllRules());
 };
 
 export const addRulesController = async (req: Request, res: Response) => {
@@ -14,11 +15,11 @@ export const addRulesController = async (req: Request, res: Response) => {
     validFor,
     validIn
   );
-  res.status(200).send(ruleResult);
+  sendResponse(res, 200, ruleResult);
 };
 
 export const getVarsController = async (req: Request, res: Response) => {
-  res.status(200).send(await interpreterService.getAllVars());
+  sendResponse(res, 200, await interpreterService.getAllVars());
 };
 
 export const setVarController = async (req: Request, res: Response) => {
@@ -32,5 +33,5 @@ export const setVarController = async (req: Request, res: Response) => {
   }
 
   const result = await interpreterService.setVar(name, value);
-  res.status(200).send(result);
+  sendResponse(res, 200, result);
 };

@@ -23,7 +23,7 @@ import { BuyOrderParams } from './services/BinanceService';
 import {
   addPoliticController,
   getPoliticsController,
-  getPricesController,
+  getPricesHistoryController,
   getSymbolsController
 } from './controllers/monitor';
 
@@ -66,7 +66,7 @@ export default class Server {
     this.app.get('/politics', verifyJwtHeader, getPoliticsController);
 
     this.app.get('/symbols', verifyJwtHeader, getSymbolsController);
-    this.app.get('/prices', verifyJwtHeader, getPricesController);
+    this.app.get('/prices', verifyJwtHeader, getPricesHistoryController);
 
     this.app.get('/binance/exchangeInfo', getExchangeInfoController);
     this.app.get('/binance/account', getAccountController);
