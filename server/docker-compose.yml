@@ -3,15 +3,16 @@ services:
   crypto-monitor-server:
     build:
       context: .
+      dockerfile: Dockerfile
     ports:
-      - '8080:8080' # add to .env
-    volumes:
-      - ./src:/app/src
-      - ./tests:/app/tests
-      - ./nodemon.json:/app/nodemon.json
-      - ./jest.config.js:/app/jest.config.js
-      - ./tsconfig.json:/app/tsconfig.json
-      - ./.prettierrc:/app/.prettierrc
-      - ./.prettierignore:/app/.prettierignore
-      - ./.eslintrc.js:/app/.eslintrc.js
-    command: npm start
+      - ${PORT}:${PORT}
+    env_file:
+      - .env
+  crypto-monitor-client:
+    build:
+      context: ../client
+      dockerfile: Dockerfile
+    ports:
+      - '5173:5173' # TODO ver como cambiar el puerto en node/vite y que no sea estático. Una vez hecho esto, poner ${PORT}:${PORT} y pasar PORT=puerto_deseado en el ../client/.env
+    env_file:
+      - ../client/.env

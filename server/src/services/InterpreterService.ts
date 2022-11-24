@@ -5,7 +5,7 @@ import { SymbolMarketStatus, SymbolMarketStatusDict, Symbol } from './types';
 import InMemoryRuleRepository from '../repositories/InMemoryRuleRepository';
 import VariableRepository from '../repositories/VariableRepository';
 import InMemoryVariableRepository from '../repositories/InMemoryVariableRepository';
-import { Value } from '../interpreter/types/value';
+import { Value, ValueOutput } from '../interpreter/types/value';
 
 export type RulesForSymbol = {
   ALZA: RuleRepository;
@@ -70,35 +70,23 @@ export default class InterpreterService {
     return this.ruleRepositories;
   }
 
-  private parseValue(value: string): Value {
-    if (value === 'true')
-      return {
-        type: 'CONSTANT',
-        value: true
-      };
-    if (value === 'false')
-      return {
-        type: 'CONSTANT',
-        value: false
-      };
+  private parseValue(value: string): ValueOutput {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
 
     const numberValue = Number(value);
-    if (!isNaN(numberValue))
-      return {
-        type: 'CONSTANT',
-        value: numberValue
-      };
+    if (!isNaN(numberValue)) return numberValue;
 
-    return {
-      type: 'CONSTANT',
-      value: value
-    };
+    return value;
   }
 
-  public async getAllVars(): Promise<VariableRepository> {
-    return this.varRepository;
+  public async getAllVars(): Promise<Record<string, ValueOutput>> {
+    return this.varRepository.getVars();
   }
-  public async setVar(name: string, value: string): Promise<Value | undefined> {
+  public async setVar(
+    name: string,
+    value: string
+  ): Promise<ValueOutput | undefined> {
     return this.varRepository.setVar(name, this.parseValue(value));
   }
 }

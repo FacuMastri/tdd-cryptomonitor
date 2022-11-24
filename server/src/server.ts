@@ -10,7 +10,8 @@ import {
 import { loginController, verifyJwtController } from './controllers/users';
 import {
   getAccountController,
-  getExchangeInfoController
+  getExchangeInfoController,
+  getTransactionsController
 } from './controllers/binance';
 import { binanceService } from './services';
 import {
@@ -23,7 +24,7 @@ import { BuyOrderParams } from './services/BinanceService';
 import {
   addPoliticController,
   getPoliticsController,
-  getPricesController,
+  getPricesHistoryController,
   getSymbolsController
 } from './controllers/monitor';
 
@@ -63,9 +64,10 @@ export default class Server {
 
     this.app.post('/politics', verifyJwtHeaderAdmin, addPoliticController);
     this.app.get('/politics', verifyJwtHeader, getPoliticsController);
+    this.app.get('/transactions', verifyJwtHeader, getTransactionsController);
 
     this.app.get('/symbols', verifyJwtHeader, getSymbolsController);
-    this.app.get('/prices', verifyJwtHeader, getPricesController);
+    this.app.get('/prices', verifyJwtHeader, getPricesHistoryController);
 
     this.app.get('/binance/exchangeInfo', getExchangeInfoController);
     this.app.get('/binance/account', getAccountController);
@@ -75,11 +77,9 @@ export default class Server {
       const symbol = req.query.symbol;
       // @ts-ignore
       const quantity = req.query.quantity as number;
-      // @ts-ignore
-      const price = req.query.price as number;
 
       if (symbol) {
-        binanceService.buy(symbol.toString(), quantity, price).then((data) => {
+        binanceService.buy(symbol.toString(), quantity).then((data) => {
           resp.send(data);
         });
       } else {
@@ -95,15 +95,11 @@ export default class Server {
         const symbol = req.query.symbol;
         // @ts-ignore
         const quantity = req.query.quantity as number;
-        // @ts-ignore
-        const price = req.query.price as number;
 
         if (symbol) {
-          binanceService
-            .sell(symbol.toString(), quantity, price)
-            .then((data) => {
-              resp.send(data);
-            });
+          binanceService.sell(symbol.toString(), quantity).then((data) => {
+            resp.send(data);
+          });
         } else {
           resp.send({
             error: 'Symbol is required'
