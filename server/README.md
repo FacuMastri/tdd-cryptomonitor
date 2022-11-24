@@ -36,16 +36,6 @@ Dockerfile-dev  README.md  docker-compose-dev.yml  jest.config.js  node_modules 
 $ root@f55080179d84:/app# npm t
 ```
 
-### Run with Docker for demo
-
-First, make sure the .env file is configured correctly as per the [instructions](#Environment-variables).
-
-Then:
-
-    docker-compose up --build
-
-Will build the image for both server and client.
-
 ### Commands
 
 - `npm install` or `npm i` to install dependencies
@@ -63,7 +53,6 @@ Will build the image for both server and client.
 The following env vars should be set on a `.env` file at the root of this directory:
 
 - `PORT`: Port to run the server on.
-- `WEB_PORT`: Port to run the client on.
 - `BINANCE_API_KEY`: Binance API key. It could be obtained from [here](https://www.binance.com/en/my/settings/api-management)
 - `BINANCE_API_SECRET`: Binance API secret. It could be obtained from [here](https://www.binance.com/en/my/settings/api-management)
 - `JWT_SECRET`: Secret to sign JWT tokens. If not set, 'mysecret' will be set as default.
