@@ -72,8 +72,7 @@ export const postRules = async (
   // This happens if the rule format is wrong
   if (res.status === 406) {
     const err = await res.text();
-    toast.error(err);
-    return;
+    throw new Error(err);
   }
 
   try {

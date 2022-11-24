@@ -60,6 +60,7 @@ const Rules = ({ jwt }: Props) => {
   const { data: allSymbols } = useSWR(symbolsAPI, fetcher(jwt));
 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<String | undefined>();
   const [text, setText] = useState(BASE_RULES);
   const [showOnlyExisting, setShowOnlyExisting] = useState(false);
 
@@ -100,9 +101,15 @@ const Rules = ({ jwt }: Props) => {
       validFor: selection.symbol,
       validIn: selection.status,
     };
-    postRules(jwt, payload).then(() => {
-      mutate().then(() => setLoading(false));
-    });
+    postRules(jwt, payload)
+      .then(async () => {
+        setError(undefined);
+        await mutate();
+      })
+      .catch((e: any) => {
+        setError(e?.message ?? "Error");
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -209,6 +216,8 @@ const Rules = ({ jwt }: Props) => {
       >
         Set Rules
       </Button>
+
+      <div>{error ? <Typography color="error">{error}</Typography> : null}</div>
     </section>
   );
 };

@@ -366,7 +366,7 @@ export function evalRules(rules: Rules, context: Context): Context {
 
   rules.rules.forEach((rule) => {
     console.log('Evaluating rule: ' + rule.name);
-    evalRule(rule, context)
+    evalRule(rule, context);
   });
   return context;
 }
