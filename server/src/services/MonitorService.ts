@@ -166,11 +166,16 @@ export default class MonitorService {
     const rulesStatus = await interpreterService.getRulesFor(this.status);
     for (const rules of rulesStatus) {
       const context = await interpreterService.getContextFor(rules);
-      const new_context =  evalRules(rules, context);
-      if (new_context.variables) {
-        for await (const [key, value] of Object.entries(new_context.variables)) {
-          await interpreterService.setVarParsed(key, value);
+      try {
+        const new_context =  evalRules(rules, context);
+        if (new_context.variables) {
+          for await (const [key, value] of Object.entries(new_context.variables)) {
+            await interpreterService.setVarParsed(key, value);
+          }
         }
+      } catch (error) {
+        // @ts-ignore
+        console.log("Error evaluating rules: ", error.message);
       }
     }
   }
