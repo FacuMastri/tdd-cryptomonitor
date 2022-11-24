@@ -13,8 +13,6 @@ services:
       context: ../client
       dockerfile: Dockerfile
     ports:
-      - ${CLI_PORT}:${CLI_PORT}
-    env_file:
-      - ../client/.env
+      - ${WEB_PORT}:${WEB_PORT}
     environment:
-      - PORT=${CLI_PORT}
+      - PORT=${WEB_PORT}

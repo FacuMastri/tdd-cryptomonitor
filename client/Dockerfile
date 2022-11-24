@@ -7,5 +7,4 @@ RUN npm ci
 
 COPY . .
 
-# use port from env variable
-CMD ["npx", "vite", "--port", "$PORT"]
+CMD ["npx", "vite", "--host", "--port", "$PORT"]
