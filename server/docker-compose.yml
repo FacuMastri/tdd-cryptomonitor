@@ -13,6 +13,8 @@ services:
       context: ../client
       dockerfile: Dockerfile
     ports:
-      - '5173:5173' # TODO ver como cambiar el puerto en node/vite y que no sea estático. Una vez hecho esto, poner ${PORT}:${PORT} y pasar PORT=puerto_deseado en el ../client/.env
+      - ${CLI_PORT}:${CLI_PORT}
     env_file:
       - ../client/.env
+    environment:
+      - PORT=${CLI_PORT}
