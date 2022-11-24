@@ -155,7 +155,6 @@ const Dashboard = ({ jwt }: Props) => {
           ))}
         </tbody>
       </table>
-      <Button onClick={() => {console.log(transactions)}}>HOLA</Button>
     </section>
   );
 };
