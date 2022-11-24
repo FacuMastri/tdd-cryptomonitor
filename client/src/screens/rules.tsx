@@ -120,6 +120,19 @@ const Rules = ({ jwt }: Props) => {
     element.download = `${selection.symbol}-${selection.status}.json`;
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
+    element.remove();
+  };
+
+  const downloadAllRules = () => {
+    const element = document.createElement("a");
+    const file = new Blob([JSON.stringify(rules, null, INDENT_SIZE)], {
+      type: "text/plain",
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = `rules.json`;
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+    element.remove();
   };
 
   return (
@@ -201,12 +214,17 @@ const Rules = ({ jwt }: Props) => {
             />
           ) : null}
         </div>
-        <Button
-          onClick={downloadRules}
-          disabled={loading || !selection.symbol || !selection.status}
-        >
-          Download rules
-        </Button>
+        <div>
+          <Button
+            onClick={downloadRules}
+            disabled={loading || !selection.symbol || !selection.status}
+          >
+            Download rules
+          </Button>
+          <Button onClick={downloadAllRules} disabled={loading}>
+            Download all
+          </Button>
+        </div>
       </div>
 
       <Typography variant="h4">
