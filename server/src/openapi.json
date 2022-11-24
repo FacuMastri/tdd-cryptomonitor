@@ -235,6 +235,143 @@
           }
         }
       }
+    },
+    "/symbols": {
+      "get": {
+        "description": "Get system symbols",
+        "tags": ["Monitor"],
+        "responses": {
+          "200": {
+            "description": "symbols list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MarketSymbolWithStatus"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/politics": {
+      "get": {
+        "description": "Get system symbol monitoring politics",
+        "tags": ["Monitor"],
+        "responses": {
+          "200": {
+            "description": "system symbol monitoring politics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "symbol": {
+                      "$ref": "#/components/schemas/Politic"
+                    },
+                    "otherSymbol": {
+                      "$ref": "#/components/schemas/Politic"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "description": "Set system symbol monitoring politic",
+        "tags": ["Monitor"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "symbol": {
+                    "$ref": "#/components/schemas/MarketSymbol"
+                  },
+                  "variationPerc": {
+                    "type": "number",
+                    "example": 0.1
+                  },
+                  "intervalInHours": {
+                    "type": "number",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "system symbol monitoring politics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "symbol": {
+                      "$ref": "#/components/schemas/Politic"
+                    },
+                    "otherSymbol": {
+                      "$ref": "#/components/schemas/Politic"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/prices": {
+      "get": {
+        "description": "Get system symbol prices",
+        "tags": ["Monitor"],
+        "responses": {
+          "200": {
+            "description": "symbol prices history list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "symbol": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TimedValue"
+                      }
+                    },
+                    "otherSymbol": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TimedValue"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
     }
   },
   "security": [
@@ -851,6 +988,43 @@
       "MarketSymbolStatus": {
         "type": "string",
         "enum": ["ALZA", "BAJA", "ESTABLE"]
+      },
+      "MarketSymbolWithStatus": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "$ref": "#/components/schemas/MarketSymbol"
+          },
+          "status": {
+            "$ref": "#/components/schemas/MarketSymbolStatus"
+          }
+        }
+      },
+      "Politic": {
+        "type": "object",
+        "properties": {
+          "variationPerc": {
+            "type": "number",
+            "example": 0.1
+          },
+          "intervalInHours": {
+            "type": "number",
+            "example": 1
+          }
+        }
+      },
+      "TimedValue": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "example": "16537.70000000"
+          },
+          "timestamp": {
+            "type": "number",
+            "example": 1669303382912
+          }
+        }
       }
     },
     "responses": {
