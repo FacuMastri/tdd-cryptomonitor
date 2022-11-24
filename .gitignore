@@ -2,6 +2,7 @@
 .vscode
 .idea
 server/.env
+client/.env
 
 # Package lock outside the 'server' folder
 package-lock.json

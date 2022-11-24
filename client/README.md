@@ -22,7 +22,7 @@ Se consideró el uso de `Redux`, pero se decidió no utilizarlo ya que nos parec
 
 ## Desarrollo
 
-### Requirements
+### Requisitos
 
 - [Node.js](https://nodejs.org/en/)
 
@@ -36,16 +36,10 @@ Se consideró el uso de `Redux`, pero se decidió no utilizarlo ya que nos parec
 
 ### Ejecutar con Docker
 
-Asegurarse que el archivo .env esta configurado correctamente según las [instructions](#Environment-variables).
+Asegurarse que el archivo .env esta configurado correctamente según las [instrucciones](#Environment-variables).
 
 Luego, ir a la carpeta `../server` y ejecutar:
 
     `docker-compose up --build`
 
 Este comando va a buildear las imagenes para el servidor y para el cliente.
-
-### Environment variables
-
-Las siguientes environment variables se deben configurar en el archivo `.env` en esta carpeta:
-
-- `PORT`: Puerto en el que hostear la página web.

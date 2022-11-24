@@ -99,7 +99,7 @@ Las siguientes variables de entorno deben ser configuradas en el archivo `.env` 
 la raíz de ésta carpeta:
 
 - `PORT`: Puerto en el que correr el servidor.
-- `CLI_PORT`: Puerto en el que correr el ciente.
+- `WEB_PORT`: Puerto en el que correr el ciente.
 - `BINANCE_API_KEY`: API key de Binance. Puede ser obtenida de [aquí](https://www.binance.com/en/my/settings/api-management)
 - `BINANCE_API_SECRET`: API secret de Binance. Puede ser obtenido de [aquí](https://www.binance.com/en/my/settings/api-management)
 - `JWT_SECRET` [optional]: Secret para firmar los tokens JWT. Si no se encuentra seteado, se usará 'mysecret' por default.
