@@ -6,7 +6,7 @@ import InMemoryRuleRepository from '../repositories/InMemoryRuleRepository';
 import VariableRepository from '../repositories/VariableRepository';
 import InMemoryVariableRepository from '../repositories/InMemoryVariableRepository';
 import { ValueOutput } from '../interpreter/types/value';
-import {Context} from "../interpreter/types/context";
+import { Context } from '../interpreter/types/context';
 
 export type RulesForSymbol = {
   ALZA: RuleRepository;

@@ -6,11 +6,10 @@ import {
   MIN_SYMBOL_VARIATION_PERC
 } from '../config';
 import { evalRules } from '../interpreter/interpreter';
-import { Context } from '../interpreter/types/context';
 import { ContextDatum } from '../interpreter/types/number';
 import { SymbolMarketStatusDict, Symbol, SymbolMarketStatus } from './types';
 import { WebSocket } from 'ws';
-import { Rules } from '../interpreter/types/rule';
+import { calculateVariation } from './helper';
 
 const BINANCE_WS = `wss://stream.binance.com:9443/ws/`;
 
@@ -32,7 +31,7 @@ export type SymbolWithStatus = {
 export type OpCriteria = {
   symbol: string;
   minOpValue: number;
-}
+};
 
 export default class MonitorService {
   private history: { [key: Symbol]: ContextDatum[] };
@@ -221,21 +220,7 @@ export default class MonitorService {
   // It is calculated as the difference between the last price and the minimum price
   // in the last intervalInHours
   private getVariationOf(symbol: Symbol, intervalInHours: number): number {
-    const symbolHistory = this.history[symbol];
-    if (!symbolHistory) {
-      return 0;
-    }
-    const last_entry = symbolHistory[symbolHistory.length - 1];
-    const min_entry = symbolHistory.reduce((min, entry) => {
-      if (
-        entry.timestamp >
-        last_entry.timestamp - intervalInHours * 3600 * 1000
-      ) {
-        return entry.value < min.value ? entry : min;
-      }
-      return min;
-    });
-    return (last_entry.value - min_entry.value) / min_entry.value;
+    return calculateVariation(symbol, intervalInHours, this.history[symbol]);
   }
 
   // Updates status of the symbols according to the statusChangePolitics

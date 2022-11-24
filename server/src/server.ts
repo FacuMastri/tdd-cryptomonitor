@@ -71,7 +71,11 @@ export default class Server {
     this.app.post('/politics', verifyJwtHeaderAdmin, addPoliticController);
     this.app.get('/politics', verifyJwtHeader, getPoliticsController);
     this.app.get('/prices', verifyJwtHeader, getPricesHistoryController);
-    this.app.post('/walletOpCriterias', verifyJwtHeaderAdmin, addOpCriteriasController);
+    this.app.post(
+      '/walletOpCriterias',
+      verifyJwtHeaderAdmin,
+      addOpCriteriasController
+    );
 
     // Binance
 
