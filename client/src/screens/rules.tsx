@@ -10,6 +10,7 @@ import {
   InputLabel,
   Checkbox,
   FormControlLabel,
+  Alert,
 } from "@mui/material";
 import "../styles/rules.css";
 import { Editor } from "../util/editor";
@@ -217,7 +218,9 @@ const Rules = ({ jwt }: Props) => {
         Set Rules
       </Button>
 
-      <div>{error ? <Typography color="error">{error}</Typography> : null}</div>
+      <div>
+        {error ? [<br />, <Alert severity="error">{error}</Alert>] : null}
+      </div>
     </section>
   );
 };
