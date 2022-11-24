@@ -7,33 +7,39 @@ El servidor está hecho en Node.js con Express. El código se organiza, principa
 - `controllers`: Contiene los controladores de las rutas.
 - `interpreter`: Contiene el intérprete de las reglas.
 - `repositories`: Contiene los repositorios de los datos (usuarios, reglas, variables).
-Se definieron interfaces que permiten cambiar la implementación de los repositorios sin afectar el resto del código.
-En este caso, se implementaron en memoria.
+  Se definieron interfaces que permiten cambiar la implementación de los repositorios sin afectar el resto del código.
+  En este caso, se implementaron en memoria.
 - `services`: Contiene los servicios de la aplicación, tales como:
   - Autenticación, con JWT (`UserService`).
   - Comunicación con la API de Binance (`BinanceService`).
   - Comunicación con el websocket de Binance y ejecución de las reglas (`MonitorService`).
   - Organización de reglas de acuerdo a los símbolos y estados (`InterpreterService`).
 
+## Documentación de la API
+
+La API se documento con `openapi`, en el archivo [openapi.json](src/openapi.json).
+Ademas, esta es servida utilizando Swagger UI en la ruta `/api-docs`.
+
 ## Decisiones de diseño
 
 - El cálculo de la variación de un símbolo, para determinar si se encuentra en ALZA, BAJA o ESTABLE, es el siguiente:
+
   - Se obtienen todos los precios válidos en el intervalo definido por el usuario.
   - Se calcula el máximo (**M**) y el mínimo (**m**) de estos precios.
   - Se calcula la variación como **(M - m) / m**.
   - Si la variación es mayor a **variationPerc** (definido en las política para ese símbolo),
-  se considera que el símbolo está en ALZA.
+    se considera que el símbolo está en ALZA.
   - Si la variación es menor a **-variationPerc**, se considera que el símbolo está en BAJA.
   - De lo contrario, se considera que el símbolo está ESTABLE.
-Pueden encontrarse ejemplos de funcionamiento en `test/services/monitor.tests.ts`.
+    Pueden encontrarse ejemplos de funcionamiento en `test/services/monitor.tests.ts`.
 
 - La evaluación de reglas solo se realiza cuando ocurren los siguientes eventos:
   - Ocurre una variación significativa en el precio de algún símbolo. Esto se determina a partir de un valor
     definido en el archivo de configuración.
   - La cartera se encuentra operable. Esto se determina a partir de un `opCriteria`, definido con un símbolo y un valor,
-  que pueden configurarse por el usuario.
-  Si el valor del símbolo es mayor al valor del `opCriteria`, la cartera se considera operable.
-  De lo contrario, se considera no operable.
+    que pueden configurarse por el usuario.
+    Si el valor del símbolo es mayor al valor del `opCriteria`, la cartera se considera operable.
+    De lo contrario, se considera no operable.
 
 ## Desarrollo
 
@@ -83,6 +89,7 @@ $ root@f55080179d84:/app# npm t
 - `npm run schemas` para actualizar los esquemas JSON
 
 ### Variables de entorno requeridas
+
 - `PORT`: Puerto en el que correr el servidor.
 
 ### Variables de entorno
