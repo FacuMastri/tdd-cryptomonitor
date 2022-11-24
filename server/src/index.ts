@@ -8,3 +8,5 @@ const app: Express = express();
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 const server: Server = new Server(app, Number(PORT));
 server.start();
+
+console.log('Server started on port ' + PORT);
