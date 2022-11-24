@@ -27,14 +27,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -85,11 +78,157 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/vars": {
+      "get": {
+        "description": "Get system variables",
+        "tags": ["Interpreter"],
+        "responses": {
+          "200": {
+            "description": "variables",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "stringVar": {
+                      "type": "string"
+                    },
+                    "numberVar": {
+                      "type": "number"
+                    },
+                    "booleanVar": {
+                      "type": "boolean"
+                    },
+                    "variable": {
+                      "$ref": "#/components/schemas/ValueOutput"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "description": "Set system variable",
+        "tags": ["Interpreter"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "variables",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "$ref": "#/components/schemas/ValueOutput"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/rules": {
+      "get": {
+        "description": "Get system rules",
+        "tags": ["Interpreter"],
+        "responses": {
+          "200": {
+            "description": "System rules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RulesRepositories"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "description": "Set system rule",
+        "tags": ["Interpreter"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "validFor": {
+                    "$ref": "#/components/schemas/MarketSymbol"
+                  },
+                  "validIn": {
+                    "$ref": "#/components/schemas/MarketSymbolStatus"
+                  },
+                  "rules": {
+                    "$ref": "#/components/schemas/Rules"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "variables",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "$ref": "#/components/schemas/ValueOutput"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "406": {
+            "description": "Not Acceptable",
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "description of invalid inputs",
+                  "example": "validFor must be one of BNBBUSD, BTCBUSD, ETHBUSD, LTCBUSD, TRXBUSD, XRPBUSD, BNBUSDT, BTCUSDT, ETHUSDT, LTCUSDT, TRXUSDT, XRPUSDT, BNBBTC, ETHBTC, LTCBTC, TRXBTC, XRPBTC, LTCBNB, TRXBNB, XRPBNB"
                 }
               }
             }
@@ -113,10 +252,616 @@
       }
     },
     "schemas": {
-      "User": {
+      "Action": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/ActionBuyMarket"
+          },
+          {
+            "$ref": "#/components/schemas/ActionSellMarket"
+          },
+          {
+            "$ref": "#/components/schemas/ActionSetVariable"
+          }
+        ]
+      },
+      "ActionBuyMarket": {
+        "properties": {
+          "amount": {
+            "$ref": "#/components/schemas/NumberType"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "type": {
+            "enum": ["BUY_MARKET"],
+            "type": "string"
+          }
+        },
+        "required": ["amount", "symbol", "type"],
+        "type": "object"
+      },
+      "ActionSellMarket": {
+        "properties": {
+          "amount": {
+            "$ref": "#/components/schemas/NumberType"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "type": {
+            "enum": ["SELL_MARKET"],
+            "type": "string"
+          }
+        },
+        "required": ["amount", "symbol", "type"],
+        "type": "object"
+      },
+      "ActionSetVariable": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": ["SET_VARIABLE"],
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/Value"
+          }
+        },
+        "required": ["name", "type", "value"],
+        "type": "object"
+      },
+      "BooleanCallCompBooleans": {
+        "properties": {
+          "arguments": {
+            "items": {
+              "$ref": "#/components/schemas/BooleanType"
+            },
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/OpCompManyBooleans"
+          },
+          "type": {
+            "enum": ["CALL"],
+            "type": "string"
+          }
+        },
+        "required": ["arguments", "name", "type"],
+        "type": "object"
+      },
+      "BooleanCallCompNumbers": {
+        "properties": {
+          "arguments": {
+            "items": {
+              "$ref": "#/components/schemas/NumberType"
+            },
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/OpCompManyNumbers"
+          },
+          "type": {
+            "enum": ["CALL"],
+            "type": "string"
+          }
+        },
+        "required": ["arguments", "name", "type"],
+        "type": "object"
+      },
+      "BooleanCallCompValues": {
+        "properties": {
+          "arguments": {
+            "items": {
+              "$ref": "#/components/schemas/Value"
+            },
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/OpCompManyValues"
+          },
+          "type": {
+            "enum": ["CALL"],
+            "type": "string"
+          }
+        },
+        "required": ["arguments", "name", "type"],
+        "type": "object"
+      },
+      "BooleanCallUnary": {
+        "properties": {
+          "arguments": {
+            "items": [
+              {
+                "$ref": "#/components/schemas/BooleanType"
+              }
+            ],
+            "maxItems": 1,
+            "minItems": 1,
+            "type": "array"
+          },
+          "name": {
+            "enum": ["NOT"],
+            "type": "string"
+          },
+          "type": {
+            "enum": ["CALL"],
+            "type": "string"
+          }
+        },
+        "required": ["arguments", "name", "type"],
+        "type": "object"
+      },
+      "BooleanConstant": {
+        "properties": {
+          "type": {
+            "enum": ["CONSTANT"],
+            "type": "string"
+          },
+          "value": {
+            "type": "boolean"
+          }
+        },
+        "required": ["type", "value"],
+        "type": "object"
+      },
+      "BooleanType": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/BooleanCallCompNumbers"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanCallCompValues"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanCallUnary"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanCallCompBooleans"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanConstant"
+          }
+        ]
+      },
+      "NumberCallBinary": {
+        "properties": {
+          "arguments": {
+            "items": [
+              {
+                "$ref": "#/components/schemas/NumberType"
+              },
+              {
+                "$ref": "#/components/schemas/NumberType"
+              }
+            ],
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/OpBinaryNumber"
+          },
+          "type": {
+            "enum": ["CALL"],
+            "type": "string"
+          }
+        },
+        "required": ["arguments", "name", "type"],
+        "type": "object"
+      },
+      "NumberCallMany": {
+        "properties": {
+          "arguments": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/NumberType"
+                },
+                "type": "array"
+              },
+              {
+                "$ref": "#/components/schemas/NumberData"
+              }
+            ]
+          },
+          "name": {
+            "$ref": "#/components/schemas/OpManyNumbers"
+          },
+          "type": {
+            "enum": ["CALL"],
+            "type": "string"
+          }
+        },
+        "required": ["arguments", "name", "type"],
+        "type": "object"
+      },
+      "NumberCallUnary": {
+        "properties": {
+          "arguments": {
+            "items": [
+              {
+                "$ref": "#/components/schemas/NumberType"
+              }
+            ],
+            "maxItems": 1,
+            "minItems": 1,
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/OpNumber"
+          },
+          "type": {
+            "enum": ["CALL"],
+            "type": "string"
+          }
+        },
+        "required": ["arguments", "name", "type"],
+        "type": "object"
+      },
+      "NumberConstant": {
+        "properties": {
+          "type": {
+            "enum": ["CONSTANT"],
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": ["type", "value"],
+        "type": "object"
+      },
+      "NumberData": {
+        "properties": {
+          "default": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NumberCallBinary"
+              },
+              {
+                "$ref": "#/components/schemas/NumberCallMany"
+              },
+              {
+                "$ref": "#/components/schemas/NumberCallUnary"
+              },
+              {
+                "$ref": "#/components/schemas/NumberConstant"
+              },
+              {
+                "$ref": "#/components/schemas/WalletDef"
+              },
+              {
+                "$ref": "#/components/schemas/NumberVariable"
+              },
+              {
+                "items": {
+                  "$ref": "#/components/schemas/NumberType"
+                },
+                "type": "array"
+              }
+            ]
+          },
+          "since": {
+            "type": "number"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "type": {
+            "enum": ["DATA"],
+            "type": "string"
+          },
+          "until": {
+            "type": "number"
+          }
+        },
+        "required": ["since", "symbol", "type", "until"],
+        "type": "object"
+      },
+      "NumberType": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/NumberCallBinary"
+          },
+          {
+            "$ref": "#/components/schemas/NumberCallMany"
+          },
+          {
+            "$ref": "#/components/schemas/NumberCallUnary"
+          },
+          {
+            "$ref": "#/components/schemas/NumberConstant"
+          },
+          {
+            "$ref": "#/components/schemas/WalletDef"
+          },
+          {
+            "$ref": "#/components/schemas/NumberVariable"
+          }
+        ]
+      },
+      "NumberVariable": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": ["VARIABLE"],
+            "type": "string"
+          }
+        },
+        "required": ["name", "type"],
+        "type": "object"
+      },
+      "OpBinaryNumber": {
+        "enum": ["-", "/"],
+        "type": "string"
+      },
+      "OpCompManyBooleans": {
+        "enum": ["AND", "OR"],
+        "type": "string"
+      },
+      "OpCompManyNumbers": {
+        "enum": ["<", "<=", ">", ">="],
+        "type": "string"
+      },
+      "OpCompManyValues": {
+        "enum": ["==", "DISTINCT"],
+        "type": "string"
+      },
+      "OpManyNumbers": {
+        "enum": ["*", "+", "AVERAGE", "FIRST", "LAST", "MAX", "MIN", "STDDEV"],
+        "type": "string"
+      },
+      "OpNumber": {
+        "enum": [
+          "*",
+          "+",
+          "-",
+          "/",
+          "AVERAGE",
+          "FIRST",
+          "LAST",
+          "MAX",
+          "MIN",
+          "NEGATE",
+          "STDDEV"
+        ],
+        "type": "string"
+      },
+      "Rule": {
+        "properties": {
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            },
+            "type": "array"
+          },
+          "condition": {
+            "$ref": "#/components/schemas/BooleanType"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["actions", "condition", "name"],
+        "type": "object"
+      },
+      "Value": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/NumberCallBinary"
+          },
+          {
+            "$ref": "#/components/schemas/NumberCallMany"
+          },
+          {
+            "$ref": "#/components/schemas/NumberCallUnary"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanCallCompNumbers"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanCallCompValues"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanCallUnary"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanCallCompBooleans"
+          },
+          {
+            "$ref": "#/components/schemas/NumberConstant"
+          },
+          {
+            "$ref": "#/components/schemas/WalletDef"
+          },
+          {
+            "$ref": "#/components/schemas/NumberVariable"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanConstant"
+          },
+          {
+            "$ref": "#/components/schemas/ValueConstant"
+          },
+          {
+            "$ref": "#/components/schemas/ValueVariable"
+          },
+          {
+            "$ref": "#/components/schemas/ValueWallet"
+          }
+        ]
+      },
+      "ValueConstant": {
+        "properties": {
+          "type": {
+            "enum": ["CONSTANT"],
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": ["type", "value"],
+        "type": "object"
+      },
+      "ValueVariable": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": ["VARIABLE"],
+            "type": "string"
+          }
+        },
+        "required": ["name", "type"],
+        "type": "object"
+      },
+      "ValueWallet": {
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "type": {
+            "enum": ["WALLET"],
+            "type": "string"
+          }
+        },
+        "required": ["amount", "symbol", "type"],
+        "type": "object"
+      },
+      "WalletDef": {
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "type": {
+            "enum": ["WALLET"],
+            "type": "string"
+          }
+        },
+        "required": ["symbol", "type"],
+        "type": "object"
+      },
+      "Rules": {
+        "properties": {
+          "requiredVariables": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/Rule"
+            },
+            "type": "array"
+          }
+        },
+        "required": ["requiredVariables", "rules"],
+        "type": "object"
+      },
+      "ValueOutput": {
+        "example": "string | number | bool",
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          }
+        ]
+      },
+      "RulesForSymbol": {
         "type": "object",
-        "items": {
-          "type": "string"
+        "properties": {
+          "ALZA": {
+            "type": "object",
+            "properties": {
+              "rules": {
+                "$ref": "#/components/schemas/Rules"
+              }
+            }
+          },
+          "BAJA": {
+            "type": "object",
+            "properties": {
+              "rules": {
+                "$ref": "#/components/schemas/Rules"
+              }
+            }
+          },
+          "ESTABLE": {
+            "type": "object",
+            "properties": {
+              "rules": {
+                "$ref": "#/components/schemas/Rules"
+              }
+            }
+          }
+        }
+      },
+      "RulesRepositories": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "$ref": "#/components/schemas/RulesForSymbol"
+          },
+          "otherSymbol": {
+            "$ref": "#/components/schemas/RulesForSymbol"
+          }
+        }
+      },
+      "MarketSymbol": {
+        "type": "string",
+        "enum": [
+          "BNBBUSD",
+          "BTCBUSD",
+          "ETHBUSD",
+          "LTCBUSD",
+          "TRXBUSD",
+          "XRPBUSD",
+          "BNBUSDT",
+          "BTCUSDT",
+          "ETHUSDT",
+          "LTCUSDT",
+          "TRXUSDT",
+          "XRPUSDT",
+          "BNBBTC",
+          "ETHBTC",
+          "LTCBTC",
+          "TRXBTC",
+          "XRPBTC",
+          "LTCBNB",
+          "TRXBNB",
+          "XRPBNB"
+        ]
+      },
+      "MarketSymbolStatus": {
+        "type": "string",
+        "enum": ["ALZA", "BAJA", "ESTABLE"]
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": {
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            }
+          }
         }
       }
     }
