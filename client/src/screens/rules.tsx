@@ -113,6 +113,15 @@ const Rules = ({ jwt }: Props) => {
       .finally(() => setLoading(false));
   };
 
+  const downloadRules = () => {
+    const element = document.createElement("a");
+    const file = new Blob([text], { type: "text/plain" });
+    element.href = URL.createObjectURL(file);
+    element.download = `${selection.symbol}-${selection.status}.json`;
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+  };
+
   return (
     <section>
       <Typography variant="h3">Rules</Typography>
@@ -192,6 +201,12 @@ const Rules = ({ jwt }: Props) => {
             />
           ) : null}
         </div>
+        <Button
+          onClick={downloadRules}
+          disabled={loading || !selection.symbol || !selection.status}
+        >
+          Download rules
+        </Button>
       </div>
 
       <Typography variant="h4">
