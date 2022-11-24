@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { Symbol } from './types';
 import { ContextDatum } from '../interpreter/types/number';
 
