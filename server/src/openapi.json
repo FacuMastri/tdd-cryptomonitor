@@ -372,6 +372,144 @@
           }
         }
       }
+    },
+    "/binance/exchangeInfo": {
+      "get": {
+        "description": "Binance API wrapper - get exchange info",
+        "externalDocs": {
+          "description": "Binance API",
+          "url": "https://binance-docs.github.io/apidocs/spot/en/#exchange-information"
+        },
+        "tags": ["Exchange"],
+        "responses": {
+          "200": {
+            "description": "exchange info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "timezone": "UTC",
+                    "serverTime": 1565246363776,
+                    "rateLimits": [
+                      {
+                        "limit": "optional"
+                      }
+                    ],
+                    "exchangeFilters": ["optional filters"],
+                    "symbols": [
+                      {
+                        "symbol": "ETHBTC",
+                        "status": "TRADING",
+                        "baseAsset": "ETH",
+                        "baseAssetPrecision": 8,
+                        "quoteAsset": "BTC",
+                        "quotePrecision": 8,
+                        "quoteAssetPrecision": 8,
+                        "orderTypes": [
+                          "LIMIT",
+                          "LIMIT_MAKER",
+                          "MARKET",
+                          "STOP_LOSS",
+                          "STOP_LOSS_LIMIT",
+                          "TAKE_PROFIT",
+                          "TAKE_PROFIT_LIMIT"
+                        ],
+                        "icebergAllowed": true,
+                        "ocoAllowed": true,
+                        "quoteOrderQtyMarketAllowed": true,
+                        "allowTrailingStop": false,
+                        "cancelReplaceAllowed": false,
+                        "isSpotTradingAllowed": true,
+                        "isMarginTradingAllowed": true,
+                        "filters": ["optional filter"],
+                        "permissions": ["SPOT", "MARGIN"]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/binance/account": {
+      "get": {
+        "description": "Binance API wrapper - get account info",
+        "externalDocs": {
+          "description": "Binance API",
+          "url": "https://binance-docs.github.io/apidocs/spot/en/#account-information-user_data"
+        },
+        "tags": ["Exchange"],
+        "responses": {
+          "200": {
+            "description": "user data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "makerCommission": 15,
+                    "takerCommission": 15,
+                    "buyerCommission": 0,
+                    "sellerCommission": 0,
+                    "canTrade": true,
+                    "canWithdraw": true,
+                    "canDeposit": true,
+                    "brokered": false,
+                    "updateTime": 123456789,
+                    "accountType": "SPOT",
+                    "balances": [
+                      {
+                        "asset": "BTC",
+                        "free": "4723846.89208129",
+                        "locked": "0.00000000"
+                      },
+                      {
+                        "asset": "LTC",
+                        "free": "4763368.68006011",
+                        "locked": "0.00000000"
+                      }
+                    ],
+                    "permissions": ["SPOT"]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "description": "System transaction history",
+        "tags": ["Exchange"],
+        "responses": {
+          "200": {
+            "description": "transaction history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TransactionRecord"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
     }
   },
   "security": [
@@ -1023,6 +1161,27 @@
           "timestamp": {
             "type": "number",
             "example": 1669303382912
+          }
+        }
+      },
+      "TransactionRecord": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "$ref": "#/components/schemas/MarketSymbol"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["BUY", "SELL"]
+          },
+          "symbolStatus": {
+            "$ref": "#/components/schemas/MarketSymbolStatus"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "timestamp": {
+            "type": "number"
           }
         }
       }
