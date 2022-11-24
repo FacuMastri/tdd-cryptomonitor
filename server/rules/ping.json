@@ -1,0 +1,32 @@
+{
+  "requiredVariables": ["PING"],
+  "rules": [
+    {
+      "name": "Test Rule - Ping variable",
+      "condition": {
+        "type": "CONSTANT",
+        "value": true
+      },
+      "actions": [
+        {
+          "type": "SET_VARIABLE",
+          "name": "PING",
+          "value": {
+            "type": "CALL",
+            "name": "+",
+            "arguments": [
+              {
+                "type": "VARIABLE",
+                "name": "PING"
+              },
+              {
+                "type": "CONSTANT",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

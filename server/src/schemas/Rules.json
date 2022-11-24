@@ -122,11 +122,9 @@
     "BooleanCallUnary": {
       "properties": {
         "arguments": {
-          "items": [
-            {
-              "$ref": "#/definitions/BooleanType"
-            }
-          ],
+          "items": {
+            "$ref": "#/definitions/BooleanType"
+          },
           "maxItems": 1,
           "minItems": 1,
           "type": "array"
@@ -178,14 +176,9 @@
     "NumberCallBinary": {
       "properties": {
         "arguments": {
-          "items": [
-            {
-              "$ref": "#/definitions/NumberType"
-            },
-            {
-              "$ref": "#/definitions/NumberType"
-            }
-          ],
+          "items": {
+            "$ref": "#/definitions/NumberType"
+          },
           "maxItems": 2,
           "minItems": 2,
           "type": "array"
@@ -230,11 +223,9 @@
     "NumberCallUnary": {
       "properties": {
         "arguments": {
-          "items": [
-            {
-              "$ref": "#/definitions/NumberType"
-            }
-          ],
+          "items": {
+            "$ref": "#/definitions/NumberType"
+          },
           "maxItems": 1,
           "minItems": 1,
           "type": "array"

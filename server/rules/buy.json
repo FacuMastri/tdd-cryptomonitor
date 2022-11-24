@@ -1,0 +1,52 @@
+{
+  "requiredVariables": ["LTC/BUSD_DATA_SUM_THRESHOLD"],
+  "rules": [
+    {
+      "name": "Comprar 13 BNB/BTC cuando la suma de valores de DATA de LTC/BUSD sea mayor a LTC/BUSD_DATA_SUM_THRESHOLD",
+      "condition": {
+        "type": "CALL",
+        "name": ">",
+        "arguments": [
+          {
+            "type": "CALL",
+            "name": "+",
+            "arguments": {
+              "type": "DATA",
+              "symbol": "LTC/BUSD",
+              "since": 7200,
+              "until": 0,
+              "default": [
+                {
+                  "type": "CONSTANT",
+                  "value": 180
+                }
+              ]
+            }
+          },
+          {
+            "type": "VARIABLE",
+            "name": "LTC/BUSD_DATA_SUM_THRESHOLD"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "BUY_MARKET",
+          "symbol": "BNB/BTC",
+          "amount": {
+            "type": "CONSTANT",
+            "value": 13
+          }
+        },
+        {
+          "type": "SET_VARIABLE",
+          "name": "LTC/BUSD_DATA_SUM_THRESHOLD",
+          "value": {
+            "type": "CONSTANT",
+            "value": 99999999
+          }
+        }
+      ]
+    }
+  ]
+}
