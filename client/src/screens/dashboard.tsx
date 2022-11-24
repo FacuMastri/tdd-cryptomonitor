@@ -196,8 +196,8 @@ const Dashboard = ({ jwt }: Props) => {
           </tr>
         </thead>
         <tbody>
-          {transactions?.map((transaction: TransactionRecord) => (
-            <tr key={transaction.timestamp}>
+          {transactions?.map((transaction: TransactionRecord, i: number) => (
+            <tr key={transaction.timestamp + i}>
               <td>{transaction.symbol}</td>
               <td>{transaction.type}</td>
               <td>{transaction.quantity}</td>

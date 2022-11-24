@@ -10,6 +10,7 @@ import {
   InputLabel,
   Checkbox,
   FormControlLabel,
+  Alert,
 } from "@mui/material";
 import "../styles/rules.css";
 import { Editor } from "../util/editor";
@@ -60,6 +61,7 @@ const Rules = ({ jwt }: Props) => {
   const { data: allSymbols } = useSWR(symbolsAPI, fetcher(jwt));
 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<String | undefined>();
   const [text, setText] = useState(BASE_RULES);
   const [showOnlyExisting, setShowOnlyExisting] = useState(false);
 
@@ -100,9 +102,37 @@ const Rules = ({ jwt }: Props) => {
       validFor: selection.symbol,
       validIn: selection.status,
     };
-    postRules(jwt, payload).then(() => {
-      mutate().then(() => setLoading(false));
+    postRules(jwt, payload)
+      .then(async () => {
+        setError(undefined);
+        await mutate();
+      })
+      .catch((e: any) => {
+        setError(e?.message ?? "Error");
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const downloadRules = () => {
+    const element = document.createElement("a");
+    const file = new Blob([text], { type: "text/plain" });
+    element.href = URL.createObjectURL(file);
+    element.download = `${selection.symbol}-${selection.status}.json`;
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+    element.remove();
+  };
+
+  const downloadAllRules = () => {
+    const element = document.createElement("a");
+    const file = new Blob([JSON.stringify(rules, null, INDENT_SIZE)], {
+      type: "text/plain",
     });
+    element.href = URL.createObjectURL(file);
+    element.download = `rules.json`;
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+    element.remove();
   };
 
   return (
@@ -184,6 +214,17 @@ const Rules = ({ jwt }: Props) => {
             />
           ) : null}
         </div>
+        <div>
+          <Button
+            onClick={downloadRules}
+            disabled={loading || !selection.symbol || !selection.status}
+          >
+            Download rules
+          </Button>
+          <Button onClick={downloadAllRules} disabled={loading}>
+            Download all
+          </Button>
+        </div>
       </div>
 
       <Typography variant="h4">
@@ -209,6 +250,10 @@ const Rules = ({ jwt }: Props) => {
       >
         Set Rules
       </Button>
+
+      <div>
+        {error ? [<br />, <Alert severity="error">{error}</Alert>] : null}
+      </div>
     </section>
   );
 };

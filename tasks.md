@@ -6,8 +6,8 @@
 - [x] unico Rules por cada simbolo y status
 - [x] que se ejecuten acciones predefinidas
 - [x] ir guardando las acciones de compra/venta para despues mostrarlas
-- [ ] mostrar error de parseo de reglas aparte
-- [ ] compartir reglas
+- [x] mostrar error de parseo de reglas aparte
+- [x] compartir reglas
 - [ ] (opcional) notificaciones de transacciones
 - [ ] docs
 - [ ] docker
