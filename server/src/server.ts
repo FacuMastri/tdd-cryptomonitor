@@ -49,18 +49,17 @@ export default class Server {
   private addControllers() {
     this.app.get('/verify', verifyJwtHeader, verifyJwtController);
     this.app.post('/login', verifyCredentialsBody, loginController);
+
+    this.app.get('/vars', verifyJwtHeader, getVarsController);
+    this.app.post('/vars', verifyJwtHeaderAdmin, setVarController);
+
+    this.app.get('/rules', verifyJwtHeader, getRulesController);
     this.app.post(
       '/rules',
       verifyJwtHeader,
       verifyRulesBody,
       addRulesController
     );
-
-    this.app.get('/vars', verifyJwtHeader, getVarsController);
-    this.app.post('/vars', verifyJwtHeaderAdmin, setVarController);
-
-    this.app.get('/rules', verifyJwtHeader, getRulesController);
-    this.app.post('/rules', verifyJwtHeaderAdmin, addRulesController);
 
     this.app.post('/politics', verifyJwtHeaderAdmin, addPoliticController);
     this.app.get('/politics', verifyJwtHeader, getPoliticsController);
