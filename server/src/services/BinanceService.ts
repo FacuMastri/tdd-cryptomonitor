@@ -1,6 +1,9 @@
 import * as https from 'https';
 import { RequestOptions } from 'https';
 import * as crypto from 'crypto';
+import { SymbolMarketStatus } from './types';
+import MonitorService from './MonitorService';
+import { monitorService } from './index';
 
 const API_HOST = 'testnet.binance.vision';
 const API_PATH = '/api/v3';
@@ -17,21 +20,51 @@ export type BuyOrderParams = {
   quantity?: number;
 };
 
+export type TransactionRecord = {
+  symbol: string;
+  type: 'BUY' | 'SELL';
+  symbolStatus: SymbolMarketStatus;
+  quantity: number;
+  timestamp: number;
+};
+
 export class BinanceService {
   private readonly apiKey: string;
   private readonly apiSecret: string;
+  private transactionsHistory: TransactionRecord[];
 
   constructor(apiKey: string, apiSecret: string) {
     this.apiKey = apiKey;
     this.apiSecret = apiSecret;
+    this.transactionsHistory = [];
   }
 
-  public buy(symbol: string, quantity?: number, price?: number): Promise<any> {
-    return this.doOrder(symbol, 'BUY', 'MARKET', quantity, price);
+  public buy(symbol: string, quantity: number): Promise<any> {
+    this.transactionsHistory.push({
+      symbol,
+      type: 'BUY',
+      quantity: quantity,
+      symbolStatus: monitorService.getStatusFor(symbol),
+      timestamp: Date.now()
+    });
+
+    return this.doOrder(symbol, 'BUY', 'MARKET', quantity);
   }
 
-  public sell(symbol: string, quantity?: number, price?: number): Promise<any> {
-    return this.doOrder(symbol, 'SELL', 'MARKET', quantity, price);
+  public sell(symbol: string, quantity: number): Promise<any> {
+    this.transactionsHistory.push({
+      symbol,
+      type: 'SELL',
+      quantity,
+      symbolStatus: monitorService.getStatusFor(symbol),
+      timestamp: Date.now()
+    });
+
+    return this.doOrder(symbol, 'SELL', 'MARKET', quantity);
+  }
+
+  public getTransactionsHistory(): TransactionRecord[] {
+    return this.transactionsHistory;
   }
 
   public getAccountInfo(): Promise<any> {

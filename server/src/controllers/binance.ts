@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { binanceService } from '../services';
+import { binanceService, monitorService } from '../services';
 import { ExchangeInfoParams } from '../services/BinanceService';
 
 export const getExchangeInfoController = async (
@@ -17,4 +17,11 @@ export const getExchangeInfoController = async (
 
 export const getAccountController = async (req: Request, res: Response) => {
   res.send(await binanceService.getAccountInfo());
+};
+
+export const getTransactionsController = async (
+  req: Request,
+  res: Response
+) => {
+  res.send(binanceService.getTransactionsHistory());
 };
