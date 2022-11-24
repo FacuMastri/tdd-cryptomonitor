@@ -62,9 +62,9 @@ Will build the image for both server and client.
 
 The following env vars should be set on a `.env` file at the root of this directory:
 
-- `PORT`: Port to run the server on
-- `CLI_PORT`: Port to run the client on
+- `WEB_PORT`: Port to run the server on.
+- `CLI_PORT`: Port to run the client on.
 - `BINANCE_API_KEY`: Binance API key. It could be obtained from [here](https://www.binance.com/en/my/settings/api-management)
 - `BINANCE_API_SECRET`: Binance API secret. It could be obtained from [here](https://www.binance.com/en/my/settings/api-management)
-- `JWT_SECRET` [optional]: Secret to sign JWT tokens. If not set, 'mysecret' will be set as default.
-- `JWT_EXPIRATION` [optional]: Expiration time for JWT tokens. If not set, it will default to 30d. Available formats could be found [here](ea5c52512b5d)
+- `JWT_SECRET`: Secret to sign JWT tokens. If not set, 'mysecret' will be set as default.
+- `JWT_EXPIRATION`: Expiration time for JWT tokens. If not set, it will default to 30d. Available formats could be found [here](ea5c52512b5d)
