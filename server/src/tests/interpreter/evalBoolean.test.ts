@@ -2,7 +2,6 @@ import { VALUE_CALL, VALUE_CONST } from '../../interpreter/types/value';
 import { evalValue } from '../../interpreter/interpreter';
 import {
   AND,
-  EQUAL,
   GREATER,
   GREATER_EQUAL,
   LESS,
@@ -425,44 +424,5 @@ describe('evalBoolean', () => {
     } as unknown as BooleanType;
 
     expect(() => evalValue(call)).toThrow(Error);
-  });
-
-  test("evalBoolean confirms De Morgan's laws", () => {
-    const call: BooleanCall = {
-      type: VALUE_CALL,
-      name: EQUAL,
-      arguments: [
-        {
-          type: VALUE_CALL,
-          name: NOT,
-          arguments: [
-            {
-              type: VALUE_CALL,
-              name: AND,
-              arguments: [
-                { type: VALUE_CONST, value: true },
-                { type: VALUE_CONST, value: true }
-              ]
-            }
-          ]
-        },
-        {
-          type: VALUE_CALL,
-          name: OR,
-          arguments: [
-            {
-              type: VALUE_CALL,
-              name: NOT,
-              arguments: [{ type: VALUE_CONST, value: true }]
-            },
-            {
-              type: VALUE_CALL,
-              name: NOT,
-              arguments: [{ type: VALUE_CONST, value: true }]
-            }
-          ]
-        }
-      ]
-    };
   });
 });

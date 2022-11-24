@@ -10,7 +10,7 @@ import { Context } from '../interpreter/types/context';
 import { ValueOutput } from '../interpreter/types/value';
 import { ContextDatum } from '../interpreter/types/number';
 import { SymbolMarketStatusDict, Symbol } from './types';
-const { WebSocket } = require('ws');
+import { WebSocket } from 'ws';
 
 const BINANCE_WS = `wss://stream.binance.com:9443/ws/`;
 
@@ -26,9 +26,9 @@ export type SymbolChangePolitic = {
 
 export default class MonitorService {
   private history: { [key: Symbol]: ContextDatum[] };
-  private variables: { [name: Symbol]: ValueOutput };
-  private status: SymbolMarketStatusDict;
-  private statusChangePolitics: { [key: Symbol]: SymbolChangePolitic };
+  private readonly variables: { [name: Symbol]: ValueOutput };
+  private readonly status: SymbolMarketStatusDict;
+  private readonly statusChangePolitics: { [key: Symbol]: SymbolChangePolitic };
 
   private socket: any | undefined;
 

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { OAuth2Client, TokenPayload } from 'google-auth-library';
+import { OAuth2Client } from 'google-auth-library';
 import { userService } from '../services';
 import { getErrorMessage } from './utils';
 const clientId =
