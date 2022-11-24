@@ -1,4 +1,5 @@
-export const baseUrl = "http://localhost:" + import.meta.env.VITE_SERVER_PORT;
+export const baseUrl =
+  "http://localhost:" + (import.meta.env.VITE_SERVER_PORT || "8080");
 export const accountAPI = `${baseUrl}/binance/account`;
 export const loginAPI = `${baseUrl}/login`;
 export const rulesAPI = `${baseUrl}/rules`;
@@ -7,6 +8,7 @@ export const pricesAPI = `${baseUrl}/prices`;
 export const policiesAPI = `${baseUrl}/politics`;
 export const varsAPI = `${baseUrl}/vars`;
 export const transactionsAPI = `${baseUrl}/transactions`;
+export const opCriteriaAPI = `${baseUrl}/walletOpCriterias`;
 
 export const checkOk = (errorMsg: string) => (res: Response) => {
   if (res.status >= 300) {

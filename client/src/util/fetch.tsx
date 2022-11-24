@@ -24,7 +24,7 @@ export const fetcher =
       },
     })
       .then(checkOk(checkMsg))
-      .then(intoJson)
+      .then(intoRes)
       .catch((error) => {
         console.log(error.message ?? error);
         toast.error(error.message ?? "Error");
