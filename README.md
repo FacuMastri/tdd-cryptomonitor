@@ -6,6 +6,6 @@ Ver [docs](/docs/)
 
 Ver [enunciado](https://docs.google.com/document/d/1YWHSMlHjrVZ6HAVEERuD4IdhdI54ica8IvILpKLGT24/edit)
 
-Ver [README](/client/README.md) del server
+Ver [README](/client/README.md) del cliente.
 
-Ver [README](/server/README.md) del cliente
+Ver [README](/server/README.md) del server.
