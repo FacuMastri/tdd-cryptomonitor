@@ -8,7 +8,8 @@
   {
     "id": 2,
     "user": "fdeluca@fi.uba.ar",
-    "password": "fdelu"
+    "password": "fdelu",
+    "admin": true
   },
   {
     "id": 3,

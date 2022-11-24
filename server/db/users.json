@@ -11,6 +11,7 @@
   {
     "id": 2,
     "user": "fdeluca@fi.uba.ar",
+    "admin": true,
     "cypher": {
       "iv": "af49e68a713b4499d4cdeb1badb513a5",
       "encryptedData": "e769b84b890169165c14f781b004656b"

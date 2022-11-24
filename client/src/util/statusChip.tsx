@@ -7,13 +7,19 @@ const COLORS = {
     "BAJA": "error",
 } as const;
 
-const MarketStatusChip = ({ status }: { status: MarketStatus }) => {
+type Props = {
+    status: MarketStatus;
+    className?: string;
+}
+
+const MarketStatusChip = (props: Props) => {
     return (
         <Chip
-            label={status}
-            color={COLORS[status]}
+            label={props.status}
+            color={COLORS[props.status]}
             size="small"
             style={{width: "80px"}}
+            className={props.className}
         />
     )
 }

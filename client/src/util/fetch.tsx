@@ -15,14 +15,6 @@ export type RulesType = {
 export const MARKET_STATUSES = ["ALZA", "BAJA", "ESTABLE"] as const;
 export type MarketStatus = typeof MARKET_STATUSES[number];
 
-export const fetchRules = async (jwt: string): Promise<any> => {
-  return await fetchData(jwt, rulesAPI, "Could not fetch rules");
-};
-
-export const fetchSymbols = async (jwt: string): Promise<any> => {
-  return await fetchData(jwt, symbolsAPI, "Could not fetch symbols");
-};
-
 export const fetcher =
   (jwt: string, checkMsg = "error") =>
   (url: string) =>

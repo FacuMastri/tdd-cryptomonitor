@@ -25,3 +25,14 @@
   display: flex;
   justify-content: center;
 }
+
+.statusContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.status {
+  margin: 10px 5px !important;
+}

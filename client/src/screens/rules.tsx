@@ -13,15 +13,16 @@ import {
 } from "@mui/material";
 import "../styles/rules.css";
 import { Editor } from "../util/editor";
-import { capitalize } from "../util/text";
 import {
-  fetchRules,
-  fetchSymbols,
   postRules,
   MarketStatus,
   MARKET_STATUSES,
+  fetcher,
 } from "../util/fetch";
 import { toast } from "react-toastify";
+import useSWR from "swr";
+import { rulesAPI, symbolsAPI } from "../util/requests";
+import MarketStatusChip from "../util/statusChip";
 
 type Props = {
   jwt: string;
@@ -34,6 +35,11 @@ type Symbol = {
 
 type Rules = Record<string, Record<MarketStatus, any>>; // Symbol -> MarketStatus -> Rules
 
+type Selection = {
+  status: MarketStatus;
+  symbol: string | null;
+}
+
 const INDENT_SIZE = 4;
 
 const BASE_RULES = JSON.stringify(
@@ -45,75 +51,56 @@ const BASE_RULES = JSON.stringify(
   INDENT_SIZE
 );
 
-const getExistingRuleSymbols = (
-  rules: Rules,
-  marketStatus: MarketStatus
-): string[] => {
-  return Object.keys(rules).filter((symbol) => {
-    return Boolean(rules[symbol]?.[marketStatus]?.rules);
-  });
-};
-
 const Rules = ({ jwt }: Props) => {
-  const [marketStatus, setMarketStatus] = useState<MarketStatus>(
-    MARKET_STATUSES[0]
-  );
-  const [symbol, setSymbol] = useState<string | null>(null);
-
-  const [rules, setRules] = useState<Rules>({} as Rules);
-  const [allSymbols, setAllSymbols] = useState<Symbol[]>([]);
+  const [selection, setSelection] = useState<Selection>({
+    status: MARKET_STATUSES[0],
+    symbol: null
+  })
+  const {data: rules, mutate} = useSWR(rulesAPI, fetcher(jwt));
+  const {data: allSymbols} = useSWR(symbolsAPI, fetcher(jwt));
 
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState(BASE_RULES);
   const [showOnlyExisting, setShowOnlyExisting] = useState(false);
 
   const existingRuleSymbols = useMemo(() => {
-    return getExistingRuleSymbols(rules, marketStatus);
-  }, [rules, marketStatus]);
+    return rules ? Object.keys(rules) : [];
+  }, [rules]);
 
   useEffect(() => {
-    setSymbol(null);
-  }, [marketStatus]);
+    if (allSymbols && rules) {
+      setLoading(false);
+    }
+  }, [allSymbols, rules]);
 
   useEffect(() => {
-    Promise.all([
-      fetchRules(jwt).then((rules) => {
-        setRules(rules);
-      }),
-      fetchSymbols(jwt).then((symbols) => {
-        setAllSymbols(symbols);
-      }),
-    ]).then(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    if (!symbol) return;
-    const rule = rules[symbol]?.[marketStatus];
+    if (!rules || !selection.symbol) {
+      setText(BASE_RULES);
+      return;
+    };
+    const rule = rules[selection.symbol]?.[selection.status];
     if (rule) setText(JSON.stringify(rule, null, INDENT_SIZE));
     else setText(BASE_RULES);
-  }, [JSON.stringify(rules), marketStatus, symbol]);
+  }, [JSON.stringify(rules), selection]);
 
   const sendRules = () => {
-    if (!symbol) return;
+    if (!selection.symbol) return;
     setLoading(true);
     let parsed;
     try {
       parsed = JSON.parse(text);
     } catch (error) {
-      toast.error("Invalid JSON");
+      toast.error("Invalid JSON format");
       setLoading(false);
       return;
     }
     const payload = {
       rules: parsed,
-      validFor: symbol,
-      validIn: marketStatus,
+      validFor: selection.symbol,
+      validIn: selection.status,
     };
     postRules(jwt, payload).then(() => {
-      setLoading(false);
-      fetchRules(jwt).then((rules) => {
-        setRules(rules);
-      });
+      mutate().then(() => setLoading(false));
     });
   };
 
@@ -123,33 +110,34 @@ const Rules = ({ jwt }: Props) => {
       <div className="options">
         <Typography>Rule Options</Typography>
         <div className="form">
+        <FormControl className="formInput">
+            <Autocomplete
+              value={selection.symbol}
+              onChange={(_, value: any) => setSelection(s => ({...s, symbol: value}))}
+              renderInput={(params) => (
+                <TextField {...params} label="Rule's symbol" variant="standard" />
+              )}
+              options={(showOnlyExisting ? existingRuleSymbols : allSymbols?.map((s: Symbol) => s.symbol)) || []}
+            />
+          </FormControl>
+
           <FormControl className="formInput">
-            <InputLabel>Market Status</InputLabel>
+            <InputLabel>Rule's market status</InputLabel>
             <Select
-              value={marketStatus}
-              onChange={(e) => setMarketStatus(e.target.value as MarketStatus)}
-              label="Market Status"
+              value={selection.status}
+              onChange={(e) => setSelection(s => ({...s, status: e.target.value as MarketStatus}))}
+              label="Rule's market status"
             >
               {MARKET_STATUSES.map((status) => (
                 <MenuItem value={status} key={status}>
-                  {capitalize(status)}
+                  {status.toUpperCase()}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
-          <FormControl className="formInput">
-            <Autocomplete
-              value={symbol}
-              onChange={(_, value: any) => setSymbol(value)}
-              renderInput={(params) => (
-                <TextField {...params} label="Symbol" variant="standard" />
-              )}
-              options={showOnlyExisting ? existingRuleSymbols : allSymbols?.map((s)=> s.symbol)}
-            />
-          </FormControl>
         </div>
         <FormControlLabel
-          label="Show only existing rules"
+          label="Show only symbols with existing rules"
           control={
             <Checkbox
               checked={showOnlyExisting}
@@ -158,28 +146,34 @@ const Rules = ({ jwt }: Props) => {
             />
           }
           disabled={
-            loading || !(!symbol || existingRuleSymbols.includes(symbol))
+            loading || Boolean(selection.symbol && !existingRuleSymbols.includes(selection.symbol))
           }
         />
+        
+          <div className="statusContainer">
+            <Typography className="status">Current symbol market status: {selection.symbol ? "" : " - "}</Typography>
+            {selection.symbol ? (<MarketStatusChip status={allSymbols.find((s: Symbol) => s.symbol === selection.symbol)?.status} className="status"/>) : null}
+            </div>
+            
       </div>
 
       <Typography variant="h4">
-        {symbol && existingRuleSymbols.includes(symbol) ? "Edit" : "Add new"} Rules
+        {selection.symbol && existingRuleSymbols.includes(selection.symbol) ? "Edit" : "Add new"} Rules
       </Typography>
       <div className="editor">
         <Editor
-          value={symbol ? text : " "}
+          value={selection.symbol ? text : " "}
           baseValue={BASE_RULES}
           indent={INDENT_SIZE}
           onChange={setText}
-          disabled={loading || !symbol}
+          disabled={loading || !selection.symbol}
         />
       </div>
 
       <Button
         variant="contained"
         onClick={sendRules}
-        disabled={loading || !symbol}
+        disabled={loading || !selection.symbol}
       >
         Set Rules
       </Button>
