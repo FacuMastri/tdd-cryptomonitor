@@ -5,12 +5,12 @@ import {
   DEFAULT_VARIATION_PERC,
   MIN_SYMBOL_VARIATION_PERC
 } from '../config';
-import { evalRule } from '../interpreter/interpreter';
+import { evalRules } from '../interpreter/interpreter';
 import { Context } from '../interpreter/types/context';
-import { ValueOutput } from '../interpreter/types/value';
 import { ContextDatum } from '../interpreter/types/number';
-import { SymbolMarketStatusDict, Symbol } from './types';
+import { SymbolMarketStatusDict, Symbol, SymbolMarketStatus } from './types';
 import { WebSocket } from 'ws';
+import { Rules } from '../interpreter/types/rule';
 
 const BINANCE_WS = `wss://stream.binance.com:9443/ws/`;
 
@@ -24,9 +24,13 @@ export type SymbolChangePolitic = {
   intervalInHours: number;
 };
 
+export type SymbolWithStatus = {
+  symbol: string;
+  status: SymbolMarketStatus;
+};
+
 export default class MonitorService {
   private history: { [key: Symbol]: ContextDatum[] };
-  private readonly variables: { [name: Symbol]: ValueOutput };
   private readonly status: SymbolMarketStatusDict;
   private readonly statusChangePolitics: { [key: Symbol]: SymbolChangePolitic };
 
@@ -34,7 +38,6 @@ export default class MonitorService {
 
   constructor(startSocket = true) {
     this.history = {};
-    this.variables = {};
     this.status = {};
     this.statusChangePolitics = this.getDefaultPolitics();
     // Does not work if I change the anonymous function to a
@@ -72,6 +75,20 @@ export default class MonitorService {
   public async getValidSymbols(): Promise<Symbol[]> {
     const info = JSON.parse(await binanceService.getExchangeInfo());
     return info.symbols.map((symbol: any) => symbol.symbol);
+  }
+
+  public async getValidSymbolsWithStatus(): Promise<SymbolWithStatus[]> {
+    const symbols = await this.getValidSymbols();
+    return symbols.map((symbol) => {
+      return {
+        symbol,
+        status: this.getStatusFor(symbol)
+      };
+    });
+  }
+
+  public getStatusFor(symbol: Symbol): SymbolMarketStatus {
+    return this.status[symbol];
   }
 
   // Returns some politics as an example
@@ -135,12 +152,10 @@ export default class MonitorService {
         });
         this.updateStatus();
         const rulesStatus = await interpreterService.getRulesFor(this.status);
-        rulesStatus.forEach((rules) => {
-          rules.rules.forEach((r) => {
-            const newContext = evalRule(r, this.getContext());
-            this.setContext(newContext);
-          });
-        });
+        for (const rules of rulesStatus) {
+          const context = await MonitorService.getContextFor(rules);
+          evalRules(rules, context);
+        }
       }
     } else {
       symbolHistory.push({
@@ -149,6 +164,19 @@ export default class MonitorService {
       });
       this.updateStatus();
     }
+  }
+
+  private static async getContextFor(rules: Rules): Promise<Context> {
+    const allVariables = await interpreterService.getAllVars();
+    const context: Context = {
+      variables: {}
+    };
+    Object.entries(allVariables).forEach(([key, value]) => {
+      if (rules.requiredVariables.includes(key)) {
+        if (context.variables) context.variables[key] = value;
+      }
+    });
+    return context;
   }
 
   // Returns the variation of the symbol in the last intervalInHours
@@ -189,32 +217,6 @@ export default class MonitorService {
   private isRelevantVariation(lastPrice: number, newPrice: number) {
     const variation = Math.abs((lastPrice - newPrice) / lastPrice);
     return variation > MIN_SYMBOL_VARIATION_PERC;
-  }
-
-  private getContext(): Context {
-    const context: Context = {
-      data: this.history,
-      variables: {}
-    };
-    Object.entries(this.variables).forEach(([variableName, variableValue]) => {
-      if (context.variables) context.variables[variableName] = variableValue;
-    });
-    return context;
-  }
-
-  private setContext(context: Context) {
-    if (context.data) {
-      this.history = context.data;
-    }
-    if (context.variables) {
-      Object.entries(context.variables).forEach(
-        ([variableName, variableValue]) => {
-          if (variableName !== 'data') {
-            this.variables[variableName] = variableValue;
-          }
-        }
-      );
-    }
   }
 
   public getHistory(): { [key: Symbol]: ContextDatum[] } {

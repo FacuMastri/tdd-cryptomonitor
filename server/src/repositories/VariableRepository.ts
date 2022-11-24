@@ -1,6 +1,6 @@
-import { Value } from '../interpreter/types/value';
+import { ValueOutput } from '../interpreter/types/value';
 
 export default interface VariableRepository {
-  setVar(name: string, value: Value): Promise<Value>;
-  getVars(): Promise<Record<string, Value>>;
+  setVar(name: string, value: ValueOutput): Promise<ValueOutput>;
+  getVars(): Promise<Record<string, ValueOutput>>;
 }
