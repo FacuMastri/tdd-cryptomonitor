@@ -16,3 +16,4 @@ services:
       - ${WEB_PORT}:${WEB_PORT}
     environment:
       - PORT=${WEB_PORT}
+      - VITE_SERVER_PORT=${PORT}

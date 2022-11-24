@@ -1,4 +1,4 @@
-export const baseUrl = "http://localhost:8080";
+export const baseUrl = "http://localhost:" + import.meta.env.VITE_SERVER_PORT;
 export const accountAPI = `${baseUrl}/binance/account`;
 export const loginAPI = `${baseUrl}/login`;
 export const rulesAPI = `${baseUrl}/rules`;
