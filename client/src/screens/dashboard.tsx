@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 import { fetcher, MarketStatus } from "../util/fetch";
-import { accountAPI, pricesAPI } from "../util/requests";
-import MarketStatusChip from "../util/statusChip";
+import { accountAPI, pricesAPI, transactionsAPI } from "../util/requests";
+// import MarketStatusChip from "../util/statusChip";
 import { Sparklines, SparklinesBars } from "react-sparklines";
 import "../styles/dashboard.css";
+import { Button } from "@mui/material";
 
 type Props = {
   jwt: string;
@@ -26,30 +27,6 @@ type TransactionRecord = {
 
 type RawPrices = Record<string, { value: string }[]>;
 type Prices = Record<string, RawPrices>;
-
-const transactions: TransactionRecord[] = [
-  {
-    symbol: "BNBETH",
-    type: "BUY",
-    symbolStatus: "ALZA",
-    quantity: 5,
-    timestamp: 1669261319047,
-  },
-  {
-    symbol: "BNBETH",
-    type: "BUY",
-    symbolStatus: "BAJA",
-    quantity: 5,
-    timestamp: 1669261319047,
-  },
-  {
-    symbol: "BNBETH",
-    type: "BUY",
-    symbolStatus: "ESTABLE",
-    quantity: 5,
-    timestamp: 1669261319047,
-  },
-];
 
 const parseTimeStampToDate = (timestamp: number) => {
   return new Intl.DateTimeFormat("es-AR", {
@@ -89,6 +66,7 @@ const parsePrices = (prices?: RawPrices, symbols?: string[]) => {
 const Dashboard = ({ jwt }: Props) => {
   const { data: account } = useSWR(accountAPI, fetcher(jwt));
   const { data: raw_prices } = useSWR(pricesAPI, fetcher(jwt));
+  const { data: transactions } = useSWR(transactionsAPI, fetcher(jwt));
   const balances: balance[] = account?.balances;
   const symbols = balances?.map((b) => b.asset);
   const [symbol, setSymbol] = useState(symbols && symbols[0]);
@@ -164,19 +142,15 @@ const Dashboard = ({ jwt }: Props) => {
             <th>Type</th>
             <th>Quantity</th>
             <th>Timestamp</th>
-            <th>Symbol Status</th>
           </tr>
         </thead>
         <tbody>
-          {transactions?.map((transaction) => (
+          {transactions?.map((transaction: TransactionRecord) => (
             <tr key={transaction.timestamp}>
               <td>{transaction.symbol}</td>
               <td>{transaction.type}</td>
               <td>{transaction.quantity}</td>
               <td>{parseTimeStampToDate(transaction.timestamp)}</td>
-              <td>
-                <MarketStatusChip status={transaction.symbolStatus} />
-              </td>
             </tr>
           ))}
         </tbody>

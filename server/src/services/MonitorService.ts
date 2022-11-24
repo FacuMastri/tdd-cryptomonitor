@@ -29,11 +29,16 @@ export type SymbolWithStatus = {
   status: SymbolMarketStatus;
 };
 
+export type OpCriteria = {
+  symbol: string;
+  minOpValue: number;
+}
+
 export default class MonitorService {
   private history: { [key: Symbol]: ContextDatum[] };
   private readonly status: SymbolMarketStatusDict;
   private readonly statusChangePolitics: { [key: Symbol]: SymbolChangePolitic };
-
+  private opCriteria: OpCriteria | undefined;
   private socket: any | undefined;
 
   constructor(startSocket = true) {
@@ -57,6 +62,19 @@ export default class MonitorService {
     });
   }
 
+  private isOperational(): boolean {
+    if (!this.opCriteria) {
+      return true;
+    }
+    const { symbol, minOpValue } = this.opCriteria;
+    const symbolHistory = this.history[symbol];
+    if (!symbolHistory) {
+      return false;
+    }
+    const last_entry = symbolHistory[symbolHistory.length - 1];
+    return last_entry.value > minOpValue;
+  }
+
   public addPolitic(
     symbol: Symbol,
     variationPerc: number,
@@ -66,6 +84,10 @@ export default class MonitorService {
       variationPerc,
       intervalInHours
     };
+  }
+
+  public setOpCriteria(symbol: Symbol, minOpValue: number) {
+    this.opCriteria = { symbol, minOpValue };
   }
 
   public getPolitics(): { [key: Symbol]: SymbolChangePolitic } {
@@ -150,16 +172,23 @@ export default class MonitorService {
           value: price,
           timestamp: Date.now()
         });
-        this.updateStatus();
-
-        await this.evalRulesAndUpdateContext();
+        await this.handleRelevantVariation();
       }
     } else {
       symbolHistory.push({
         value: price,
         timestamp: Date.now()
       });
-      this.updateStatus();
+      await this.handleRelevantVariation();
+    }
+  }
+
+  private async handleRelevantVariation() {
+    this.updateStatus();
+    if (this.isOperational()) {
+      await this.evalRulesAndUpdateContext();
+    } else {
+      console.log('Not evaluating rules because the wallet is not operational');
     }
   }
 
