@@ -1,21 +1,21 @@
 import { Typography, TextField } from "@mui/material";
-import "../styles/politic.css";
+import "../styles/policy.css";
 
-export type PoliticProps = {
+export type PolicyProps = {
   symbol: string;
   values: {
     variationPerc: number;
     intervalInHours: number;
   };
-  onChange: (values: PoliticProps["values"]) => void;
+  onChange: (values: PolicyProps["values"]) => void;
   disabled: boolean;
 };
 
-export const Politic = (props: PoliticProps) => {
+export const Policy = (props: PolicyProps) => {
   return (
-    <div className="politic">
+    <div className="policy">
       <Typography>{props.symbol}</Typography>
-      <div className="poltiticFieldsContainer">
+      <div className="policiesFieldsContainer">
         <TextField
           className="field"
           label="Variation %"

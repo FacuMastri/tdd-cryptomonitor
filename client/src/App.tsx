@@ -34,7 +34,7 @@ function Nav({ admin, user, logout }: NavProps) {
             <Link to="/">Dashboard</Link>
             {admin ? <Link to="rules">Rules</Link> : ""}
             {admin ? <Link to="variables">Variables</Link> : ""}
-            {admin ? <Link to="politics">Politics</Link> : ""}
+            {admin ? <Link to="policies">Policies</Link> : ""}
           </div>
           <BasicMenu
             items={[
