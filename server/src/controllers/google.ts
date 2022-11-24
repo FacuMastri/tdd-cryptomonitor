@@ -2,17 +2,15 @@ import { Request, Response } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import { userService } from '../services';
 import { getErrorMessage, sendResponse } from './utils';
+import { CLIENT_ID } from '../config';
 
-const clientId =
-  '283435392885-4q2ph3d1v2nuf98str251pvd1vg5elmq.apps.googleusercontent.com';
-
-const client = new OAuth2Client(clientId);
+const client = new OAuth2Client(CLIENT_ID);
 
 export const googleLoginController = async (req: Request, res: Response) => {
   const { google } = req.body;
   const ticket = await client.verifyIdToken({
     idToken: google,
-    audience: clientId
+    audience: CLIENT_ID
   });
   const payload = ticket.getPayload();
 

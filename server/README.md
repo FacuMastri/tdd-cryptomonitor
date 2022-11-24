@@ -32,7 +32,7 @@ Once inside the container, run:
 
 ```bash
 $ root@f55080179d84:/app# ls
-Dockerfile  README.md  docker-compose.yml  jest.config.js  node_modules  nodemon.json  package-lock.json  package.json  src  tests  tsconfig.json
+Dockerfile-dev  README.md  docker-compose-dev.yml  jest.config.js  node_modules  nodemon.json  package-lock.json  package.json  src  tests  tsconfig.json
 $ root@f55080179d84:/app# npm t
 ```
 
@@ -47,3 +47,16 @@ $ root@f55080179d84:/app# npm t
 - `npm run format` to run code formatter
 
 - `npm run schemas` to update JSON schemas
+
+
+### Environment variables
+
+The following env vars should be set on a `.env` file at the root of this directory:
+
+- `PORT`: Port to run the server on
+- `BINANCE_API_KEY`: Binance API key. It could be obtained from [here](https://www.binance.com/en/my/settings/api-management)
+- `BINANCE_API_SECRET`: Binance API secret. It could be obtained from [here](https://www.binance.com/en/my/settings/api-management)
+- `JWT_SECRET` [optional]: Secret to sign JWT tokens. If not set, 'mysecret' will be set as default.
+- `JWT_EXPIRATION` [optional]: Expiration time for JWT tokens. If not set, it will default to 30d. Available formats could be found [here](ea5c52512b5d)
+
+

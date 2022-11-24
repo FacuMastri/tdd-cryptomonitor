@@ -1,0 +1,9 @@
+.eslintrc.js
+.prettierignore
+.prettierrc
+junit.xml
+node_modules/
+coverage/
+Dockerfile-dev
+docker-compose-dev.yml
+.env
