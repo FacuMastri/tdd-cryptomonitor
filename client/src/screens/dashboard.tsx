@@ -4,11 +4,6 @@ import { fetcher, MarketStatus } from "../util/fetch";
 import { accountAPI, pricesAPI } from "../util/requests";
 import MarketStatusChip from "../util/statusChip";
 import { Sparklines, SparklinesBars } from "react-sparklines";
-import { Accordion } from "@mui/material";
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import "../styles/dashboard.css";
 
 type Props = {
@@ -23,37 +18,49 @@ type balance = {
 
 type TransactionRecord = {
   symbol: string;
-  type: 'BUY' | 'SELL';
+  type: "BUY" | "SELL";
   symbolStatus: MarketStatus;
   quantity: number;
   timestamp: number;
 };
 
-type RawPrices = Record<string, { value: number }[]>;
+type RawPrices = Record<string, { value: string }[]>;
 type Prices = Record<string, RawPrices>;
 
-const transactions: TransactionRecord[] = [{
-  symbol: "BNBETH",
-  type: "BUY",
-  symbolStatus: "ALZA",
-  quantity: 5,
-  timestamp: 1669261319047
-},
-{  symbol: "BNBETH",
-type: "BUY",
-symbolStatus: "BAJA",
-quantity: 5,
-timestamp: 1669261319047},
-{  symbol: "BNBETH",
-type: "BUY",
-symbolStatus: "ESTABLE",
-quantity: 5,
-timestamp: 1669261319047}
+const transactions: TransactionRecord[] = [
+  {
+    symbol: "BNBETH",
+    type: "BUY",
+    symbolStatus: "ALZA",
+    quantity: 5,
+    timestamp: 1669261319047,
+  },
+  {
+    symbol: "BNBETH",
+    type: "BUY",
+    symbolStatus: "BAJA",
+    quantity: 5,
+    timestamp: 1669261319047,
+  },
+  {
+    symbol: "BNBETH",
+    type: "BUY",
+    symbolStatus: "ESTABLE",
+    quantity: 5,
+    timestamp: 1669261319047,
+  },
 ];
 
 const parseTimeStampToDate = (timestamp: number) => {
-    return new Intl.DateTimeFormat('es-AR', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
-}
+  return new Intl.DateTimeFormat("es-AR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(timestamp);
+};
 
 const parsePrices = (prices?: RawPrices, symbols?: string[]) => {
   if (!prices || !symbols) return;
@@ -150,28 +157,30 @@ const Dashboard = ({ jwt }: Props) => {
       </table>
 
       <h2>Transaction</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Symbol</th>
-              <th>Type</th>
-              <th>Quantity</th>
-              <th>Timestamp</th>
-              <th>Symbol Status</th>
+      <table>
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Type</th>
+            <th>Quantity</th>
+            <th>Timestamp</th>
+            <th>Symbol Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {transactions?.map((transaction) => (
+            <tr key={transaction.timestamp}>
+              <td>{transaction.symbol}</td>
+              <td>{transaction.type}</td>
+              <td>{transaction.quantity}</td>
+              <td>{parseTimeStampToDate(transaction.timestamp)}</td>
+              <td>
+                <MarketStatusChip status={transaction.symbolStatus} />
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {transactions?.map((transaction) => (
-              <tr key={transaction.timestamp}>
-                <td>{transaction.symbol}</td>
-                <td>{transaction.type}</td>
-                <td>{transaction.quantity}</td>
-                <td>{parseTimeStampToDate(transaction.timestamp)}</td>
-                <td><MarketStatusChip status={transaction.symbolStatus}/></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          ))}
+        </tbody>
+      </table>
     </section>
   );
 };

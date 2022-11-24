@@ -235,6 +235,281 @@
           }
         }
       }
+    },
+    "/symbols": {
+      "get": {
+        "description": "Get system symbols",
+        "tags": ["Monitor"],
+        "responses": {
+          "200": {
+            "description": "symbols list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MarketSymbolWithStatus"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/politics": {
+      "get": {
+        "description": "Get system symbol monitoring politics",
+        "tags": ["Monitor"],
+        "responses": {
+          "200": {
+            "description": "system symbol monitoring politics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "symbol": {
+                      "$ref": "#/components/schemas/Politic"
+                    },
+                    "otherSymbol": {
+                      "$ref": "#/components/schemas/Politic"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "description": "Set system symbol monitoring politic",
+        "tags": ["Monitor"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "symbol": {
+                    "$ref": "#/components/schemas/MarketSymbol"
+                  },
+                  "variationPerc": {
+                    "type": "number",
+                    "example": 0.1
+                  },
+                  "intervalInHours": {
+                    "type": "number",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "system symbol monitoring politics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "symbol": {
+                      "$ref": "#/components/schemas/Politic"
+                    },
+                    "otherSymbol": {
+                      "$ref": "#/components/schemas/Politic"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/prices": {
+      "get": {
+        "description": "Get system symbol prices",
+        "tags": ["Monitor"],
+        "responses": {
+          "200": {
+            "description": "symbol prices history list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "symbol": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TimedValue"
+                      }
+                    },
+                    "otherSymbol": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TimedValue"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/binance/exchangeInfo": {
+      "get": {
+        "description": "Binance API wrapper - get exchange info",
+        "externalDocs": {
+          "description": "Binance API",
+          "url": "https://binance-docs.github.io/apidocs/spot/en/#exchange-information"
+        },
+        "tags": ["Exchange"],
+        "responses": {
+          "200": {
+            "description": "exchange info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "timezone": "UTC",
+                    "serverTime": 1565246363776,
+                    "rateLimits": [
+                      {
+                        "limit": "optional"
+                      }
+                    ],
+                    "exchangeFilters": ["optional filters"],
+                    "symbols": [
+                      {
+                        "symbol": "ETHBTC",
+                        "status": "TRADING",
+                        "baseAsset": "ETH",
+                        "baseAssetPrecision": 8,
+                        "quoteAsset": "BTC",
+                        "quotePrecision": 8,
+                        "quoteAssetPrecision": 8,
+                        "orderTypes": [
+                          "LIMIT",
+                          "LIMIT_MAKER",
+                          "MARKET",
+                          "STOP_LOSS",
+                          "STOP_LOSS_LIMIT",
+                          "TAKE_PROFIT",
+                          "TAKE_PROFIT_LIMIT"
+                        ],
+                        "icebergAllowed": true,
+                        "ocoAllowed": true,
+                        "quoteOrderQtyMarketAllowed": true,
+                        "allowTrailingStop": false,
+                        "cancelReplaceAllowed": false,
+                        "isSpotTradingAllowed": true,
+                        "isMarginTradingAllowed": true,
+                        "filters": ["optional filter"],
+                        "permissions": ["SPOT", "MARGIN"]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/binance/account": {
+      "get": {
+        "description": "Binance API wrapper - get account info",
+        "externalDocs": {
+          "description": "Binance API",
+          "url": "https://binance-docs.github.io/apidocs/spot/en/#account-information-user_data"
+        },
+        "tags": ["Exchange"],
+        "responses": {
+          "200": {
+            "description": "user data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "makerCommission": 15,
+                    "takerCommission": 15,
+                    "buyerCommission": 0,
+                    "sellerCommission": 0,
+                    "canTrade": true,
+                    "canWithdraw": true,
+                    "canDeposit": true,
+                    "brokered": false,
+                    "updateTime": 123456789,
+                    "accountType": "SPOT",
+                    "balances": [
+                      {
+                        "asset": "BTC",
+                        "free": "4723846.89208129",
+                        "locked": "0.00000000"
+                      },
+                      {
+                        "asset": "LTC",
+                        "free": "4763368.68006011",
+                        "locked": "0.00000000"
+                      }
+                    ],
+                    "permissions": ["SPOT"]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "description": "System transaction history",
+        "tags": ["Exchange"],
+        "responses": {
+          "200": {
+            "description": "transaction history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TransactionRecord"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
     }
   },
   "security": [
@@ -373,11 +648,9 @@
       "BooleanCallUnary": {
         "properties": {
           "arguments": {
-            "items": [
-              {
-                "$ref": "#/components/schemas/BooleanType"
-              }
-            ],
+            "items": {
+              "$ref": "#/components/schemas/BooleanType"
+            },
             "maxItems": 1,
             "minItems": 1,
             "type": "array"
@@ -429,14 +702,9 @@
       "NumberCallBinary": {
         "properties": {
           "arguments": {
-            "items": [
-              {
-                "$ref": "#/components/schemas/NumberType"
-              },
-              {
-                "$ref": "#/components/schemas/NumberType"
-              }
-            ],
+            "items": {
+              "$ref": "#/components/schemas/NumberType"
+            },
             "maxItems": 2,
             "minItems": 2,
             "type": "array"
@@ -481,11 +749,9 @@
       "NumberCallUnary": {
         "properties": {
           "arguments": {
-            "items": [
-              {
-                "$ref": "#/components/schemas/NumberType"
-              }
-            ],
+            "items": {
+              "$ref": "#/components/schemas/NumberType"
+            },
             "maxItems": 1,
             "minItems": 1,
             "type": "array"
@@ -851,6 +1117,64 @@
       "MarketSymbolStatus": {
         "type": "string",
         "enum": ["ALZA", "BAJA", "ESTABLE"]
+      },
+      "MarketSymbolWithStatus": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "$ref": "#/components/schemas/MarketSymbol"
+          },
+          "status": {
+            "$ref": "#/components/schemas/MarketSymbolStatus"
+          }
+        }
+      },
+      "Politic": {
+        "type": "object",
+        "properties": {
+          "variationPerc": {
+            "type": "number",
+            "example": 0.1
+          },
+          "intervalInHours": {
+            "type": "number",
+            "example": 1
+          }
+        }
+      },
+      "TimedValue": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "example": "16537.70000000"
+          },
+          "timestamp": {
+            "type": "number",
+            "example": 1669303382912
+          }
+        }
+      },
+      "TransactionRecord": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "$ref": "#/components/schemas/MarketSymbol"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["BUY", "SELL"]
+          },
+          "symbolStatus": {
+            "$ref": "#/components/schemas/MarketSymbolStatus"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "timestamp": {
+            "type": "number"
+          }
+        }
       }
     },
     "responses": {
