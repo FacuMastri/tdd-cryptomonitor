@@ -21,7 +21,7 @@ import {
 } from './controllers/interpreter';
 import {
   addOpCriteriasController,
-  addPoliticController,
+  addPoliticController, getOpCriteriasController,
   getPoliticsController,
   getPricesHistoryController,
   getSymbolsController
@@ -71,6 +71,8 @@ export default class Server {
     this.app.post('/politics', verifyJwtHeaderAdmin, addPoliticController);
     this.app.get('/politics', verifyJwtHeader, getPoliticsController);
     this.app.get('/prices', verifyJwtHeader, getPricesHistoryController);
+    this.app.get('/walletOpCriterias', verifyJwtHeader, getOpCriteriasController);
+
     this.app.post(
       '/walletOpCriterias',
       verifyJwtHeaderAdmin,
