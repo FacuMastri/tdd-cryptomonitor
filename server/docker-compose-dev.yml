@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile-dev
     ports:
-      - '8080:8080' # add to .env
+      - '8080:8080'
     volumes:
       - ./src:/app/src
       - ./tests:/app/tests
@@ -15,4 +15,5 @@ services:
       - ./.prettierrc:/app/.prettierrc
       - ./.prettierignore:/app/.prettierignore
       - ./.eslintrc.js:/app/.eslintrc.js
+      - ./db:/app/db
     command: npm start
