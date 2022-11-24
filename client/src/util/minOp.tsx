@@ -51,9 +51,9 @@ const MinOpValue = ({ jwt, symbols }: { jwt: string; symbols: string[] }) => {
       </select>
       <button
         onClick={() => {
-          postVar(selection).then(() => {
+          /*postVar(selection).then(() => {
             toast.success("Minimum value saved");
-          });
+          });*/
         }}
       >
         Save

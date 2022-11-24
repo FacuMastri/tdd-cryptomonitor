@@ -177,3 +177,19 @@ td.boolean {
 .spark-td:hover > .history {
   opacity: 1;
 }
+
+.minValueContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30%;
+  margin: 10px 0;
+  border-bottom: 1px solid #fff5;
+}
+
+.minValueContainer *:not(span) {
+  background-color: #ddd;
+  outline: none;
+  border: #0000;
+}
