@@ -9,9 +9,11 @@ import { Context } from 'vm';
 import { Rules } from '../../../interpreter/types/rule';
 import { BooleanConstant } from '../../../interpreter/types/boolean';
 import { Action } from '../../../interpreter/types/action';
+import { mockServices } from '../mocks';
 
-// TODO: this now uses external services
-describe.skip('Comprar 12 TDD/USDT siempre', () => {
+describe('Comprar 12 TDD/USDT siempre', () => {
+  mockServices();
+
   const amount: NumberConstant = {
     type: 'CONSTANT',
     value: 12
@@ -37,19 +39,19 @@ describe.skip('Comprar 12 TDD/USDT siempre', () => {
     ]
   };
 
-  describe('should buy 12 usdt', () => {
+  describe('should buy 12 tdd', () => {
     let context: Context;
 
     beforeEach(() => {
       const wallets: ValueWallet[] = [
         {
           type: 'WALLET',
-          symbol: 'TDD/USDT',
+          symbol: 'TDD',
           amount: 2
         },
         {
           type: 'WALLET',
-          symbol: 'TDD/BTC',
+          symbol: 'BTC',
           amount: 100
         }
       ];
@@ -72,7 +74,7 @@ describe.skip('Comprar 12 TDD/USDT siempre', () => {
       evalAction(action, context);
 
       const wallet = context.wallets.find(
-        (wallet: ValueWallet) => wallet.symbol === 'TDD/USDT'
+        (wallet: ValueWallet) => wallet.symbol === 'TDD'
       );
 
       expect(wallet.amount).toBe(2 /* inicial */ + 12 /* comprado */);
@@ -80,7 +82,7 @@ describe.skip('Comprar 12 TDD/USDT siempre', () => {
 
     test('eval rules', () => {
       const wallet = context.wallets.find(
-        (wallet: ValueWallet) => wallet.symbol === 'TDD/USDT'
+        (wallet: ValueWallet) => wallet.symbol === 'TDD'
       );
 
       expect(wallet.amount).toBe(2);
@@ -90,7 +92,7 @@ describe.skip('Comprar 12 TDD/USDT siempre', () => {
 
     test('eval rules two times', () => {
       const wallet = context.wallets.find(
-        (wallet: ValueWallet) => wallet.symbol === 'TDD/USDT'
+        (wallet: ValueWallet) => wallet.symbol === 'TDD'
       );
 
       expect(wallet.amount).toBe(2);

@@ -1,5 +1,4 @@
 import { Rules } from '../../interpreter/types/rule';
-import { Value } from '../../interpreter/types/value';
 import InMemoryRuleRepository from '../../repositories/InMemoryRuleRepository';
 import InMemoryUserRepository from '../../repositories/InMemoryUserRepository';
 import InMemoryVariableRepository from '../../repositories/InMemoryVariableRepository';
@@ -47,10 +46,7 @@ describe('Variable Repository', () => {
     const repository = new InMemoryVariableRepository();
 
     const name = 'TDD/USDT';
-    const value: Value = {
-      type: 'CONSTANT',
-      value: 12
-    };
+    const value = 12;
 
     await repository.setVar(name, value);
 

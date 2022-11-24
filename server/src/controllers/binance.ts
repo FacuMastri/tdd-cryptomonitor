@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { binanceService, monitorService } from '../services';
+import { binanceService } from '../services';
 import { ExchangeInfoParams } from '../services/BinanceService';
 import { sendResponse } from './utils';
 

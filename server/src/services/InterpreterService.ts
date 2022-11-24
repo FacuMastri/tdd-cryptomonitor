@@ -5,7 +5,7 @@ import { SymbolMarketStatus, SymbolMarketStatusDict, Symbol } from './types';
 import InMemoryRuleRepository from '../repositories/InMemoryRuleRepository';
 import VariableRepository from '../repositories/VariableRepository';
 import InMemoryVariableRepository from '../repositories/InMemoryVariableRepository';
-import { Value, ValueOutput } from '../interpreter/types/value';
+import { ValueOutput } from '../interpreter/types/value';
 
 export type RulesForSymbol = {
   ALZA: RuleRepository;

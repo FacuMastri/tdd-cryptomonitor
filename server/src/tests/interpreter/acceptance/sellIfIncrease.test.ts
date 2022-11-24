@@ -16,9 +16,11 @@ import {
   ActionSellMarket,
   ActionSetVariable
 } from '../../../interpreter/types/action';
+import { mockServices } from '../mocks';
 
-// TODO: this now uses external services
-describe.skip('Si el precio de BTC/USDT aumenta más de 15% del valor de la última venta, vender 0.1 BTC', () => {
+describe('Si el precio de BTC/USDT aumenta más de 15% del valor de la última venta, vender 0.1 BTC', () => {
+  mockServices();
+
   const lastSell: ValueVariable = {
     type: 'VARIABLE',
     name: 'LAST_SELL_VALUE_BTC/USDT'
@@ -91,12 +93,14 @@ describe.skip('Si el precio de BTC/USDT aumenta más de 15% del valor de la últ
       const wallets: ValueWallet[] = [
         {
           type: 'WALLET',
-          symbol: 'BTC/USDT',
+          symbol: 'BTC',
           amount: 2
         }
       ];
       context = {
-        'LAST_SELL_VALUE_BTC/USDT': 100,
+        variables: {
+          'LAST_SELL_VALUE_BTC/USDT': 100
+        },
         data,
         wallets
       };
@@ -118,40 +122,40 @@ describe.skip('Si el precio de BTC/USDT aumenta más de 15% del valor de la últ
     test('Wallet amount should be 1.9 and last sell value should be 120', () => {
       evalAction(actionSell, context);
       const wallet = context.wallets.find(
-        (wallet: ValueWallet) => wallet.symbol === 'BTC/USDT'
+        (wallet: ValueWallet) => wallet.symbol === 'BTC'
       );
       expect(wallet.amount).toBeCloseTo(1.9);
 
       evalAction(actionSet, context);
-      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(120);
+      expect(context.variables['LAST_SELL_VALUE_BTC/USDT']).toBe(120);
     });
 
     test('Should sell 0.1, wallet amount should be 1.9 and last sell value should be 120', () => {
       const wallet = context.wallets.find(
-        (wallet: ValueWallet) => wallet.symbol === 'BTC/USDT'
+        (wallet: ValueWallet) => wallet.symbol === 'BTC'
       );
 
       expect(wallet.amount).toBe(2);
-      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
+      expect(context.variables['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
       evalRules(rules, context);
       expect(wallet.amount).toBeCloseTo(1.9);
-      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(120);
+      expect(context.variables['LAST_SELL_VALUE_BTC/USDT']).toBe(120);
     });
 
     test('After selling 0.1 the first time, evalRules should not change wallet amount nor last sell value', () => {
       const wallet = context.wallets.find(
-        (wallet: ValueWallet) => wallet.symbol === 'BTC/USDT'
+        (wallet: ValueWallet) => wallet.symbol === 'BTC'
       );
 
       expect(wallet.amount).toBe(2);
-      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
+      expect(context.variables['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
       evalRules(rules, context);
       expect(wallet.amount).toBeCloseTo(1.9);
-      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(120);
+      expect(context.variables['LAST_SELL_VALUE_BTC/USDT']).toBe(120);
       // the value doesn't change the second time so no sell
       evalRules(rules, context);
       expect(wallet.amount).toBeCloseTo(1.9);
-      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(120);
+      expect(context.variables['LAST_SELL_VALUE_BTC/USDT']).toBe(120);
     });
   });
 
@@ -170,12 +174,14 @@ describe.skip('Si el precio de BTC/USDT aumenta más de 15% del valor de la últ
       const wallets: ValueWallet[] = [
         {
           type: 'WALLET',
-          symbol: 'BTC/USDT',
+          symbol: 'BTC',
           amount: 2
         }
       ];
       context = {
-        'LAST_SELL_VALUE_BTC/USDT': 100,
+        variables: {
+          'LAST_SELL_VALUE_BTC/USDT': 100
+        },
         data,
         wallets
       };
@@ -196,15 +202,15 @@ describe.skip('Si el precio de BTC/USDT aumenta más de 15% del valor de la últ
 
     test('Should not sell 0.1, wallet amount should be 2 and last sell value should be 100', () => {
       const wallet = context.wallets.find(
-        (wallet: ValueWallet) => wallet.symbol === 'BTC/USDT'
+        (wallet: ValueWallet) => wallet.symbol === 'BTC'
       );
 
       expect(wallet.amount).toBe(2);
-      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
+      expect(context.variables['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
       evalRules(rules, context);
       expect(wallet.amount).toBeCloseTo(2);
       // Since we did not sell (the condition was not met), the last sell value is not updated
-      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
+      expect(context.variables['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
     });
   });
 
@@ -223,12 +229,14 @@ describe.skip('Si el precio de BTC/USDT aumenta más de 15% del valor de la últ
       const wallets: ValueWallet[] = [
         {
           type: 'WALLET',
-          symbol: 'BTC/USDT',
+          symbol: 'BTC',
           amount: 2
         }
       ];
       context = {
-        'LAST_SELL_VALUE_BTC/USDT': 100,
+        variables: {
+          'LAST_SELL_VALUE_BTC/USDT': 100
+        },
         data,
         wallets
       };
@@ -249,19 +257,19 @@ describe.skip('Si el precio de BTC/USDT aumenta más de 15% del valor de la últ
 
     test('Action should update last sell value to 80', () => {
       evalAction(actionSet, context);
-      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(80);
+      expect(context.variables['LAST_SELL_VALUE_BTC/USDT']).toBe(80);
     });
 
     test('Should not sell 0.1, wallet amount should be 2 and last sell value should be 100', () => {
       const wallet = context.wallets.find(
-        (wallet: ValueWallet) => wallet.symbol === 'BTC/USDT'
+        (wallet: ValueWallet) => wallet.symbol === 'BTC'
       );
 
       expect(wallet.amount).toBe(2);
-      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
+      expect(context.variables['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
       evalRules(rules, context);
       expect(wallet.amount).toBeCloseTo(2);
-      expect(context['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
+      expect(context.variables['LAST_SELL_VALUE_BTC/USDT']).toBe(100);
     });
   });
 });

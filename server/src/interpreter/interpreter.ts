@@ -327,55 +327,29 @@ function evalSetVariable(action: ActionSetVariable, context: Context): Context {
   return context;
 }
 
-function evalBuyMarket(action: ActionBuyMarket, context: Context): Context {
+export const evalBuyMarket = (
+  action: ActionBuyMarket,
+  context: Context
+): Context => {
   const amount = evalValue(action.amount, context);
   if (typeof amount !== 'number') throw new Error('Amount must be a number');
   if (amount < 0) throw new Error('Cannot buy negative amount');
 
-  // TODO: Mock this
   binanceService.buy(action.symbol, amount);
   return context;
+};
 
-  /*
-  if (!context.wallets) context.wallets = [];
-  const wallets = context.wallets as ValueWallet[];
-
-  const wallet = wallets.find((wallet) => wallet.symbol === action.symbol);
-  if (!wallet) {
-    wallets.push({
-      type: VALUE_WALLET,
-      symbol: action.symbol,
-      amount: amount
-    });
-  } else {
-    wallet.amount += amount;
-  }
-  return context;
-   */
-}
-
-function evalSellMarket(action: ActionSellMarket, context: Context): Context {
+export const evalSellMarket = (
+  action: ActionSellMarket,
+  context: Context
+): Context => {
   const amount = evalValue(action.amount, context);
   if (typeof amount !== 'number') throw new Error('Amount must be a number');
   if (amount < 0) throw new Error('Cannot sell negative amount');
 
-  // TODO: Mock this
   binanceService.sell(action.symbol, amount);
   return context;
-
-  /*
-  const wallets = context.wallets as unknown as ValueWallet[];
-
-  const wallet = wallets.find((wallet) => wallet.symbol === action.symbol);
-  if (!wallet) throw new Error('No wallet for symbol: ' + action.symbol);
-
-  if (wallet.amount < amount) throw new Error('Not enough funds in wallet');
-
-  wallet.amount -= amount;
-
-  return context;
-   */
-}
+};
 
 export function evalRule(rule: Rule, context: Context): Context {
   if (evalBoolean(rule.condition, context))
@@ -386,7 +360,7 @@ export function evalRule(rule: Rule, context: Context): Context {
 
 export function evalRules(rules: Rules, context: Context): Context {
   for (const name of rules.requiredVariables)
-    if (!(name in context))
+    if (!context.variables || !(name in context.variables))
       throw new Error('Required variable not set: ' + name);
 
   rules.rules.forEach((rule) => evalRule(rule, context));

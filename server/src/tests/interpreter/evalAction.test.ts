@@ -9,6 +9,7 @@ import {
 import { VALUE_CONST, ValueWallet } from '../../interpreter/types/value';
 import { evalAction } from '../../interpreter/interpreter';
 import { Context } from 'vm';
+import { mockServices } from './mocks';
 
 describe('evalAction', () => {
   test('evalAction sets variable value for SET_VARIABLE action', () => {
@@ -56,11 +57,12 @@ describe('evalAction', () => {
     expect(() => evalAction(action, {})).toThrow(Error);
   });
 
-  // TODO: this now uses external services, mocking them isn't worth it
-  test.skip('evalAction buys stock for BUY_MARKET action', () => {
+  test('evalAction buys stock for BUY_MARKET action', () => {
+    mockServices();
+
     const action: ActionBuyMarket = {
       type: ACTION_BUY,
-      symbol: 'BTC',
+      symbol: 'BTC/USDT',
       amount: { type: VALUE_CONST, value: 100 }
     };
 
@@ -85,18 +87,19 @@ describe('evalAction', () => {
   test('evalAction throws error for BUY_MARKET action with negative amount', () => {
     const action: ActionBuyMarket = {
       type: ACTION_BUY,
-      symbol: 'BTC',
+      symbol: 'BTC/USDT',
       amount: { type: VALUE_CONST, value: -100 }
     };
 
     expect(() => evalAction(action, {})).toThrow(Error);
   });
 
-  // TODO: this now uses external services, mocking them isn't worth it
-  test.skip('evalAction sells stock for SELL_MARKET action', () => {
+  test('evalAction sells stock for SELL_MARKET action', () => {
+    mockServices();
+
     const action: ActionSellMarket = {
       type: ACTION_SELL,
-      symbol: 'BTC',
+      symbol: 'BTC/USDT',
       amount: { type: VALUE_CONST, value: 100 }
     };
 
@@ -120,7 +123,7 @@ describe('evalAction', () => {
   test('evalAction throws error for SELL_MARKET action with negative amount', () => {
     const action: ActionSellMarket = {
       type: ACTION_SELL,
-      symbol: 'BTC',
+      symbol: 'BTC/USDT',
       amount: { type: VALUE_CONST, value: -100 }
     };
 
@@ -136,11 +139,12 @@ describe('evalAction', () => {
     expect(() => evalAction(action, context)).toThrow(Error);
   });
 
-  // TODO: this now uses external services, mocking them isn't worth it
-  test.skip('evalAction throws error for SELL_MARKET action with amount greater than owned', () => {
+  test('evalAction throws error for SELL_MARKET action with amount greater than owned', () => {
+    mockServices();
+
     const action: ActionSellMarket = {
       type: ACTION_SELL,
-      symbol: 'BTC',
+      symbol: 'BTC/USDT',
       amount: { type: VALUE_CONST, value: 1000 }
     };
 
@@ -156,11 +160,12 @@ describe('evalAction', () => {
     expect(() => evalAction(action, context)).toThrow(Error);
   });
 
-  // TODO: this now uses external services, mocking them isn't worth it
-  test.skip('evalAction throws error for SELL_MARKET action with no stock owned', () => {
+  test('evalAction throws error for SELL_MARKET action with no stock owned', () => {
+    mockServices();
+
     const action: ActionSellMarket = {
       type: ACTION_SELL,
-      symbol: 'BTC',
+      symbol: 'BTC/USDT',
       amount: { type: VALUE_CONST, value: 1 }
     };
 
@@ -176,11 +181,10 @@ describe('evalAction', () => {
     expect(() => evalAction(action, context)).toThrow(Error);
   });
 
-  // TODO: this now uses external services, mocking them isn't worth it
-  test.skip('evalAction throws error for SELL_MARKET action with unknown coin', () => {
+  test('evalAction throws error for SELL_MARKET action with unknown coin', () => {
     const action: ActionSellMarket = {
       type: ACTION_SELL,
-      symbol: 'BTC',
+      symbol: 'BTC/USDT',
       amount: { type: VALUE_CONST, value: 1000 }
     };
 

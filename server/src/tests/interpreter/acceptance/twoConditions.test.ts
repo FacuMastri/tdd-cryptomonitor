@@ -13,9 +13,10 @@ import { Context } from 'vm';
 import { Rules } from '../../../interpreter/types/rule';
 import { BooleanCall } from '../../../interpreter/types/boolean';
 import { Action } from '../../../interpreter/types/action';
+import { mockServices } from '../mocks';
 
-// TODO: this now uses external services
-describe.skip('Si el precio BTC/USDT cae bajo un nivel determinado pero por encima de otro, vender todo el BTC disponible ', () => {
+describe('Si el precio BTC/USDT cae bajo un nivel determinado pero por encima de otro, vender todo el BTC disponible ', () => {
+  mockServices();
   const lastPrice: ValueCall = {
     type: 'CALL',
     name: 'LAST',
@@ -56,7 +57,7 @@ describe.skip('Si el precio BTC/USDT cae bajo un nivel determinado pero por enci
 
   const action: Action = {
     type: 'SELL_MARKET',
-    symbol: 'BTC',
+    symbol: 'BTC/USDT',
     amount: {
       type: 'WALLET',
       symbol: 'BTC'
@@ -94,8 +95,10 @@ describe.skip('Si el precio BTC/USDT cae bajo un nivel determinado pero por enci
         }
       ];
       context = {
-        'LIMIT_VALUE_UP_BTC/USDT': 1000,
-        'LIMIT_VALUE_DOWN_BTC/USDT': 700,
+        variables: {
+          'LIMIT_VALUE_UP_BTC/USDT': 1000,
+          'LIMIT_VALUE_DOWN_BTC/USDT': 700
+        },
         data,
         wallets
       };
@@ -156,8 +159,10 @@ describe.skip('Si el precio BTC/USDT cae bajo un nivel determinado pero por enci
         }
       ];
       context = {
-        'LIMIT_VALUE_UP_BTC/USDT': 1000,
-        'LIMIT_VALUE_DOWN_BTC/USDT': 700,
+        variables: {
+          'LIMIT_VALUE_UP_BTC/USDT': 1000,
+          'LIMIT_VALUE_DOWN_BTC/USDT': 700
+        },
         data,
         wallets
       };

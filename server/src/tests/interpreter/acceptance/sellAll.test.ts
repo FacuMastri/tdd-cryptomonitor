@@ -9,13 +9,15 @@ import {
   ValueWallet
 } from '../../../interpreter/types/value';
 import { ContextData, NUMBER_DATA } from '../../../interpreter/types/number';
-import { Context } from 'vm';
 import { Rules } from '../../../interpreter/types/rule';
 import { BooleanCall } from '../../../interpreter/types/boolean';
 import { Action } from '../../../interpreter/types/action';
+import { mockServices } from '../mocks';
+import { Context } from '../../../interpreter/types/context';
 
-// TODO: this now uses external services
-describe.skip('Si el precio BTC/USDT cae bajo un nivel determinado por una variable, vender todo el BTC disponible ', () => {
+describe('Si el precio BTC/USDT cae bajo un nivel determinado por una variable, vender todo el BTC disponible ', () => {
+  mockServices();
+
   const lastPrice: ValueCall = {
     type: 'CALL',
     name: 'LAST',
@@ -42,7 +44,7 @@ describe.skip('Si el precio BTC/USDT cae bajo un nivel determinado por una varia
 
   const action: Action = {
     type: 'SELL_MARKET',
-    symbol: 'BTC',
+    symbol: 'BTC/USDT',
     amount: {
       type: 'WALLET',
       symbol: 'BTC'
@@ -80,13 +82,16 @@ describe.skip('Si el precio BTC/USDT cae bajo un nivel determinado por una varia
         }
       ];
       context = {
-        'LIMIT_VALUE_BTC/USDT': 1000,
+        variables: {
+          'LIMIT_VALUE_BTC/USDT': 1000
+        },
         data,
         wallets
       };
     });
 
     test('values', () => {
+      console.log('CONTEXT', context);
       const lim = evalValue(limitValue, context);
 
       expect(lim).toBe(1000);
@@ -103,21 +108,21 @@ describe.skip('Si el precio BTC/USDT cae bajo un nivel determinado por una varia
     test('action', () => {
       evalAction(action, context);
 
-      const wallet = context.wallets.find(
+      const wallet = context.wallets?.find(
         (wallet: ValueWallet) => wallet.symbol === 'BTC'
       );
 
-      expect(wallet.amount).toBe(0);
+      expect(wallet?.amount).toBe(0);
     });
 
     test('eval rules', () => {
-      const wallet = context.wallets.find(
+      const wallet = context.wallets?.find(
         (wallet: ValueWallet) => wallet.symbol === 'BTC'
       );
 
-      expect(wallet.amount).toBe(2);
+      expect(wallet?.amount).toBe(2);
       evalRules(rules, context);
-      expect(wallet.amount).toBe(0);
+      expect(wallet?.amount).toBe(0);
     });
   });
 });
