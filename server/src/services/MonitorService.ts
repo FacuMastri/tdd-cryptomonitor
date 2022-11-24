@@ -89,6 +89,10 @@ export default class MonitorService {
     this.opCriteria = { symbol, minOpValue };
   }
 
+  public getOpCriteria(): OpCriteria | undefined {
+    return this.opCriteria;
+  }
+
   public getPolitics(): { [key: Symbol]: SymbolChangePolitic } {
     return this.statusChangePolitics;
   }

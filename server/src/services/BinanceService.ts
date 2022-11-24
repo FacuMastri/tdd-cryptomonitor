@@ -40,7 +40,6 @@ export class BinanceService {
 
   public buy(symbol: string, quantity: number): Promise<any> {
     const symbol_without_slash = symbol.replace('/', '');
-    console.log('symbol_without_slash', symbol_without_slash);
     this.transactionsHistory.push({
       symbol,
       type: 'BUY',

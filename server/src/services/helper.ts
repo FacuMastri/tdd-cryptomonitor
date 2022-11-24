@@ -22,8 +22,6 @@ export function calculateVariation(
     return 0;
   }
 
-  console.log('entriesValidForInterval', entriesValidForInterval);
-
   const min_entry = entriesValidForInterval.reduce((min, entry) => {
     return entry.value < min.value ? entry : min;
   });
