@@ -31,14 +31,14 @@ type Props = {
 type Symbol = {
   symbol: string;
   marketStatus: MarketStatus;
-}
+};
 
 type Rules = Record<string, Record<MarketStatus, any>>; // Symbol -> MarketStatus -> Rules
 
 type Selection = {
   status: MarketStatus;
   symbol: string | null;
-}
+};
 
 const INDENT_SIZE = 4;
 
@@ -54,10 +54,10 @@ const BASE_RULES = JSON.stringify(
 const Rules = ({ jwt }: Props) => {
   const [selection, setSelection] = useState<Selection>({
     status: MARKET_STATUSES[0],
-    symbol: null
-  })
-  const {data: rules, mutate} = useSWR(rulesAPI, fetcher(jwt));
-  const {data: allSymbols} = useSWR(symbolsAPI, fetcher(jwt));
+    symbol: null,
+  });
+  const { data: rules, mutate } = useSWR(rulesAPI, fetcher(jwt));
+  const { data: allSymbols } = useSWR(symbolsAPI, fetcher(jwt));
 
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState(BASE_RULES);
@@ -77,8 +77,9 @@ const Rules = ({ jwt }: Props) => {
     if (!rules || !selection.symbol) {
       setText(BASE_RULES);
       return;
-    };
+    }
     const rule = rules[selection.symbol]?.[selection.status];
+    console.log("rule", rule, rules);
     if (rule) setText(JSON.stringify(rule, null, INDENT_SIZE));
     else setText(BASE_RULES);
   }, [JSON.stringify(rules), selection]);
@@ -110,14 +111,24 @@ const Rules = ({ jwt }: Props) => {
       <div className="options">
         <Typography>Rule Options</Typography>
         <div className="form">
-        <FormControl className="formInput">
+          <FormControl className="formInput">
             <Autocomplete
               value={selection.symbol}
-              onChange={(_, value: any) => setSelection(s => ({...s, symbol: value}))}
+              onChange={(_, value: any) =>
+                setSelection((s) => ({ ...s, symbol: value }))
+              }
               renderInput={(params) => (
-                <TextField {...params} label="Rule's symbol" variant="standard" />
+                <TextField
+                  {...params}
+                  label="Rule's symbol"
+                  variant="standard"
+                />
               )}
-              options={(showOnlyExisting ? existingRuleSymbols : allSymbols?.map((s: Symbol) => s.symbol)) || []}
+              options={
+                (showOnlyExisting
+                  ? existingRuleSymbols
+                  : allSymbols?.map((s: Symbol) => s.symbol)) || []
+              }
             />
           </FormControl>
 
@@ -125,7 +136,12 @@ const Rules = ({ jwt }: Props) => {
             <InputLabel>Rule's market status</InputLabel>
             <Select
               value={selection.status}
-              onChange={(e) => setSelection(s => ({...s, status: e.target.value as MarketStatus}))}
+              onChange={(e) =>
+                setSelection((s) => ({
+                  ...s,
+                  status: e.target.value as MarketStatus,
+                }))
+              }
               label="Rule's market status"
             >
               {MARKET_STATUSES.map((status) => (
@@ -146,19 +162,35 @@ const Rules = ({ jwt }: Props) => {
             />
           }
           disabled={
-            loading || Boolean(selection.symbol && !existingRuleSymbols.includes(selection.symbol))
+            loading ||
+            Boolean(
+              selection.symbol &&
+                !existingRuleSymbols.includes(selection.symbol)
+            )
           }
         />
-        
-          <div className="statusContainer">
-            <Typography className="status">Current symbol market status: {selection.symbol ? "" : " - "}</Typography>
-            {selection.symbol ? (<MarketStatusChip status={allSymbols.find((s: Symbol) => s.symbol === selection.symbol)?.status} className="status"/>) : null}
-            </div>
-            
+
+        <div className="statusContainer">
+          <Typography className="status">
+            Current symbol market status: {selection.symbol ? "" : " - "}
+          </Typography>
+          {selection.symbol ? (
+            <MarketStatusChip
+              status={
+                allSymbols.find((s: Symbol) => s.symbol === selection.symbol)
+                  ?.status
+              }
+              className="status"
+            />
+          ) : null}
+        </div>
       </div>
 
       <Typography variant="h4">
-        {selection.symbol && existingRuleSymbols.includes(selection.symbol) ? "Edit" : "Add new"} Rules
+        {selection.symbol && existingRuleSymbols.includes(selection.symbol)
+          ? "Edit"
+          : "Add new"}{" "}
+        Rules
       </Typography>
       <div className="editor">
         <Editor

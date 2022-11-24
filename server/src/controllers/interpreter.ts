@@ -4,7 +4,7 @@ import { Rules } from '../interpreter/types/rule';
 import { sendResponse } from './utils';
 
 export const getRulesController = async (req: Request, res: Response) => {
-  sendResponse(res, 200, interpreterService.getAllRules());
+  sendResponse(res, 200, await interpreterService.getAllRules());
 };
 
 export const addRulesController = async (req: Request, res: Response) => {
