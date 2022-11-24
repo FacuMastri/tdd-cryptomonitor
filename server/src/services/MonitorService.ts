@@ -154,12 +154,15 @@ export default class MonitorService {
         const rulesStatus = await interpreterService.getRulesFor(this.status);
         for (const rules of rulesStatus) {
           const context = await MonitorService.getContextFor(rules);
+          const ruleNames = rules.rules.map((rule) => rule.name);
           try {
             evalRules(rules, context);
-          } catch (e) {
-            const err = e as Error;
-            console.error(err?.message ?? 'Error', { rules, context });
+            console.log('\x1b[32m%s\x1b[0m', 'Rules evaluated successfully ');
+          } catch (e: any) {
+            const err = e?.message ?? 'Error at evalRules';
+            console.log('\x1b[31m%s\x1b[0m', err);
           }
+          console.log(ruleNames);
         }
       }
     } else {
