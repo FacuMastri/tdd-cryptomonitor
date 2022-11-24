@@ -4,8 +4,9 @@ export const loginAPI = `${baseUrl}/login`;
 export const rulesAPI = `${baseUrl}/rules`;
 export const symbolsAPI = `${baseUrl}/symbols`;
 export const pricesAPI = `${baseUrl}/prices`;
-export const politicsAPI = `${baseUrl}/politics`;
+export const policiesAPI = `${baseUrl}/politics`;
 export const varsAPI = `${baseUrl}/vars`;
+export const transactionsAPI = `${baseUrl}/transactions`;
 
 export const checkOk = (errorMsg: string) => (res: Response) => {
   if (res.status >= 300) {

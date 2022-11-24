@@ -7,14 +7,14 @@ input[type="number"]::-webkit-outer-spin-button {
   display: none;
 }
 
-.politicsContainer {
+.policiesContainer {
   /* grid with responsive amount of columns */
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   grid-gap: 1rem;
 }
 
-.poltiticFieldsContainer {
+.policiesFieldsContainer {
   /* horizontal */
   display: flex;
   flex-direction: row;
@@ -22,7 +22,7 @@ input[type="number"]::-webkit-outer-spin-button {
   justify-content: center;
 }
 
-.politic {
+.policy {
   margin: 10px;
   border-radius: 5px;
   border: 1px solid rgba(255, 255, 255, 0.25);
