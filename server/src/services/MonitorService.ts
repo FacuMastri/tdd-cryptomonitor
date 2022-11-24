@@ -165,8 +165,10 @@ export default class MonitorService {
 
   private async evalRulesAndUpdateContext() {
     const rulesStatus = await interpreterService.getRulesFor(this.status);
+
     for (const rules of rulesStatus) {
       const context = await interpreterService.getContextFor(rules);
+      const ruleNames = rules.rules.map((rule) => rule.name);
       try {
         const new_context = evalRules(rules, context);
         if (new_context.variables) {
@@ -176,10 +178,13 @@ export default class MonitorService {
             await interpreterService.setVarParsed(key, value);
           }
         }
+        console.log('\x1b[32m%s\x1b[0m', 'Rules evaluated successfully ');
       } catch (error) {
         // @ts-ignore
-        console.log('Error evaluating rules: ', error.message);
+        const err = e?.message ?? 'Error at evalRules';
+        console.log('\x1b[31m%s\x1b[0m', err);
       }
+      if (ruleNames.length > 0) console.log(ruleNames);
     }
   }
 

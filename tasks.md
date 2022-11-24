@@ -2,8 +2,8 @@
 - [x] monitorear los valores de criptomonedas
 - [x] monitorear la variación del valor de una criptomoneda frente a otra
 - [x] unico Rules por cada simbolo y status
-- [ ] que se ejecuten acciones predefinidas
-- [ ] ir guardando las acciones de compra/venta para despues mostrarlas
+- [x] que se ejecuten acciones predefinidas
+- [x] ir guardando las acciones de compra/venta para despues mostrarlas
 - [ ] docs
 - [ ] docker
 - [ ] tests
