@@ -154,7 +154,12 @@ export default class MonitorService {
         const rulesStatus = await interpreterService.getRulesFor(this.status);
         for (const rules of rulesStatus) {
           const context = await MonitorService.getContextFor(rules);
-          evalRules(rules, context);
+          try {
+            evalRules(rules, context);
+          } catch (e) {
+            const err = e as Error;
+            console.error(err?.message ?? 'Error', { rules, context });
+          }
         }
       }
     } else {
