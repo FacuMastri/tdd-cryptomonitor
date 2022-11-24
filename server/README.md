@@ -17,8 +17,8 @@ El servidor está hecho en Node.js con Express. El código se organiza, principa
 
 ## Documentación de la API
 
-La API se documento con `openapi`, en el archivo [openapi.json](src/openapi.json).
-Ademas, esta es servida utilizando Swagger UI en la ruta `/api-docs`.
+La API se documentó con `openapi`, en el archivo [openapi.json](src/openapi.json).
+Además, ésta es servida utilizando Swagger UI en la ruta `/api-docs`.
 
 ## Decisiones de diseño
 
