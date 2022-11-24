@@ -26,4 +26,4 @@ export const getPricesHistoryController = async (
 export const addOpCriteriasController = async (req: Request, res: Response) => {
   const { symbol, minOpValue } = req.body;
   await monitorService.setOpCriteria(symbol, minOpValue);
-}
+};
