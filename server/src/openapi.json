@@ -1,0 +1,124 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "CryptoMonitor",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Rostov's crypto monitor, keep track of your crypto portfolio"
+    }
+  ],
+  "paths": {
+    "/verify": {
+      "get": {
+        "description": "Verify jwt is valid",
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "user id",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "description": "Login user with credentials",
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "password": {
+              "schema": {
+                "description": "user and password login",
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "google": {
+              "schema": {
+                "description": "google identification for federated login",
+                "type": "object",
+                "properties": {
+                  "google": {
+                    "type": "string",
+                    "description": "google id"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "jwt",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "jwt": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "jwt": {
+        "type": "apiKey",
+        "description": "JWT token",
+        "name": "jwt",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
