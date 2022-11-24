@@ -1,4 +1,4 @@
-import express, { Express, Request } from 'express';
+import express, { Express } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import {
@@ -13,14 +13,12 @@ import {
   getExchangeInfoController,
   getTransactionsController
 } from './controllers/binance';
-import { binanceService } from './services';
 import {
   addRulesController,
   getRulesController,
   getVarsController,
   setVarController
 } from './controllers/interpreter';
-import { BuyOrderParams } from './services/BinanceService';
 import {
   addPoliticController,
   getPoliticsController,
@@ -48,8 +46,12 @@ export default class Server {
   }
 
   private addControllers() {
+    // Users
+
     this.app.get('/verify', verifyJwtHeader, verifyJwtController);
     this.app.post('/login', verifyCredentialsBody, loginController);
+
+    // Interpreter
 
     this.app.get('/vars', verifyJwtHeader, getVarsController);
     this.app.post('/vars', verifyJwtHeaderAdmin, setVarController);
@@ -62,51 +64,18 @@ export default class Server {
       addRulesController
     );
 
-    this.app.post('/politics', verifyJwtHeaderAdmin, addPoliticController);
-    this.app.get('/politics', verifyJwtHeader, getPoliticsController);
-    this.app.get('/transactions', verifyJwtHeader, getTransactionsController);
+    // Monitor
 
     this.app.get('/symbols', verifyJwtHeader, getSymbolsController);
+    this.app.post('/politics', verifyJwtHeaderAdmin, addPoliticController);
+    this.app.get('/politics', verifyJwtHeader, getPoliticsController);
     this.app.get('/prices', verifyJwtHeader, getPricesHistoryController);
+
+    // Binance
 
     this.app.get('/binance/exchangeInfo', getExchangeInfoController);
     this.app.get('/binance/account', getAccountController);
-
-    // These are not meant to be endpoints
-    this.app.get('/binance/buyOrders', (req: Request<BuyOrderParams>, resp) => {
-      const symbol = req.query.symbol;
-      // @ts-ignore
-      const quantity = req.query.quantity as number;
-
-      if (symbol) {
-        binanceService.buy(symbol.toString(), quantity).then((data) => {
-          resp.send(data);
-        });
-      } else {
-        resp.send({
-          error: 'Symbol is required'
-        });
-      }
-    });
-
-    this.app.get(
-      '/binance/sellOrders',
-      (req: Request<BuyOrderParams>, resp) => {
-        const symbol = req.query.symbol;
-        // @ts-ignore
-        const quantity = req.query.quantity as number;
-
-        if (symbol) {
-          binanceService.sell(symbol.toString(), quantity).then((data) => {
-            resp.send(data);
-          });
-        } else {
-          resp.send({
-            error: 'Symbol is required'
-          });
-        }
-      }
-    );
+    this.app.get('/transactions', verifyJwtHeader, getTransactionsController);
   }
 
   private addHelpers() {

@@ -2,7 +2,6 @@ import * as https from 'https';
 import { RequestOptions } from 'https';
 import * as crypto from 'crypto';
 import { SymbolMarketStatus } from './types';
-import MonitorService from './MonitorService';
 import { monitorService } from './index';
 
 const API_HOST = 'testnet.binance.vision';
