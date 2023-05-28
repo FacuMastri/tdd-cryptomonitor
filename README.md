@@ -25,6 +25,6 @@ The server also needs a `.env` file in its directory with other variables.
 
 Then:
 
-    `docker-compose up --build`
+    docker-compose up --build
 
 Will build the image for both server and client.
